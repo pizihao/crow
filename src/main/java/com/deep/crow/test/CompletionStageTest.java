@@ -1,6 +1,7 @@
 package com.deep.crow.test;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <h2>test</h2>
@@ -9,22 +10,70 @@ import java.util.concurrent.CompletableFuture;
  */
 public class CompletionStageTest {
     public static void main(String[] args) throws Exception {
-        CompletableFuture.supplyAsync(() -> {
-            System.out.println("ssd");
-            return 1 + 2;
-        })
-            .thenApply(i -> i + 5)
-            .thenApply(i -> 3 / 0)
-            .thenApply(u -> 12)
-            .exceptionally(throwable -> {
-                System.out.println(123);
-                return null;
-            })
-            .thenApply(integer -> {
-                System.out.println(integer);
-                return integer;
-            });
+        CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("A");
+        });
+        CompletableFuture<String> b = a.thenApply(unused -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("B");
+            return "B";
+        });
+        CompletableFuture<String> c = a.thenApply(unused -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("C");
+            return "C";
+        });
+        CompletableFuture<String> d = a.thenApply(unused -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("D");
+            return "D";
+        });
+        CompletableFuture<String> e = b.thenApply(unused -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("E");
+            return "E";
+        });
+        CompletableFuture<String> f = c.thenApply(unused -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("F");
+            return "F";
+        });
+        CompletableFuture<String> g = d.thenApply(unused -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("G");
+            return "G";
+        });
 
-        CompletableFuture.runAsync(() -> System.out.println(1));
+        TimeUnit.SECONDS.sleep(50);
+
     }
 }

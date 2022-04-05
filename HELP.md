@@ -97,5 +97,134 @@ CompletableFuture的任务执行方式对于异常并不敏感，如果某一个
 
 ### 栈和CompletableFuture
 
-> 在CompletableFuture中，存在一个
+> 通过使用，不难发现在CompletableFuture中，应该存在一个链式的关系，这个链存放了CompletableFuture整个运行期间各个任务调用之间的承接关系，因为这是一个单项的链，简单来说只需要一个next的指针即可完整表示，“下一个” 这种逻辑，但是在CompletableFuture中存在着正对单个CompletableFuture的多层调用，这种就需要依靠栈的思路
+
+示例1：
+
+~~~java
+CompletableFuture a;
+CompletableFuture  b = a.thenApply();
+CompletableFuture  C = b.thenApply();
+~~~
+
+上述代码的执行逻辑是这样的：
+
+~~~mermaid
+graph LR
+a --> b --> c
+~~~
+
+
+
+示例2:
+
+~~~java
+CompletableFuture a;
+CompletableFuture  b = a.thenApply();
+CompletableFuture  c = a.thenApply();
+CompletableFuture  d = a.thenApply();
+CompletableFuture  e = b.thenApply();
+CompletableFuture  f = c.thenApply();
+CompletableFuture  g = d.thenApply();
+public static void main(String[] args) throws Exception {
+    CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("A");
+    });
+    CompletableFuture<String> b = a.thenApply(unused -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("B");
+        return "B";
+    });
+    CompletableFuture<String> c = a.thenApply(unused -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("C");
+        return "C";
+    });
+    CompletableFuture<String> d = a.thenApply(unused -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("D");
+        return "D";
+    });
+    CompletableFuture<String> e = b.thenApply(unused -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("E");
+        return "E";
+    });
+    CompletableFuture<String> f = c.thenApply(unused -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("F");
+        return "F";
+    });
+    CompletableFuture<String> g = d.thenApply(unused -> {
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        System.out.println("G");
+        return "G";
+    });
+    TimeUnit.SECONDS.sleep(50);
+}
+
+~~~
+
+<details>
+  <summary>结果</summary>
+ADGCFBE
+</details>
+
+以上代码的执行逻辑是这样的：
+
+~~~mermaid
+graph LR
+a --> d --> g
+a --> c --> f
+a --> b --> e
+d --> c
+c --> b
+~~~
+
+其顺序是从上到下的，b优先被放入链中，但是是最后被回调的。这个过程是在上一个还没有完成时添加的，如果执行速度足够快，执行顺序基本就是代码的顺序。
+
+> 当上一个CompletableFuture没有完成时，将新的CompletableFuture封装Completion的添加到上一个CompletableFuture的stack中。再将新的CompletableFuture封装后的Completion放到原本上一个CompletableFuture的stack的next的位置。这样在上一个执行完成后，其回调的就是新的CompletableFuture。
+
+上述过程简述：
+
+
+
+在这里使用的是thenApply进行连接，thenApply是典型的串行化结构，其对应的内部类为UniApply。
+
+UniApply是UniCompletion的子类，UniCompletion是Completion的子类。
+
+所以在UniApply中还存在几个属性值：
+
+- next，如果
+
+
 
