@@ -9,6 +9,17 @@ import java.util.concurrent.TimeUnit;
  * @author Create by liuwenhao on 2022/4/5 16:08
  */
 public class CompletionStageTest {
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
     public static void main(String[] args) throws Exception {
         CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
             try {
