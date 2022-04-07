@@ -1,34 +1,24 @@
-package com.deep.crow.test.node;
+package com.deep.crow.tree;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * <h2>任务节点</h2>
  *
  * @author Create by liuwenhao on 2022/4/6 18:54
  */
-public interface Node {
+public abstract class Node {
 
     /**
-     * <h2>节点名</h2>
-     * 作为节点的唯一标识，子类需以本方法为基础重写equals和hashcode
-     *
-     * @return java.lang.String
-     * @author liuwenhao
-     * @date 2022/4/6 18:58
+     * 节点名<br>
+     * 唯一标识
      */
-    String name();
+    String name;
 
     /**
-     * <h2>执行任务</h2>
-     * 当任务的参数先于节点被转配时使用
-     *
-     * @return T
-     * @author liuwenhao
-     * @date 2022/4/6 21:20
-     */
-    <T> T exec();
-
-    /**
-     * <h2>顺序</h2>
+     * 顺序<br>
      * <ul>
      *     <li>顺序的定义对于多线程情况下的串行化和并行化的交汇关系非常关键</li>
      *     <li>串行化情况下顺序就是链执行的顺序，这个顺序是系统自动加的，从小到大以一个单位的步长均匀的赋值给每一个节点</li>
@@ -42,20 +32,45 @@ public interface Node {
      *     <li>在一次节点的排序中如果同一个节点出现了多个值，那么大的order覆盖小的order</li>
      *     <li>一次操作只能操作一个链</li>
      * </ul>
-     *
-     * @return int
-     * @author liuwenhao
-     * @date 2022/4/6 19:00
      */
-    long order();
+    long order = -1;
 
     /**
-     * <h2>是否存在下一层</h2>
-     *
-     * @return boolean
-     * @author liuwenhao
-     * @date 2022/4/6 21:10
+     * 下一层节点<br>
+     * 当前节点执行完成后会传播到下层节点，如果不存在下层节点则任务完成，将当前最终的结果到树中
      */
-    boolean isExit();
+    Set<Node> next = new HashSet<>();
 
+    /**
+     * 返回值
+     */
+    Object result;
+
+    /**
+     * <h2>获取返回值</h2>
+     *
+     * @return T 返回值类型
+     * @author liuwenhao
+     * @date 2022/4/7 20:27
+     */
+    public Object getResult() {
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Node node = (Node) o;
+        return name.equals(node.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
 }
