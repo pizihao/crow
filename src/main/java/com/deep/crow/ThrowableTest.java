@@ -1,7 +1,12 @@
 package com.deep.crow;
 
 import com.deep.crow.exception.CrowException;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -12,6 +17,12 @@ import java.util.concurrent.CompletableFuture;
 public class ThrowableTest {
 
     public static void main(String[] args) {
+
+        Set<Integer> integers = new HashSet<>();
+        integers.add(1);
+
+        System.out.println(integers.add(2));
+        System.out.println(integers.add(1));
 
         CompletableFuture.runAsync(() -> System.out.println(123))
             .thenApply(unused -> {
@@ -28,6 +39,5 @@ public class ThrowableTest {
             }).join();
 
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> 1).thenApply(integer -> "1");
-
     }
 }
