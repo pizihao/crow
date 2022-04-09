@@ -19,8 +19,9 @@ public class RunNode extends TreeNode {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T getResult() {
         runnable.run();
-        return null;
+        return (T) result;
     }
 }

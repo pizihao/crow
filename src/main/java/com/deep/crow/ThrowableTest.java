@@ -18,11 +18,11 @@ public class ThrowableTest {
 
     public static void main(String[] args) {
 
-        Set<Integer> integers = new HashSet<>();
-        integers.add(1);
+        String a = null;
+        Object b = a;
 
-        System.out.println(integers.add(2));
-        System.out.println(integers.add(1));
+        Integer o = (Integer) b;
+        System.out.println(o);
 
         CompletableFuture.runAsync(() -> System.out.println(123))
             .thenApply(unused -> {

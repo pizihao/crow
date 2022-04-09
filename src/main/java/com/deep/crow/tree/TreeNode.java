@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * <h2>任务节点</h2>
+ * <h2>任务节点树</h2>
  *
  * @author Create by liuwenhao on 2022/4/6 18:54
  */
@@ -40,7 +40,7 @@ public abstract class TreeNode implements Comparable<TreeNode> {
     TreeNode head;
 
     /**
-     * 标识异常节点
+     * 标识异常节点，不同于常规节点，异常节点会在出现异常后直接调用
      */
     TreeNode throwable;
 
@@ -121,7 +121,26 @@ public abstract class TreeNode implements Comparable<TreeNode> {
     }
 
     /**
-     * <h2>添加一个异常</h2>
+     * <h2>添加一个同级节点</h2>
+     * 添加成功后返回新节点
+     *
+     * @param node 新节点
+     * @return com.deep.crow.tree.TreeNode
+     * @author liuwenhao
+     * @date 2022/4/9 13:26
+     */
+    public TreeNode addPeer(TreeNode node) {
+        TreeNode parentNode = parent;
+        if (Objects.isNull(parentNode)) {
+            throw CrowException.exception("无法添加同级节点，找不到父节点");
+        }
+        return parentNode.addChild(node);
+    }
+
+    /**
+     * <h2>添加一个异常节点</h2>
+     * 新的异常节点会覆盖旧的异常节点<br>
+     * 通常情况下只有头结点的异常节点生效<br>
      * 返回当前节点
      *
      * @param node 子节点
@@ -136,6 +155,49 @@ public abstract class TreeNode implements Comparable<TreeNode> {
             this.throwable = node.throwable;
         }
         return this;
+    }
+
+    /**
+     * <h2>获取父节点</h2>
+     * 如果不存在父节点返回null
+     *
+     * @return com.deep.crow.tree.TreeNode
+     * @author liuwenhao
+     * @date 2022/4/9 10:55
+     */
+    public TreeNode parentNodeJust() {
+        return parent;
+    }
+
+    /**
+     * <h2>获取父节点</h2>
+     *
+     * @return com.deep.crow.tree.TreeNode
+     * @author liuwenhao
+     * @date 2022/4/9 10:55
+     */
+    public TreeNode parentNode() {
+        TreeNode p = parent;
+        TreeNode t = head.throwable;
+        if (pos == HEADS || p == null || depth == HEADS) {
+            CrowException.of("头结点没有父节点");
+        }
+        if (this == t || depth == THROWABLE) {
+            CrowException.of("异常节点没有父节点");
+        }
+        return p;
+    }
+
+    /**
+     * <h2>获取异常节点</h2>
+     *
+     * @return com.deep.crow.tree.TreeNode
+     * @author liuwenhao
+     * @date 2022/4/9 10:59
+     */
+    @Nullable
+    public TreeNode throwableNode() {
+        return this.head.throwable;
     }
 
     /**
@@ -199,9 +261,8 @@ public abstract class TreeNode implements Comparable<TreeNode> {
      * @date 2022/4/8 19:41
      */
     public boolean isHead() {
-        return depth == HEADS && this == head && parent == null;
+        return depth == HEADS && this == head && parent == null && pos == HEADS;
     }
-
 
     /**
      * <h2>当前节点是否是尾节点</h2>
