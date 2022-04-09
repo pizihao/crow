@@ -1,12 +1,8 @@
 package com.deep.crow;
 
 import com.deep.crow.exception.CrowException;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
+import com.deep.crow.team.MultiImpl;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -18,11 +14,6 @@ public class ThrowableTest {
 
     public static void main(String[] args) {
 
-        String a = null;
-        Object b = a;
-
-        Integer o = (Integer) b;
-        System.out.println(o);
 
         CompletableFuture.runAsync(() -> System.out.println(123))
             .thenApply(unused -> {
