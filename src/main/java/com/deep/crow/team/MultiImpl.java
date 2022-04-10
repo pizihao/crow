@@ -37,85 +37,85 @@ public class MultiImpl<T> implements Multi<T> {
 
     @Override
     public <U> Multi<U> thenApply(Function<? super T, ? extends U> fn) {
-        completableFuture.thenApplyAsync(fn, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.thenApplyAsync(fn, executorService);
         return (Multi<U>) this;
     }
 
     @Override
     public Multi<Void> thenAccept(Consumer<? super T> action) {
-        completableFuture.thenAcceptAsync(action, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.thenAcceptAsync(action, executorService);
         return (Multi<Void>) this;
     }
 
 
     @Override
     public Multi<Void> thenRun(Runnable action) {
-        completableFuture.thenRunAsync(action, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.thenRunAsync(action, executorService);
         return (Multi<Void>) this;
     }
 
     @Override
     public <U, V> Multi<V> thenCombine(Multi<? extends U> other, BiFunction<? super T, ? super U, ? extends V> fn) {
-        completableFuture.thenCombineAsync(other.getCpf(), fn, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.thenCombineAsync(other.getCpf(), fn, executorService);
         return (Multi<V>) this;
     }
 
     @Override
     public <U> Multi<Void> thenBiAccept(Multi<? extends U> other, BiConsumer<? super T, ? super U> action) {
-        completableFuture.thenAcceptBothAsync(other.getCpf(), action, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.thenAcceptBothAsync(other.getCpf(), action, executorService);
         return (Multi<Void>) this;
     }
 
     @Override
     public Multi<Void> runRunBoth(Multi<?> other, Runnable action) {
-        completableFuture.runAfterBothAsync(other.getCpf(), action, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.runAfterBothAsync(other.getCpf(), action, executorService);
         return (Multi<Void>) this;
     }
 
     @Override
     public <U> Multi<U> applyFun(Multi<? extends T> other, Function<? super T, U> fn) {
-        completableFuture.applyToEitherAsync(other.getCpf(), fn, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.applyToEitherAsync(other.getCpf(), fn, executorService);
         return (Multi<U>) this;
     }
 
     @Override
     public Multi<Void> acceptFun(Multi<? extends T> other, Consumer<? super T> action) {
-        completableFuture.acceptEitherAsync(other.getCpf(), action, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.acceptEitherAsync(other.getCpf(), action, executorService);
         return (Multi<Void>) this;
     }
 
     @Override
     public Multi<Void> runFun(Multi<?> other, Runnable action) {
-        completableFuture.runAfterEitherAsync(other.getCpf(), action, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.runAfterEitherAsync(other.getCpf(), action, executorService);
         return (Multi<Void>) this;
     }
 
     @Override
     public <U> Multi<U> thenCompose(Function<? super T, ? extends Multi<U>> fn) {
         AtomicReference<Multi<U>> uMulti = new AtomicReference<>((Multi<U>) this);
-        executorService.execute(() -> completableFuture.thenApply(s -> {
+        completableFuture = (CompletableFuture<T>) completableFuture.thenApply(s -> {
             Multi<U> multi = fn.apply(s);
             uMulti.set(multi);
-            return multi;
-        }));
+            return completableFuture;
+        });
         return uMulti.get();
     }
 
     @Override
     public Multi<T> exceptionally(Function<Throwable, ? extends T> fn) {
-        completableFuture.exceptionally(fn);
+        completableFuture = completableFuture.exceptionally(fn);
         return this;
     }
 
     @Override
     public Multi<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
-        completableFuture.whenCompleteAsync(action, executorService);
+        completableFuture = completableFuture.whenCompleteAsync(action, executorService);
         return this;
     }
 
     @Override
     public <U> Multi<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
-        completableFuture.handleAsync(fn, executorService);
+        completableFuture = (CompletableFuture<T>) completableFuture.handleAsync(fn, executorService);
         return (Multi<U>) this;
     }
 
@@ -138,6 +138,11 @@ public class MultiImpl<T> implements Multi<T> {
 
     public static Multi<Void> runAsync(ExecutorService executorService, Runnable runnable) {
         CompletableFuture<Void> async = CompletableFuture.runAsync(runnable, executorService);
+        return new MultiImpl<>(executorService, async);
+    }
+
+    public static <T> Multi<T> create(ExecutorService executorService) {
+        CompletableFuture<T> async = CompletableFuture.supplyAsync(() -> null, executorService);
         return new MultiImpl<>(executorService, async);
     }
 
