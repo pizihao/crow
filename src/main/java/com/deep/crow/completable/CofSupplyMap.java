@@ -1,11 +1,10 @@
 package com.deep.crow.completable;
 
-import cn.net.nova.common.utils.CollectionTools;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.sun.istack.internal.NotNull;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,7 +47,7 @@ class CofSupplyMap extends CofSupply<Map<String, Object>> {
             .filter(c -> c.getName() != null)
             .collect(Collectors.toSet());
         // 获取结果
-        return CollectionTools.toMap(perform(supplyList), Signature::getName, c -> c.getCompletableFuture().join());
+        return perform(supplyList).stream().collect(Collectors.toMap(Signature::getName, c -> c.getCompletableFuture().join(), (f, l) -> l));
     }
 
     protected CofSupplyMap() {

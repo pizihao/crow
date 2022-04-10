@@ -1,8 +1,8 @@
 package com.deep.crow.completable;
 
 import cn.hutool.core.lang.Tuple;
+import com.sun.istack.internal.NotNull;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;

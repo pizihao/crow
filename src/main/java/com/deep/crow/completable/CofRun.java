@@ -1,6 +1,7 @@
 package com.deep.crow.completable;
 
-import javax.validation.constraints.NotNull;
+import com.sun.istack.internal.NotNull;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 

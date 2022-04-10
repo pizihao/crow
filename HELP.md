@@ -95,9 +95,9 @@ CompletableFuture的任务执行方式对于异常并不敏感，如果某一个
 
 > handle和exceptionally都属于中间操作，两个是可以连用的，handle只会获取链上传递过来的异常信息，如果在这之前已经被其他操作将异常处理了，那么handle就无法拿到异常信息了，反之，如果存在操作在exceptionally之前完成了异常处理，那么exceptionally就不会接收到异常信息，除非在两次异常处理方法之前又出现了异常。
 
-### 栈和CompletableFuture
+### CompletableFuture的实现方式
 
-> 通过使用，不难发现在CompletableFuture中，应该存在一个链式的关系，这个链存放了CompletableFuture整个运行期间各个任务调用之间的承接关系，因为这是一个单项的链，简单来说只需要一个next的指针即可完整表示，“下一个” 这种逻辑，但是在CompletableFuture中存在着正对单个CompletableFuture的多层调用，这种就需要依靠栈的思路
+> 通过使用，不难发现在CompletableFuture中，应该存在一个链式的关系，这个链存放了CompletableFuture整个运行期间各个任务调用之间的承接关系，因为这是一个单项的链，简单来说只需要一个next的指针即可完整表示，“下一个” 这种逻辑。
 
 示例1：
 
@@ -203,30 +203,53 @@ ADGCFBE
 
 ~~~mermaid
 graph LR
-a --> d --> g
-a --> c --> f
-a --> b --> e
-d --> c
-c --> b
+A --> D --> G
+A --> C --> F
+A --> B --> E
+D --> C
+C --> B
 ~~~
 
 其顺序是从上到下的，b优先被放入链中，但是是最后被回调的。这个过程是在上一个还没有完成时添加的，如果执行速度足够快，执行顺序基本就是代码的顺序。
 
 > 当上一个CompletableFuture没有完成时，将新的CompletableFuture封装Completion的添加到上一个CompletableFuture的stack中。再将新的CompletableFuture封装后的Completion放到原本上一个CompletableFuture的stack的next的位置。这样在上一个执行完成后，其回调的就是新的CompletableFuture。
 
-上述过程简述：
-
-
-
-在这里使用的是thenApply进行连接，thenApply是典型的串行化结构，其对应的内部类为UniApply。
+> 在这里使用的是thenApply进行连接，thenApply是典型的串行化结构，其对应的内部类为UniApply。假设一个CompletableFuture实例A，其对应的Completion为a，在A中存在一个属性stack，他代表绑定当前CompletableFuture的后续CompletableFuture，如上图中A->B过程中，A.stack = b。
 
 UniApply是UniCompletion的子类，UniCompletion是Completion的子类。
 
 所以在UniApply中还存在几个属性值：
 
-- next：
-- dev：
-- src：
+- next：当前任务执行完成后需要进行回调的Completion
+- dep：依赖任务，当前构建的新任务，如上图 a -> b的过程中，a的依赖任务就是b，a.thenApply中返回的CompletableFuture是一个新的CompletableFuture，这个CompletableFuture就是b，即b依赖于a
+- src：源任务，上一个任务，如上图a -> b的过程中，b的源任务就是a
+
+在A->B->E过程中：
+
+- A.stack = b
+- a.dep = B
+- a.next = null
+- a.src = A
+- b.dep = E
+- b.next = null
+- b.src = A
+- B.stack = e
+- e.dep = null
+- e.next = null
+- e.src = B
+- E.stack = null
+
+在上图中的整个过程中，b.next = c，c.next = d，在D完成之后会将G添加到C的stack上，如果G后面仍然有其他的任务H，那么g.next = h，如果f是最后一个，那么h.next = c，在f执行完成后回调c.
+
+最终(b，c，d).src = A，A.stack = d，D.stack = g。g.next = C。。。依次类推整个CompletableFuture就执行完成了。
+
+
+
+
+
+
+
+
 
 
 

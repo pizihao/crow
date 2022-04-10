@@ -13,7 +13,7 @@ public class CompletionStageTest {
     public static void main(String[] args) throws Exception {
         CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -21,7 +21,7 @@ public class CompletionStageTest {
         });
         CompletableFuture<String> b = a.thenApply(unused -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -30,7 +30,7 @@ public class CompletionStageTest {
         });
         CompletableFuture<String> c = a.thenApply(unused -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -39,7 +39,7 @@ public class CompletionStageTest {
         });
         CompletableFuture<String> d = a.thenApply(unused -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -48,7 +48,7 @@ public class CompletionStageTest {
         });
         CompletableFuture<String> e = b.thenApply(unused -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -57,7 +57,7 @@ public class CompletionStageTest {
         });
         CompletableFuture<String> f = c.thenApply(unused -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
@@ -66,15 +66,23 @@ public class CompletionStageTest {
         });
         CompletableFuture<String> g = d.thenApply(unused -> {
             try {
-                TimeUnit.SECONDS.sleep(2);
+                TimeUnit.SECONDS.sleep(10);
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
             System.out.println("G");
             return "G";
+        }).thenApply(s -> {
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            System.out.println("G1");
+            return "G";
         });
 
-        TimeUnit.SECONDS.sleep(20);
+        TimeUnit.SECONDS.sleep(200);
 
     }
 }

@@ -10,6 +10,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
+ * 基于CompletableFuture的回调任务实现，更注重于不同任务异步的执行<br>
+ * 当完成一个任务时可以异步的回调设置好的任务，这个回调机制是可以无限延伸的<br>
+ *
  * @author Create by liuwenhao on 2022/4/9 22:29
  */
 @SuppressWarnings("unused")

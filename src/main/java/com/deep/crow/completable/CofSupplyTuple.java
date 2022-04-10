@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Tuple;
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -58,13 +57,13 @@ class CofSupplyTuple extends CofSupply<Tuple> {
     }
 
     @Override
-    public Cof<Supplier<Object>, Tuple> register(@NotNull Supplier<Object> s, @NotNull ExecutorService e) {
+    public Cof<Supplier<Object>, Tuple> register(Supplier<Object> s, ExecutorService e) {
         supplies.add(CofTask.buildSupply().task(s).executorService(e));
         return this;
     }
 
     @Override
-    public Cof<Supplier<Object>, Tuple> register(@NotNull Supplier<Object> s) {
+    public Cof<Supplier<Object>, Tuple> register(Supplier<Object> s) {
         supplies.add(CofTask.buildSupply().task(s));
         return this;
     }
