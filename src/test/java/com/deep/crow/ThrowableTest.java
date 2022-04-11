@@ -1,7 +1,6 @@
 package com.deep.crow;
 
-import com.deep.crow.exception.CrowException;
-import com.deep.crow.team.MultiImpl;
+import com.deep.crow.team.MultiHelper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +15,7 @@ public class ThrowableTest {
     public static void main(String[] args) {
 
         ExecutorService executorService = ThreadPool.executorService();
-        MultiImpl
+        MultiHelper
             .runAsync(executorService, () -> System.out.println(1))
             .thenApply(unused -> 1)
             .thenApply(integer -> {
