@@ -1,6 +1,7 @@
 package com.deep.crow.exception;
 
 import cn.hutool.core.text.StrFormatter;
+import com.deep.crow.util.StrUtil;
 
 /**
  * <h2></h2>
@@ -23,7 +24,7 @@ public class CrowException extends RuntimeException {
     }
 
     public static CrowException exception(String format, Object... elements) {
-        return new CrowException(StrFormatter.format(format, elements));
+        return new CrowException(StrUtil.format(format, elements));
     }
 
     public static CrowException of(String msg) {
