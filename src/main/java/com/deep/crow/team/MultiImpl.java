@@ -25,6 +25,18 @@ public class MultiImpl<T> implements Multi<T> {
         this.completableFuture = completableFuture;
     }
 
+    protected MultiImpl(ExecutorService executorService, Supplier<T> supplier) {
+        this(executorService, CompletableFuture.supplyAsync(supplier, executorService));
+    }
+
+    protected MultiImpl(ExecutorService executorService, Runnable runnable) {
+        this(executorService, (CompletableFuture<T>) CompletableFuture.runAsync(runnable, executorService));
+    }
+
+    protected MultiImpl(ExecutorService executorService) {
+        this(executorService, CompletableFuture.supplyAsync(() -> null, executorService));
+    }
+
     @Override
     public CompletableFuture<T> getCpf() {
         return completableFuture;
@@ -93,11 +105,11 @@ public class MultiImpl<T> implements Multi<T> {
     @Override
     public <U> Multi<U> thenCompose(Function<? super T, ? extends Multi<U>> fn) {
         AtomicReference<Multi<U>> uMulti = new AtomicReference<>((Multi<U>) this);
-        completableFuture = (CompletableFuture<T>) completableFuture.thenApply(s -> {
+        completableFuture = (CompletableFuture<T>) completableFuture.thenApplyAsync(s -> {
             Multi<U> multi = fn.apply(s);
             uMulti.set(multi);
             return completableFuture;
-        });
+        }, executorService);
         return uMulti.get();
     }
 
@@ -129,21 +141,6 @@ public class MultiImpl<T> implements Multi<T> {
         List<Object> resultList = multipleList(c);
         Object[] resultArray = resultList.toArray();
         return new Tuple(resultArray);
-    }
-
-    public static <U> Multi<U> supplyAsync(ExecutorService executorService, Supplier<U> supplier) {
-        CompletableFuture<U> async = CompletableFuture.supplyAsync(supplier, executorService);
-        return new MultiImpl<>(executorService, async);
-    }
-
-    public static Multi<Void> runAsync(ExecutorService executorService, Runnable runnable) {
-        CompletableFuture<Void> async = CompletableFuture.runAsync(runnable, executorService);
-        return new MultiImpl<>(executorService, async);
-    }
-
-    public static <T> Multi<T> create(ExecutorService executorService) {
-        CompletableFuture<T> async = CompletableFuture.supplyAsync(() -> null, executorService);
-        return new MultiImpl<>(executorService, async);
     }
 
 }
