@@ -1,6 +1,6 @@
 package com.deep.crow.task.serial;
 
-import com.deep.crow.team.Multi;
+import com.deep.crow.multi.Multi;
 
 
 /**

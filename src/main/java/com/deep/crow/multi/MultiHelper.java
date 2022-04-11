@@ -1,4 +1,4 @@
-package com.deep.crow.team;
+package com.deep.crow.multi;
 
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;

@@ -1,6 +1,6 @@
 package com.deep.crow;
 
-import com.deep.crow.team.MultiHelper;
+import com.deep.crow.multi.MultiHelper;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

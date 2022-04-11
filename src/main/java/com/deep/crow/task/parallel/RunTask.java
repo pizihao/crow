@@ -1,7 +1,7 @@
 package com.deep.crow.task.parallel;
 
-import com.deep.crow.team.Multi;
-import com.deep.crow.team.MultiHelper;
+import com.deep.crow.multi.Multi;
+import com.deep.crow.multi.MultiHelper;
 
 import java.util.concurrent.ExecutorService;
 

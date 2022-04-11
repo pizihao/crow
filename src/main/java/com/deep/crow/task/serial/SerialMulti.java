@@ -1,7 +1,7 @@
 package com.deep.crow.task.serial;
 
-import com.deep.crow.team.Multi;
-import com.deep.crow.team.MultiHelper;
+import com.deep.crow.multi.Multi;
+import com.deep.crow.multi.MultiHelper;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
