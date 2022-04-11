@@ -1,8 +1,7 @@
 package com.deep.crow.completable;
 
-import com.google.common.collect.Lists;
 
-import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -59,16 +58,16 @@ class CofRunAsync extends CofRun {
     }
 
     protected CofRunAsync() {
-        this.runs = Lists.newArrayList();
+        this.runs = new ArrayList<>();
     }
 
-    protected CofRunAsync(@Nullable ExecutorService executorService) {
-        this.runs = Lists.newArrayList();
+    protected CofRunAsync(ExecutorService executorService) {
+        this.runs = new ArrayList<>();
         this.executorService = executorService;
     }
 
-    protected CofRunAsync(@Nullable List<CofTask<Runnable>> runs, @Nullable ExecutorService executorService) {
-        this.runs = Objects.nonNull(runs) ? runs : Lists.newArrayList();
+    protected CofRunAsync(List<CofTask<Runnable>> runs, ExecutorService executorService) {
+        this.runs = Objects.nonNull(runs) ? runs : new ArrayList<>();
         this.executorService = executorService;
     }
 

@@ -1,7 +1,6 @@
 package com.deep.crow.completable;
 
-import cn.hutool.core.lang.Tuple;
-import com.sun.istack.internal.NotNull;
+import com.deep.crow.util.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -32,7 +31,6 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
     public static Cof<Runnable, Integer> buildRunBlock() {
         return new CofRunBlock();
     }
@@ -45,8 +43,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Runnable, Integer> buildRunBlock(@NotNull ExecutorService e) {
+    public static Cof<Runnable, Integer> buildRunBlock(ExecutorService e) {
         return new CofRunBlock(e);
     }
 
@@ -59,8 +56,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Runnable, Integer> buildRunBlock(@NotNull List<CofTask<Runnable>> r, @NotNull ExecutorService e) {
+    public static Cof<Runnable, Integer> buildRunBlock(List<CofTask<Runnable>> r, ExecutorService e) {
         return new CofRunBlock(r, e);
     }
 
@@ -71,7 +67,6 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
     public static Cof<Runnable, Integer> buildRunAsync() {
         return new CofRunAsync();
     }
@@ -84,8 +79,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Runnable, Integer> buildRunAsync(@NotNull ExecutorService e) {
+    public static Cof<Runnable, Integer> buildRunAsync(ExecutorService e) {
         return new CofRunAsync(e);
     }
 
@@ -98,8 +92,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Runnable, Integer> buildRunAsync(@NotNull List<CofTask<Runnable>> r, @NotNull ExecutorService e) {
+    public static Cof<Runnable, Integer> buildRunAsync(List<CofTask<Runnable>> r, ExecutorService e) {
         return new CofRunAsync(r, e);
     }
 
@@ -110,7 +103,6 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
     public static Cof<Supplier<Object>, Map<String, Object>> buildSupplyMap() {
         return new CofSupplyMap();
     }
@@ -123,8 +115,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Supplier<Object>, Map<String, Object>> buildSupplyMap(@NotNull ExecutorService e) {
+    public static Cof<Supplier<Object>, Map<String, Object>> buildSupplyMap(ExecutorService e) {
         return new CofSupplyMap(e);
     }
 
@@ -138,8 +129,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Supplier<Object>, Map<String, Object>> buildSupplyMap(@NotNull List<CofTask<Supplier<Object>>> r, @NotNull ExecutorService e) {
+    public static Cof<Supplier<Object>, Map<String, Object>> buildSupplyMap(List<CofTask<Supplier<Object>>> r, ExecutorService e) {
         return new CofSupplyMap(r, e);
     }
 
@@ -150,7 +140,6 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
     public static Cof<Supplier<Object>, Tuple> buildSupplyTuple() {
         return new CofSupplyTuple();
     }
@@ -163,8 +152,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Supplier<Object>, Tuple> buildSupplyTuple(@NotNull ExecutorService e) {
+    public static Cof<Supplier<Object>, Tuple> buildSupplyTuple(ExecutorService e) {
         return new CofSupplyTuple(e);
     }
 
@@ -178,8 +166,7 @@ public class CofHelper {
      * @author liuwenhao
      * @date 2021/11/26 16:14
      */
-    @NotNull
-    public static Cof<Supplier<Object>, Tuple> buildSupplyTuple(@NotNull List<CofTask<Supplier<Object>>> r, @NotNull ExecutorService e) {
+    public static Cof<Supplier<Object>, Tuple> buildSupplyTuple(List<CofTask<Supplier<Object>>> r, ExecutorService e) {
         return new CofSupplyTuple(r, e);
     }
 }

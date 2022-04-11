@@ -1,9 +1,8 @@
 package com.deep.crow.completable;
 
-import cn.hutool.core.lang.Tuple;
-import com.google.common.collect.Lists;
+import com.deep.crow.util.Tuple;
 
-import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -43,16 +42,16 @@ class CofSupplyTuple extends CofSupply<Tuple> {
     }
 
     protected CofSupplyTuple() {
-        this.supplies = Lists.newArrayList();
+        this.supplies = new ArrayList<>();
     }
 
-    protected CofSupplyTuple(@Nullable ExecutorService executorService) {
-        this.supplies = Lists.newArrayList();
+    protected CofSupplyTuple(ExecutorService executorService) {
+        this.supplies = new ArrayList<>();
         this.executorService = executorService;
     }
 
-    protected CofSupplyTuple(@Nullable List<CofTask<Supplier<Object>>> supplies, @Nullable ExecutorService executorService) {
-        this.supplies = Objects.nonNull(supplies) ? supplies : Lists.newArrayList();
+    protected CofSupplyTuple(List<CofTask<Supplier<Object>>> supplies, ExecutorService executorService) {
+        this.supplies = Objects.nonNull(supplies) ? supplies : new ArrayList<>();
         this.executorService = executorService;
     }
 

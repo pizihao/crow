@@ -1,14 +1,6 @@
 package com.deep.crow.completable;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.sun.istack.internal.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -39,7 +31,7 @@ class CofSupplyMap extends CofSupply<Map<String, Object>> {
     @Override
     public Map<String, Object> exec(Predicate<CofTask<Supplier<Object>>> predicate) {
         if (Objects.isNull(supplies) || supplies.isEmpty()) {
-            return Maps.newHashMap();
+            return new HashMap<>();
         }
         // 去重
         Set<CofTask<Supplier<Object>>> supplyList = supplies.stream()
@@ -51,27 +43,27 @@ class CofSupplyMap extends CofSupply<Map<String, Object>> {
     }
 
     protected CofSupplyMap() {
-        this.supplies = Lists.newArrayList();
+        this.supplies = new ArrayList<>();
     }
 
-    protected CofSupplyMap(@Nullable ExecutorService executorService) {
-        this.supplies = Lists.newArrayList();
+    protected CofSupplyMap(ExecutorService executorService) {
+        this.supplies = new ArrayList<>();
         this.executorService = executorService;
     }
 
-    protected CofSupplyMap(@Nullable List<CofTask<Supplier<Object>>> supplies, @Nullable ExecutorService executorService) {
-        this.supplies = Objects.nonNull(supplies) ? supplies : Lists.newArrayList();
+    protected CofSupplyMap(List<CofTask<Supplier<Object>>> supplies, ExecutorService executorService) {
+        this.supplies = Objects.nonNull(supplies) ? supplies : new ArrayList<>();
         this.executorService = executorService;
     }
 
     @Override
-    public Cof<Supplier<Object>, Map<String, Object>> register(@NotNull Supplier<Object> s, @NotNull ExecutorService e, @NotNull String n) {
+    public Cof<Supplier<Object>, Map<String, Object>> register(Supplier<Object> s, ExecutorService e, String n) {
         supplies.add(CofTask.buildSupply().task(s).executorService(e).name(n));
         return this;
     }
 
     @Override
-    public Cof<Supplier<Object>, Map<String, Object>> register(@NotNull Supplier<Object> s, @NotNull String n) {
+    public Cof<Supplier<Object>, Map<String, Object>> register(Supplier<Object> s, String n) {
         supplies.add(CofTask.buildSupply().task(s).name(n));
         return this;
     }

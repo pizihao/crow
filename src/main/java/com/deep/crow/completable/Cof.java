@@ -1,7 +1,6 @@
 package com.deep.crow.completable;
 
-import cn.hutool.core.lang.Tuple;
-import com.sun.istack.internal.NotNull;
+import com.deep.crow.util.Tuple;
 
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ public interface Cof<S, R> {
      * @author liuwenhao
      * @date 2021/11/26 15:44
      */
-    default Cof<S, R> register(@NotNull Runnable r) {
+    default Cof<S, R> register(Runnable r) {
         throw new UnsupportedOperationException();
     }
 
@@ -99,7 +98,7 @@ public interface Cof<S, R> {
      * @author liuwenhao
      * @date 2021/11/26 15:44
      */
-    default Cof<S, R> register(@NotNull Runnable r, @NotNull ExecutorService e) {
+    default Cof<S, R> register(Runnable r, ExecutorService e) {
         throw new UnsupportedOperationException();
     }
 
@@ -114,7 +113,7 @@ public interface Cof<S, R> {
      * @author liuwenhao
      * @date 2021/11/26 15:44
      */
-    default Cof<S, R> register(@NotNull Supplier<Object> s, @NotNull ExecutorService e, @NotNull String n) {
+    default Cof<S, R> register(Supplier<Object> s, ExecutorService e, String n) {
         throw new UnsupportedOperationException();
     }
 
@@ -127,7 +126,7 @@ public interface Cof<S, R> {
      * @author liuwenhao
      * @date 2021/11/26 15:44
      */
-    default Cof<S, R> register(@NotNull Supplier<Object> s, @NotNull String n) {
+    default Cof<S, R> register(Supplier<Object> s, String n) {
         throw new UnsupportedOperationException();
     }
 
@@ -141,7 +140,7 @@ public interface Cof<S, R> {
      * @author liuwenhao
      * @date 2021/11/26 15:44
      */
-    default Cof<S, R> register(@NotNull Supplier<Object> s, @NotNull ExecutorService e) {
+    default Cof<S, R> register(Supplier<Object> s, ExecutorService e) {
         throw new UnsupportedOperationException();
     }
 
@@ -153,7 +152,7 @@ public interface Cof<S, R> {
      * @author liuwenhao
      * @date 2021/11/26 15:44
      */
-    default Cof<S, R> register(@NotNull Supplier<Object> s) {
+    default Cof<S, R> register(Supplier<Object> s) {
         throw new UnsupportedOperationException();
     }
 }
