@@ -1,13 +1,9 @@
 package com.deep.crow.multi;
 
-import com.deep.crow.util.Tuple;
-
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Create by liuwenhao on 2022/4/9 21:55
@@ -129,18 +125,6 @@ public class MultiImpl<T> implements Multi<T> {
     public <U> Multi<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
         completableFuture = (CompletableFuture<T>) completableFuture.handleAsync(fn, executorService);
         return (Multi<U>) this;
-    }
-
-    @Override
-    public List<Object> multipleList(List<Multi<?>> c) {
-        return c.stream().map(Multi::get).collect(Collectors.toList());
-    }
-
-    @Override
-    public Tuple multipleTuple(List<Multi<?>> c) {
-        List<Object> resultList = multipleList(c);
-        Object[] resultArray = resultList.toArray();
-        return new Tuple(resultArray);
     }
 
 }

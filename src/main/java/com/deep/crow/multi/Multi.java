@@ -1,8 +1,5 @@
 package com.deep.crow.multi;
 
-import com.deep.crow.util.Tuple;
-
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -140,26 +137,6 @@ public interface Multi<T> {
      * @author Created by liuwenhao on 2022/4/10 0:14
      */
     <U> Multi<U> handle(BiFunction<? super T, Throwable, ? extends U> fn);
-
-    /**
-     * 按照参数的顺序执行，同时返回结果，类似于 Collection.stream().map()
-     * 如果Multi的返回结果为null,则转化后对应位置的值依然为null
-     *
-     * @param c 过程集合
-     * @return com.deep.crow.team.Multi<java.lang.Void>
-     * @author Created by liuwenhao on 2022/4/9 22:51
-     */
-    List<Object> multipleList(List<Multi<?>> c);
-
-    /**
-     * 按照参数的顺序执行，同时返回结果，类似于 Collection.stream().map()
-     * 如果Multi的返回结果为null,则转化后对应位置的值依然为null
-     *
-     * @param c 过程集合
-     * @return Tuple
-     * @author Created by liuwenhao on 2022/4/9 22:51
-     */
-    Tuple multipleTuple(List<Multi<?>> c);
 
     /**
      * 转化成CompletableFuture

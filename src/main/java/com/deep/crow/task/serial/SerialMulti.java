@@ -2,6 +2,7 @@ package com.deep.crow.task.serial;
 
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
+import com.deep.crow.task.parallel.ParallelMulti;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -23,12 +24,19 @@ public class SerialMulti<T> {
      */
     Multi<T> multi;
 
+    /**
+     * executorService
+     */
+    ExecutorService executorService;
+
     private SerialMulti(Multi<T> multi) {
         this.multi = multi;
+        this.executorService = ForkJoinPool.commonPool();
     }
 
     private SerialMulti(ExecutorService executorService) {
         this.multi = MultiHelper.create(executorService);
+        this.executorService = executorService;
     }
 
     public static <T> SerialMulti<T> of() {
@@ -137,8 +145,27 @@ public class SerialMulti<T> {
         return new SerialMulti<>(uMulti);
     }
 
+    /**
+     * <h2>SerialMulti -> Multi</h2>
+     *
+     * @return com.deep.crow.multi.Multi<T>
+     * @author Created by liuwenhao on 2022/4/12 23:04
+     */
     public Multi<T> multi() {
         return multi;
+    }
+
+    /**
+     * <h2>转化为 ParallelMulti</h2>
+     * 将一条串行化的链整合为一个并行化的链，this会成为第一个元素
+     *
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author Created by liuwenhao on 2022/4/12 23:09
+     */
+    public ParallelMulti toParallel() {
+        ParallelMulti parallelMulti = ParallelMulti.of(executorService);
+        parallelMulti.add(this);
+        return parallelMulti;
     }
 
     public T get() {
