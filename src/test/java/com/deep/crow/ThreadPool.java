@@ -1,8 +1,5 @@
 package com.deep.crow;
 
-import cn.hutool.core.thread.ExecutorBuilder;
-import cn.hutool.core.thread.NamedThreadFactory;
-
 import java.util.concurrent.*;
 
 /**
@@ -11,14 +8,12 @@ import java.util.concurrent.*;
 public class ThreadPool {
 
     public static ExecutorService executorService() {
-        ThreadFactory threadFactory = new NamedThreadFactory("Thread-", false);
         return new ThreadPoolExecutor(
             16,
             32,
             500,
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>(),
-            threadFactory,
             new ThreadPoolExecutor.AbortPolicy()
         );
     }
