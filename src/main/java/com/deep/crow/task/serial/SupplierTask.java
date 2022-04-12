@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  *
  * @author Create by liuwenhao on 2022/4/11 16:12
  */
-public class SupplierTask<T, R> implements SerialTask<T> {
+class SupplierTask<T, R> implements SerialTask<T> {
 
     Supplier<? super R> supplier;
 
@@ -21,7 +21,7 @@ public class SupplierTask<T, R> implements SerialTask<T> {
     @Override
     @SuppressWarnings("unchecked")
     public <U> Multi<U> increase(Multi<T> multi) {
-        Function<T,? super R> function = t -> (R) supplier.get();
+        Function<T, ? super R> function = t -> (R) supplier.get();
         return (Multi<U>) multi.thenApply(function);
     }
 

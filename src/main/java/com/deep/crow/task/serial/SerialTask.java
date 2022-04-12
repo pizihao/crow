@@ -9,7 +9,7 @@ import com.deep.crow.multi.Multi;
  *
  * @author Create by liuwenhao on 2022/4/11 10:03
  */
-public interface SerialTask<T> {
+interface SerialTask<T> {
 
     /**
      * <h2>追加一个任务</h2>

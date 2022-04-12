@@ -9,7 +9,7 @@ import java.util.function.Function;
  *
  * @author Create by liuwenhao on 2022/4/11 11:35
  */
-public class ExceptionallyTask<T> implements SerialTask<T> {
+class ExceptionallyTask<T> implements SerialTask<T> {
 
     Function<Throwable, T> function;
 

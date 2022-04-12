@@ -7,7 +7,7 @@ import com.deep.crow.multi.Multi;
  *
  * @author Create by liuwenhao on 2022/4/11 10:44
  */
-public class RunnableTask<T> implements SerialTask<T> {
+class RunnableTask<T> implements SerialTask<T> {
 
     Runnable runnable;
 

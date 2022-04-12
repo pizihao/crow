@@ -10,17 +10,19 @@ import java.util.concurrent.ExecutorService;
  *
  * @author Create by liuwenhao on 2022/4/11 11:44
  */
-public class RunTask implements ParallelTask {
+class RunTask implements ParallelTask {
 
     Runnable runnable;
+    ExecutorService executorService;
 
-    public RunTask(Runnable runnable) {
+    public RunTask(Runnable runnable, ExecutorService executorService) {
         this.runnable = runnable;
+        this.executorService = executorService;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U> Multi<U> assembling(ExecutorService executorService) {
+    public <U> Multi<U> assembling() {
         return (Multi<U>) MultiHelper.runAsync(executorService, runnable);
     }
 }

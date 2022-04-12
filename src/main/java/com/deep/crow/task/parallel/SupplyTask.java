@@ -11,17 +11,19 @@ import java.util.function.Supplier;
  *
  * @author Create by liuwenhao on 2022/4/11 11:48
  */
-public class SupplyTask<T> implements ParallelTask {
+class SupplyTask<T> implements ParallelTask {
 
     Supplier<T> supplier;
+    ExecutorService executorService;
 
-    public SupplyTask(Supplier<T> supplier) {
+    public SupplyTask(Supplier<T> supplier, ExecutorService executorService) {
         this.supplier = supplier;
+        this.executorService = executorService;
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public <U> Multi<U> assembling(ExecutorService executorService) {
+    public <U> Multi<U> assembling() {
         return (Multi<U>) MultiHelper.supplyAsync(executorService, supplier);
     }
 }

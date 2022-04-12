@@ -9,7 +9,7 @@ import java.util.function.Consumer;
  *
  * @author Create by liuwenhao on 2022/4/11 11:12
  */
-public class ConsumerTask<T> implements SerialTask<T> {
+class ConsumerTask<T> implements SerialTask<T> {
 
     Consumer<T> action;
 

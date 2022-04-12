@@ -1,6 +1,6 @@
 package com.deep.crow.multi;
 
-import cn.hutool.core.lang.Tuple;
+import com.deep.crow.util.Tuple;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

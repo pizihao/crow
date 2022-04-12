@@ -3,6 +3,7 @@ package com.deep.crow.task.serial;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
 
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
@@ -65,6 +66,7 @@ public class SerialMulti<T> {
      * @date 2022/4/11 14:24
      */
     public <U> SerialMulti<U> add(Function<T, U> function) {
+        Objects.requireNonNull(function);
         Multi<T> tMulti = this.multi;
         SerialTask<T> task = new FunctionTask<>(function);
         Multi<U> uMulti = task.increase(tMulti);
@@ -80,6 +82,7 @@ public class SerialMulti<T> {
      * @date 2022/4/11 14:24
      */
     public <U> SerialMulti<U> add(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         Multi<T> tMulti = this.multi;
         SerialTask<T> task = new RunnableTask<>(runnable);
         Multi<U> uMulti = task.increase(tMulti);
@@ -95,6 +98,7 @@ public class SerialMulti<T> {
      * @date 2022/4/11 14:24
      */
     public <U> SerialMulti<U> add(Supplier<U> supplier) {
+        Objects.requireNonNull(supplier);
         Multi<T> tMulti = this.multi;
         SerialTask<T> task = new SupplierTask<>(supplier);
         Multi<U> uMulti = task.increase(tMulti);
@@ -110,6 +114,7 @@ public class SerialMulti<T> {
      * @date 2022/4/11 14:24
      */
     public <U> SerialMulti<U> add(Consumer<T> consumer) {
+        Objects.requireNonNull(consumer);
         Multi<T> tMulti = this.multi;
         SerialTask<T> task = new ConsumerTask<>(consumer);
         Multi<U> uMulti = task.increase(tMulti);
@@ -125,6 +130,7 @@ public class SerialMulti<T> {
      * @date 2022/4/11 14:24
      */
     public <U> SerialMulti<U> addThrowable(Function<Throwable, T> function) {
+        Objects.requireNonNull(function);
         Multi<T> tMulti = this.multi;
         SerialTask<T> task = new ExceptionallyTask<>(function);
         Multi<U> uMulti = task.increase(tMulti);

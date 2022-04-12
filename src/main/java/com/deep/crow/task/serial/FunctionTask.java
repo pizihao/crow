@@ -9,7 +9,7 @@ import java.util.function.Function;
  *
  * @author Create by liuwenhao on 2022/4/11 10:14
  */
-public class FunctionTask<T, R> implements SerialTask<T> {
+class FunctionTask<T, R> implements SerialTask<T> {
 
     Function<? super T, ? super R> function;
 
