@@ -17,7 +17,7 @@ public class Coordinate {
      */
     int x;
 
-    public Coordinate(int y, int x) {
+    Coordinate(int y, int x) {
         this.y = y;
         this.x = x;
     }
