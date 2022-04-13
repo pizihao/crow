@@ -68,7 +68,7 @@ public class ParallelMulti {
     /**
      * <h2>添加一个{@link Runnable}</h2>
      * 并行执行，不影响其他任务的执行<br>
-     * 占用返回结果的位置，其结果为null
+     * 占用返回结果的位置，其结果为null，如果存在异常节点则添加
      *
      * @param r Supplier
      * @return com.deep.crow.task.parallel.ParallelMulti
@@ -81,6 +81,27 @@ public class ParallelMulti {
         Multi<Void> multi = parallelTask.assembling();
         synchronized (multiList) {
             multiList.add(multi);
+        }
+        return this;
+    }
+
+    /**
+     * <h2>添加一个异常任务节点</h2>
+     * 统一添加，针对所有的任务，会在执行时添加到队尾<T>
+     * 仅会在已添加的Multi中执行
+     *
+     * @param fn 异常任务
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/4/13 10:46
+     */
+    @SuppressWarnings("unchecked")
+    public <T> ParallelMulti add(Function<Throwable, ? extends T> fn) {
+        synchronized (multiList) {
+            multiList.forEach(m -> {
+                Multi<T> t = (Multi<T>) m;
+                t.exceptionally(fn);
+            });
         }
         return this;
     }
