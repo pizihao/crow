@@ -164,7 +164,7 @@ public class MapCoordinate<T> implements Coordinate<T> {
         return yMap.xMap();
     }
 
-    static class MapElement<E> implements Element<E> {
+    static class MapElement<E> implements Element<E>, Comparable<MapElement> {
         int x;
         int y;
         E value;
@@ -210,6 +210,11 @@ public class MapCoordinate<T> implements Coordinate<T> {
         @Override
         public String toString() {
             return "(" + x + "," + y + ")" + "-->" + value;
+        }
+
+        @Override
+        public int compareTo(MapElement o) {
+            return x - o.x;
         }
     }
 

@@ -7,10 +7,8 @@ import com.deep.crow.task.serial.SerialMulti;
 import com.deep.crow.util.Coordinate;
 import com.deep.crow.util.MapCoordinate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 /**
  * <h2>一个树形结构</h2>
@@ -37,6 +35,7 @@ import java.util.Objects;
  *
  * @author Create by liuwenhao on 2022/4/13 0:04
  */
+@SuppressWarnings("unused")
 public class MultiTree {
 
     // ========================数据部分=========================
@@ -269,7 +268,57 @@ public class MultiTree {
         }
     }
 
-    // TODO 执行MultiTree
+    /**
+     * <h2>获取最终的执行结果</h2>
+     * 最终会得到一个ParallelMulti，如果存在主节点，那么仅有一个并行任务<br>
+     * ParallelMulti 的构建是从上到下的，横坐标越高的节点越会被优先使用<br>
+     *
+     * @return com.deep.crow.multi.Multi<T>
+     * @author liuwenhao
+     * @date 2022/4/16 15:40
+     */
+    public ParallelMulti getRootMulti() {
+        // 从第一层开始构建
+        MultiTree root = coordinate.get(0, 0);
+        return root.getCurrentMulti();
+    }
+
+    /**
+     * <h2>获的当前节点及其子节点构建的的ParallelMulti</h2>
+     * 一个节点存在多少个子节点，那么他所构建的ParallelMulti就有多少个任务，执行完这些任务后会执行当前的任务
+     *
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/4/16 18:45
+     */
+    public ParallelMulti getCurrentMulti() {
+        List<MultiTree> children = this.getChildren();
+        ParallelMulti parallelMulti = ParallelMulti.of();
+        if (children.isEmpty()) {
+            // 当前是最后一个节点
+            return parallelMulti.add(getMulti());
+        }
+        // 不是最后一个节点
+        for (MultiTree child : children) {
+            parallelMulti.add(child.getCurrentMulti());
+        }
+        return parallelMulti;
+    }
+
+    /**
+     * <h2>获的当前节点及其子节点构建的的ParallelMulti</h2>
+     * 提供线程池
+     *
+     * @param executorService 线程池
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/4/16 18:45
+     */
+    public ParallelMulti getCurrentMulti(ExecutorService executorService) {
+        ParallelMulti currentMulti = getCurrentMulti();
+        return currentMulti.setExecutorService(executorService);
+    }
+
 
     @Override
     public boolean equals(Object o) {

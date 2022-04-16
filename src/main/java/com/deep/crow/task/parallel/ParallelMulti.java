@@ -46,6 +46,11 @@ public class ParallelMulti {
         return new ParallelMulti();
     }
 
+    public ParallelMulti setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+        return this;
+    }
+
     /**
      * <h2>添加一个{@link Supplier}</h2>
      * 并行执行，不影响其他任务的执行
@@ -133,6 +138,21 @@ public class ParallelMulti {
         Multi<T> multi = serialMulti.multi();
         synchronized (multiList) {
             multiList.add(multi);
+        }
+        return this;
+    }
+
+    /**
+     * <h2>额外添加一个任务的执行</h2>
+     * 在multiList的队尾添加一个并行执行的任务过程
+     *
+     * @param parallelMulti 并行化的任务执行实现
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author Created by liuwenhao on 2022/4/12 23:03
+     */
+    public ParallelMulti add(ParallelMulti parallelMulti) {
+        synchronized (multiList) {
+            multiList.addAll(parallelMulti.multiList);
         }
         return this;
     }
