@@ -5,8 +5,7 @@ import com.deep.crow.multi.MultiHelper;
 import com.deep.crow.task.parallel.ParallelMulti;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -168,8 +167,16 @@ public class SerialMulti<T> {
         return parallelMulti;
     }
 
-    public T get() {
+    public T get() throws ExecutionException, InterruptedException {
         return multi.get();
+    }
+
+    public T join() {
+        return multi.join();
+    }
+
+    public T get(long timeout, TimeUnit unit) throws ExecutionException, InterruptedException, TimeoutException {
+        return multi.get(timeout, unit);
     }
 
 }

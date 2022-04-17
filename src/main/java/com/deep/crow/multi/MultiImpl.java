@@ -1,7 +1,6 @@
 package com.deep.crow.multi;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.*;
 
@@ -39,8 +38,18 @@ public class MultiImpl<T> implements Multi<T> {
     }
 
     @Override
-    public T get() {
+    public T join() {
         return completableFuture.join();
+    }
+
+    @Override
+    public T get() throws ExecutionException, InterruptedException {
+        return completableFuture.get();
+    }
+
+    @Override
+    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+        return completableFuture.get(timeout,unit);
     }
 
     @Override

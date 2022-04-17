@@ -73,7 +73,7 @@ public class MultiTools {
     public static <R, M, N> R serialMeet(SerialMulti<M> one,
                                          SerialMulti<N> two,
                                          BiFunction<M, N, R> bi) {
-        return bi.apply(one.get(), two.get());
+        return bi.apply(one.join(), two.join());
     }
 
     /**
@@ -87,7 +87,7 @@ public class MultiTools {
     public static <M, N> void serialMeet(SerialMulti<M> one,
                                          SerialMulti<N> two,
                                          BiConsumer<M, N> bi) {
-        bi.accept(one.get(), two.get());
+        bi.accept(one.join(), two.join());
     }
 
     /**
@@ -168,7 +168,7 @@ public class MultiTools {
      * @author Created by liuwenhao on 2022/4/9 22:51
      */
     public static List<Object> multipleList(List<Multi<?>> c) {
-        return c.stream().map(Multi::get).collect(Collectors.toList());
+        return c.stream().map(Multi::join).collect(Collectors.toList());
     }
 
     /**

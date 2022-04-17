@@ -1,6 +1,9 @@
 package com.deep.crow.multi;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -152,5 +155,28 @@ public interface Multi<T> {
      * @return T 结果
      * @author Created by liuwenhao on 2022/4/10 0:42
      */
-    T get();
+    T join();
+
+    /**
+     * 获取结果
+     *
+     * @return T 结果
+     * @throws ExecutionException   任务异常终止异常
+     * @throws InterruptedException 中断异常
+     * @author Created by liuwenhao on 2022/4/10 0:42
+     */
+    T get() throws ExecutionException, InterruptedException;
+
+    /**
+     * 获取结果
+     *
+     * @param timeout 等待时长
+     * @param unit    时间单位
+     * @return T 结果
+     * @throws ExecutionException   任务异常终止异常
+     * @throws InterruptedException 中断异常
+     * @throws TimeoutException     超时异常
+     * @author Created by liuwenhao on 2022/4/10 0:42
+     */
+    T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException;
 }
