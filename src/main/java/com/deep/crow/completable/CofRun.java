@@ -1,6 +1,5 @@
 package com.deep.crow.completable;
 
-import com.sun.istack.internal.NotNull;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -31,13 +30,13 @@ abstract class CofRun implements Cof<Runnable, Integer> {
     }
 
     @Override
-    public Cof<Runnable, Integer> register(@NotNull Runnable r) {
+    public Cof<Runnable, Integer> register(Runnable r) {
         runs.add(CofTask.buildRun().task(r));
         return this;
     }
 
     @Override
-    public Cof<Runnable, Integer> register(@NotNull Runnable r, @NotNull ExecutorService e) {
+    public Cof<Runnable, Integer> register(Runnable r, ExecutorService e) {
         runs.add(CofTask.buildRun().task(r).executorService(e));
         return this;
     }
