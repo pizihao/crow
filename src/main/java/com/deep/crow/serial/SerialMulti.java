@@ -136,10 +136,11 @@ public class SerialMulti<T> {
      * @author liuwenhao
      * @date 2022/4/11 14:24
      */
-    public <U> SerialMulti<U> addThrowable(Function<Throwable, T> function) {
+    @SuppressWarnings("unchecked")
+    public <U> SerialMulti<U> addThrowable(Function<Throwable, U> function) {
         Objects.requireNonNull(function);
-        Multi<T> tMulti = this.multi;
-        SerialTask<T> task = new ExceptionallyTask<>(function);
+        Multi<U> tMulti = (Multi<U>) this.multi;
+        SerialTask<U> task = new ExceptionallyTask<>(function);
         Multi<U> uMulti = task.increase(tMulti);
         return new SerialMulti<>(uMulti);
     }
