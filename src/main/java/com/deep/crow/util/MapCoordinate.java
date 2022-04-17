@@ -80,10 +80,7 @@ public class MapCoordinate<T> implements Coordinate<T> {
 
     @Override
     public T put(int x, int y, T value) {
-        Map<Integer, T> map = coordinate.get(x);
-        if (map == null) {
-            map = new HashMap<>();
-        }
+        Map<Integer, T> map = getMapSafe(x);
         T t = map.put(y, value);
         coordinate.put(x, map);
         return t;
@@ -98,7 +95,7 @@ public class MapCoordinate<T> implements Coordinate<T> {
 
     @Override
     public T remove(int x, int y) {
-        Map<Integer, T> map = coordinate.get(x);
+        Map<Integer, T> map = getMapSafe(x);
         return map.remove(y);
     }
 
@@ -116,7 +113,8 @@ public class MapCoordinate<T> implements Coordinate<T> {
     @Override
     public Map<Integer, T> y(int x) {
         Map<Integer, T> map = new HashMap<>(16);
-        this.coordinate.get(x).forEach(map::put);
+        Map<Integer, T> tMap = getMapSafe(x);
+        map.putAll(tMap);
         return map;
     }
 
@@ -164,7 +162,7 @@ public class MapCoordinate<T> implements Coordinate<T> {
         return yMap.xMap();
     }
 
-    static class MapElement<E> implements Element<E>, Comparable<MapElement> {
+    static class MapElement<E> implements Element<E>, Comparable<MapElement<E>> {
         int x;
         int y;
         E value;
@@ -216,6 +214,19 @@ public class MapCoordinate<T> implements Coordinate<T> {
         public int compareTo(MapElement o) {
             return x - o.x;
         }
+    }
+
+    /**
+     * <h2>检查横坐标，如果不存在则实例化一个value</h2>
+     *
+     * @param m 横坐标
+     * @return E
+     * @author liuwenhao
+     * @date 2022/4/17 23:36
+     */
+    private Map<Integer, T> getMapSafe(int m) {
+        Map<Integer, T> map = coordinate.get(m);
+        return map == null ? new HashMap<>(16) : map;
     }
 
 }

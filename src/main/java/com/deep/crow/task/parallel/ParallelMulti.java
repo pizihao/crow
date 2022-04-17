@@ -241,7 +241,7 @@ public class ParallelMulti {
      * @author Created by liuwenhao on 2022/4/12 23:16
      */
     public List<?> result() {
-        return multiList.stream().map(Multi::get).collect(Collectors.toList());
+        return multiList.stream().map(Multi::join).collect(Collectors.toList());
     }
 
     /**

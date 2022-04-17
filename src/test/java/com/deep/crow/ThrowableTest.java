@@ -25,7 +25,7 @@ public class ThrowableTest {
             .thenApply(integer -> {
                 System.out.println(integer);
                 return null;
-            }).get();
+            }).join();
 
         CompletableFuture.runAsync(() -> System.out.println(1))
             .thenApplyAsync(unused -> 1, executorService)

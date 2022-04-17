@@ -16,7 +16,7 @@ public class TaskTest {
                 System.out.println(i + 5);
                 return 10;
             }).add(i -> "s")
-            .add(() -> 1).get();
+            .add(() -> 1).join();
 
         System.out.println(integer);
     }
