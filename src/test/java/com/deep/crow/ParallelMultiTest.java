@@ -1,6 +1,6 @@
 package com.deep.crow;
 
-import com.deep.crow.task.parallel.ParallelMulti;
+import com.deep.crow.parallel.ParallelMulti;
 
 /**
  * <h2>test</h2>

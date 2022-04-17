@@ -1,4 +1,4 @@
-package com.deep.crow.task.serial;
+package com.deep.crow.serial;
 
 import com.deep.crow.multi.Multi;
 

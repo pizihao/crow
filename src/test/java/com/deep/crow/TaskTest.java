@@ -1,6 +1,6 @@
 package com.deep.crow;
 
-import com.deep.crow.task.serial.SerialMulti;
+import com.deep.crow.serial.SerialMulti;
 
 /**
  * <h2></h2>
