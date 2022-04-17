@@ -1,7 +1,6 @@
 package com.deep.crow.tree;
 
 import com.deep.crow.exception.CrowException;
-import com.deep.crow.multi.Multi;
 import com.deep.crow.task.parallel.ParallelMulti;
 import com.deep.crow.task.serial.SerialMulti;
 import com.deep.crow.util.Coordinate;
@@ -9,6 +8,8 @@ import com.deep.crow.util.MapCoordinate;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * <h2>一个树形结构</h2>
@@ -36,14 +37,19 @@ import java.util.concurrent.ExecutorService;
  * @author Create by liuwenhao on 2022/4/13 0:04
  */
 @SuppressWarnings("unused")
-public class MultiTree {
+public final class MultiTree {
 
     // ========================数据部分=========================
 
     /**
-     * 执行过程
+     * 串行化的执行过程
      */
-    Multi<?> multi;
+    SerialMulti<?> serialMulti;
+
+    /**
+     * 异常节点
+     */
+    Function<Throwable, ?> throwableNode;
 
     // ========================节点部分=========================
 
@@ -75,21 +81,21 @@ public class MultiTree {
     /**
      * <h2>生成头结点</h2>
      *
-     * @param multi 执行过程
+     * @param serialMulti 执行过程
      * @author liuwenhao
      * @date 2022/4/13 15:52
      */
-    public MultiTree(Multi<?> multi) {
-        this.multi = multi;
+    public MultiTree(SerialMulti<?> serialMulti) {
+        this.serialMulti = serialMulti;
         this.coordinate = MapCoordinate.create();
         addChild(0, 0, this);
     }
 
-    public MultiTree(Multi<?> multi, MultiTree parent, int x, int y) {
+    public MultiTree(SerialMulti<?> serialMulti, MultiTree parent, int x, int y) {
         if (parent == null) {
             throw CrowException.exception("请指明父节点");
         }
-        this.multi = multi;
+        this.serialMulti = serialMulti;
         this.parent = parent;
         this.x = x;
         this.y = y;
@@ -101,15 +107,15 @@ public class MultiTree {
      * 添加成功时会覆盖其对应坐标的元素<br>
      * 新元素的横坐标由其父节点推算
      *
-     * @param multi 执行过程
-     * @param y     纵坐标
+     * @param serialMulti 执行过程
+     * @param y           纵坐标
      * @return 新的元素
      * @author liuwenhao
      * @date 2022/4/14 20:22
      */
-    public MultiTree addElement(Multi<?> multi, int y) {
+    public MultiTree addElement(SerialMulti<?> serialMulti, int y) {
         int x = this.x + 1;
-        MultiTree multiTree = new MultiTree(multi, this, x, y);
+        MultiTree multiTree = new MultiTree(serialMulti, this, x, y);
         this.children.add(multiTree);
         addChild(x, y, multiTree);
         return multiTree;
@@ -120,15 +126,15 @@ public class MultiTree {
      * 添加成功时会覆盖其对应坐标的元素<br>
      * 新元素的横坐标由其父节点推算
      *
-     * @param multi  执行过程
-     * @param parent 父节点
-     * @param y      纵坐标
+     * @param serialMulti 执行过程
+     * @param parent      父节点
+     * @param y           纵坐标
      * @return 新的元素
      * @author liuwenhao
      * @date 2022/4/14 20:22
      */
-    public MultiTree addElement(Multi<?> multi, MultiTree parent, int y) {
-        return addElement(multi, parent.getX(), parent.getY(), y);
+    public MultiTree addElement(SerialMulti<?> serialMulti, MultiTree parent, int y) {
+        return addElement(serialMulti, parent.getX(), parent.getY(), y);
     }
 
     /**
@@ -137,22 +143,22 @@ public class MultiTree {
      * 新元素的横坐标由其父节点推算<br>
      * 付过父节点不存在则添加到根节点上
      *
-     * @param multi   执行过程
-     * @param xParent 父节点横坐标
-     * @param yParent 父节点纵坐标
-     * @param y       当前节点纵坐标
+     * @param serialMulti 执行过程
+     * @param xParent     父节点横坐标
+     * @param yParent     父节点纵坐标
+     * @param y           当前节点纵坐标
      * @return 新的元素
      * @author liuwenhao
      * @date 2022/4/15 16:39
      */
-    public MultiTree addElement(Multi<?> multi, int xParent, int yParent, int y) {
+    public MultiTree addElement(SerialMulti<?> serialMulti, int xParent, int yParent, int y) {
         int x = xParent + 1;
         MultiTree parent = coordinate.get(0, 0);
         if (coordinate.contains(xParent, yParent)) {
             parent = coordinate.get(xParent, yParent);
             x = 1;
         }
-        MultiTree multiTree = new MultiTree(multi, parent, x, y);
+        MultiTree multiTree = new MultiTree(serialMulti, parent, x, y);
         parent.children.add(multiTree);
         addChild(x, y, multiTree);
         return multiTree;
@@ -164,16 +170,16 @@ public class MultiTree {
      * 新元素的横坐标由其父节点推算<br>
      * 付过父节点不存在则添加到根节点上
      *
-     * @param multi   执行过程
-     * @param xParent 父节点横坐标
-     * @param yParent 父节点纵坐标
-     * @param y       当前节点纵坐标
+     * @param serialMulti 执行过程
+     * @param xParent     父节点横坐标
+     * @param yParent     父节点纵坐标
+     * @param y           当前节点纵坐标
      * @return 调用的元素
      * @author liuwenhao
      * @date 2022/4/15 16:39
      */
-    public MultiTree addElementCall(Multi<?> multi, int xParent, int yParent, int y) {
-        addElement(multi, xParent, yParent, y);
+    public MultiTree addElementCall(SerialMulti<?> serialMulti, int xParent, int yParent, int y) {
+        addElement(serialMulti, xParent, yParent, y);
         return this;
     }
 
@@ -182,43 +188,91 @@ public class MultiTree {
      * 新元素的横坐标由其父节点推算<br>
      * 默认取父节点下一层结构最新的坐标位置
      *
-     * @param multi 执行过程
+     * @param serialMulti 执行过程
      * @return 新的元素
      * @author liuwenhao
      * @date 2022/4/15 16:39
      */
-    public MultiTree addElement(Multi<?> multi) {
+    public MultiTree addElement(SerialMulti<?> serialMulti) {
         int x = this.x + 1;
         Map<Integer, MultiTree> yMap = coordinate.y(x);
         int y = yMap.size() + 1;
-        return addElement(multi, this, y);
+        return addElement(serialMulti, this, y);
     }
 
     /**
-     * <h2>更换Multi并返回之前的Multi</h2>
+     * <h2>以当前节点为父节点添加一个元素</h2>
+     * 新元素的横坐标由其父节点推算<br>
+     * 默认取父节点下一层结构最新的坐标位置
      *
-     * @param multi 新的Multi
+     * @param runnable 任务
+     * @return 新的元素
+     * @author liuwenhao
+     * @date 2022/4/15 16:39
+     */
+    public MultiTree addElement(Runnable runnable) {
+        SerialMulti<?> serialMulti = SerialMulti.of(runnable);
+        return addElement(serialMulti);
+    }
+
+    /**
+     * <h2>以当前节点为父节点添加一个元素</h2>
+     * 新元素的横坐标由其父节点推算<br>
+     * 默认取父节点下一层结构最新的坐标位置
+     *
+     * @param supplier 任务
+     * @return 新的元素
+     * @author liuwenhao
+     * @date 2022/4/15 16:39
+     */
+    public MultiTree addElement(Supplier<?> supplier) {
+        SerialMulti<?> serialMulti = SerialMulti.of(supplier);
+        return addElement(serialMulti);
+    }
+
+    /**
+     * <h2>添加一个异常元素</h2>
+     * 独立于所有节点外的异常节点，在形成最终的串行Multi时会拼接在最后
+     *
+     * @param function 异常处理
+     * @return 新的元素
+     * @author liuwenhao
+     * @date 2022/4/15 16:39
+     */
+    public MultiTree addThrowableElement(Function<Throwable, ?> function) {
+        this.throwableNode = function;
+        return this;
+    }
+
+
+    /**
+     * <h2>更换serialMulti并返回之前的serialMulti</h2>
+     *
+     * @param serialMulti 新的serialMulti
      * @return com.deep.crow.multi.Multi<T>
      * @author liuwenhao
      * @date 2022/4/15 16:10
      */
     @SuppressWarnings("unchecked")
-    public <T> Multi<T> setObj(Multi<?> multi) {
-        Multi<T> tMulti = (Multi<T>) this.multi;
-        this.multi = multi;
+    public <T> SerialMulti<T> setObj(SerialMulti<?> serialMulti) {
+        SerialMulti<T> tMulti = (SerialMulti<T>) this.serialMulti;
+        this.serialMulti = serialMulti;
+        tMulti.addThrowable((Function<Throwable, T>) throwableNode);
         return tMulti;
     }
 
     /**
-     * <h2>返回当前的Multi</h2>
+     * <h2>返回当前的SerialMulti</h2>
      *
-     * @return com.deep.crow.multi.Multi<T>
+     * @return SerialMulti
      * @author liuwenhao
      * @date 2022/4/15 16:10
      */
     @SuppressWarnings("unchecked")
-    public <T> Multi<T> getMulti() {
-        return (Multi<T>) multi;
+    public <T> SerialMulti<T> getSerialMulti() {
+        SerialMulti<T> tMulti = (SerialMulti<T>) this.serialMulti;
+        tMulti.addThrowable((Function<Throwable, T>) throwableNode);
+        return tMulti;
     }
 
     /**
@@ -296,7 +350,7 @@ public class MultiTree {
         ParallelMulti parallelMulti = ParallelMulti.of();
         if (children.isEmpty()) {
             // 当前是最后一个节点
-            return parallelMulti.add(getMulti());
+            return parallelMulti.add(getSerialMulti());
         }
         // 不是最后一个节点
         for (MultiTree child : children) {
