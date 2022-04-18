@@ -3,7 +3,6 @@ package com.deep.crow.parallel;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
-import sun.reflect.misc.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
