@@ -64,6 +64,10 @@ public class SerialMulti<T> {
         return new SerialMulti<>(multi);
     }
 
+    public static <T> SerialMulti<T> of(Multi<T> multi) {
+        return new SerialMulti<>(multi);
+    }
+
     /**
      * <h2>function</h2>
      *

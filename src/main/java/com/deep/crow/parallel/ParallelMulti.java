@@ -3,6 +3,7 @@ package com.deep.crow.parallel;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
+import sun.reflect.misc.ReflectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -210,7 +211,7 @@ public class ParallelMulti {
     }
 
     /**
-     * <h2>等待转配的任务全部执行，完成后执行给定任务</h2>
+     * <h2>等待装配的任务全部执行，完成后执行给定任务</h2>
      *
      * @param supplier 任务
      * @return T 结果
@@ -223,7 +224,7 @@ public class ParallelMulti {
     }
 
     /**
-     * <h2>等待转配的任务全部执行，完成后执行给定任务</h2>
+     * <h2>等待装配的任务全部执行，完成后执行给定任务</h2>
      *
      * @param runnable 任务
      * @author Created by liuwenhao on 2022/4/12 23:29

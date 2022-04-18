@@ -8,6 +8,7 @@ import com.deep.crow.util.Tuple;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -15,52 +16,86 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * @author Create by liuwenhao on 2022/4/12 23:32
+ * 适用于单元模块的辅助工具类，依托于MultiTools实现，但有相对少变的线程池
+ *
+ * @author Create by liuwenhao on 2022/4/18 11:25
  */
-@SuppressWarnings("unused")
-public class MultiTools {
+public class FixedMultiTools {
 
-    private MultiTools() {
+    ExecutorService executorService;
+
+    public FixedMultiTools() {
+        this.executorService = ForkJoinPool.commonPool();
+    }
+
+    public FixedMultiTools(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    // ================================Multi====================================
+
+    /**
+     * <h2>创建一个Multi</h2>
+     *
+     * @param supplier 任务
+     * @return com.deep.crow.team.Multi<U>
+     * @author liuwenhao
+     * @date 2022/4/11 13:50
+     */
+    public <U> Multi<U> supplyAsync(Supplier<U> supplier) {
+        return MultiTools.supplyAsync(executorService, supplier);
     }
 
     /**
      * <h2>创建一个Multi</h2>
      *
-     * @param executorService 线程池
-     * @param supplier        任务
+     * @param runnable 任务
      * @return com.deep.crow.team.Multi<U>
      * @author liuwenhao
      * @date 2022/4/11 13:50
      */
-    public static <U> Multi<U> supplyAsync(ExecutorService executorService, Supplier<U> supplier) {
-        return MultiHelper.supplyAsync(executorService, supplier);
+    public Multi<Void> runAsync(Runnable runnable) {
+        return MultiTools.runAsync(executorService, runnable);
     }
 
     /**
      * <h2>创建一个Multi</h2>
      *
-     * @param executorService 线程池
-     * @param runnable        任务
      * @return com.deep.crow.team.Multi<U>
      * @author liuwenhao
      * @date 2022/4/11 13:50
      */
-    public static Multi<Void> runAsync(ExecutorService executorService, Runnable runnable) {
-        return MultiHelper.runAsync(executorService, runnable);
-    }
-
-    /**
-     * <h2>创建一个Multi</h2>
-     *
-     * @param executorService 线程池
-     * @return com.deep.crow.team.Multi<U>
-     * @author liuwenhao
-     * @date 2022/4/11 13:50
-     */
-    public static <T> Multi<T> create(ExecutorService executorService) {
+    public <T> Multi<T> create() {
         return MultiHelper.create(executorService);
     }
 
+    // ================================SerialMulti====================================
+
+
+    public <T> SerialMulti<T> serialMulti() {
+        return SerialMulti.of(executorService);
+    }
+
+    public <T> SerialMulti<T> serialMulti(Supplier<T> supplier) {
+        return SerialMulti.of(executorService, supplier);
+    }
+
+    public SerialMulti<Void> serialMulti(Runnable runnable) {
+        return SerialMulti.of(executorService, runnable);
+    }
+
+    public <T> SerialMulti<T> serialMulti(Multi<T> multi) {
+        return SerialMulti.of(multi);
+    }
+
+    // ================================ParallelMulti====================================
+
+    public ParallelMulti parallelMulti() {
+        return ParallelMulti.of(executorService);
+    }
+
+    // ======================================操作=========================================
+
     /**
      * <h2>等待两个Multi执行完成，并使用其结果执行任务</h2>
      *
@@ -70,10 +105,10 @@ public class MultiTools {
      * @return R 结果
      * @author Created by liuwenhao on 2022/4/12 23:42
      */
-    public static <R, M, N> R serialMeet(SerialMulti<M> one,
-                                         SerialMulti<N> two,
-                                         BiFunction<M, N, R> bi) {
-        return bi.apply(one.join(), two.join());
+    public <R, M, N> R serialMeet(SerialMulti<M> one,
+                                  SerialMulti<N> two,
+                                  BiFunction<M, N, R> bi) {
+        return MultiTools.serialMeet(one, two, bi);
     }
 
     /**
@@ -84,10 +119,10 @@ public class MultiTools {
      * @param bi  任务体
      * @author Created by liuwenhao on 2022/4/12 23:42
      */
-    public static <M, N> void serialMeet(SerialMulti<M> one,
-                                         SerialMulti<N> two,
-                                         BiConsumer<M, N> bi) {
-        bi.accept(one.join(), two.join());
+    public <M, N> void serialMeet(SerialMulti<M> one,
+                                  SerialMulti<N> two,
+                                  BiConsumer<M, N> bi) {
+        MultiTools.serialMeet(one, two, bi);
     }
 
     /**
@@ -98,8 +133,8 @@ public class MultiTools {
      * @return R 结果
      * @author Created by liuwenhao on 2022/4/12 23:20
      */
-    public static <R> R parallelTuple(ParallelMulti parallelMulti, Function<? super Tuple, R> function) {
-        return parallelMulti.thenExecTuple(function);
+    public <R> R parallelTuple(ParallelMulti parallelMulti, Function<? super Tuple, R> function) {
+        return MultiTools.parallelTuple(parallelMulti, function);
     }
 
     /**
@@ -110,8 +145,8 @@ public class MultiTools {
      * @return R 结果
      * @author Created by liuwenhao on 2022/4/12 23:20
      */
-    public static <R> SerialMulti<R> toSerialTuple(ParallelMulti parallelMulti, Function<? super Tuple, SerialMulti<R>> function) {
-        return parallelMulti.toSerialTuple(function);
+    public <R> SerialMulti<R> toSerialTuple(ParallelMulti parallelMulti, Function<? super Tuple, SerialMulti<R>> function) {
+        return MultiTools.toSerialTuple(parallelMulti, function);
     }
 
     /**
@@ -122,8 +157,8 @@ public class MultiTools {
      * @return R 结果
      * @author Created by liuwenhao on 2022/4/12 23:20
      */
-    public static <R> R parallelList(ParallelMulti parallelMulti, Function<? super List<?>, R> function) {
-        return parallelMulti.thenExecList(function);
+    public <R> R parallelList(ParallelMulti parallelMulti, Function<? super List<?>, R> function) {
+        return MultiTools.parallelList(parallelMulti, function);
     }
 
     /**
@@ -134,8 +169,8 @@ public class MultiTools {
      * @return R 结果
      * @author Created by liuwenhao on 2022/4/12 23:20
      */
-    public static <R> SerialMulti<R> toSerialList(ParallelMulti parallelMulti, Function<? super List<?>, SerialMulti<R>> function) {
-        return parallelMulti.toSerialList(function);
+    public <R> SerialMulti<R> toSerialList(ParallelMulti parallelMulti, Function<? super List<?>, SerialMulti<R>> function) {
+        return MultiTools.toSerialList(parallelMulti, function);
     }
 
     /**
@@ -145,8 +180,8 @@ public class MultiTools {
      * @return T 结果
      * @author Created by liuwenhao on 2022/4/12 23:29
      */
-    public static <T> T parallelApply(ParallelMulti parallelMulti, Supplier<T> supplier) {
-        return parallelMulti.thenApply(supplier);
+    public <T> T parallelApply(ParallelMulti parallelMulti, Supplier<T> supplier) {
+        return MultiTools.parallelApply(parallelMulti, supplier);
     }
 
     /**
@@ -155,8 +190,8 @@ public class MultiTools {
      * @param runnable 任务
      * @author Created by liuwenhao on 2022/4/12 23:29
      */
-    public static void parallelRun(ParallelMulti parallelMulti, Runnable runnable) {
-        parallelMulti.thenRun(runnable);
+    public void parallelRun(ParallelMulti parallelMulti, Runnable runnable) {
+        MultiTools.parallelRun(parallelMulti, runnable);
     }
 
     /**
@@ -167,8 +202,8 @@ public class MultiTools {
      * @return com.deep.crow.team.Multi<java.lang.Void>
      * @author Created by liuwenhao on 2022/4/9 22:51
      */
-    public static List<Object> multipleList(List<Multi<?>> c) {
-        return c.stream().map(Multi::join).collect(Collectors.toList());
+    public List<Object> multipleList(List<Multi<?>> c) {
+        return MultiTools.multipleList(c);
     }
 
     /**
@@ -179,10 +214,8 @@ public class MultiTools {
      * @return Tuple
      * @author Created by liuwenhao on 2022/4/9 22:51
      */
-    public static Tuple multipleTuple(List<Multi<?>> c) {
-        List<Object> resultList = multipleList(c);
-        Object[] resultArray = resultList.toArray();
-        return new Tuple(resultArray);
+    public Tuple multipleTuple(List<Multi<?>> c) {
+        return MultiTools.multipleTuple(c);
     }
 
 
