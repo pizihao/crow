@@ -1,5 +1,6 @@
 package com.deep.crow;
 
+import com.deep.crow.exception.CrowException;
 import com.deep.crow.multi.MultiHelper;
 
 import java.util.concurrent.CompletableFuture;
@@ -27,31 +28,24 @@ public class ThrowableTest {
                 return null;
             }).join();
 
-        CompletableFuture.runAsync(() -> System.out.println(1))
-            .thenApplyAsync(unused -> 1, executorService)
-            .thenApplyAsync(integer -> {
-                System.out.println(integer);
-                return 1;
-            }, executorService)
-            .thenApplyAsync(integer -> {
-                System.out.println(integer);
-                return null;
-            }, executorService).join();
+        CompletableFuture.runAsync(() -> System.out.println(1)).thenApplyAsync(unused -> 1, executorService).thenApplyAsync(integer -> {
+            System.out.println(integer);
+            return 1;
+        }, executorService).thenApplyAsync(integer -> {
+            System.out.println(integer);
+            return null;
+        }, executorService).join();
 
-//        CompletableFuture.runAsync(() -> System.out.println(123))
-//            .thenApply(unused -> {
-//                System.out.println(456);
-//                return 456;
-//            })
-//            .thenApply(integer -> {
-//                System.out.println(integer);
-//                return 142;
-//            })
-//            .thenApply(integer -> integer / 0)
-//            .exceptionally(throwable -> {
-//                throw CrowException.exception("异常线程 -> {}", Thread.currentThread().getName());
-//            }).join();
-//
-//        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> 1).thenApply(integer -> "1");
+        CompletableFuture.runAsync(() -> System.out.println(123)).thenApply(unused -> {
+            System.out.println(456);
+            return 456;
+        }).thenApply(integer -> {
+            System.out.println(integer);
+            return 142;
+        }).thenApply(integer -> integer / 0).exceptionally(throwable -> {
+            throw CrowException.exception("异常线程 -> {}", Thread.currentThread().getName());
+        }).join();
+
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> 1).thenApply(integer -> "1");
     }
 }
