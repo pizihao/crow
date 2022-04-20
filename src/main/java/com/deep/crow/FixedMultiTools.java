@@ -13,13 +13,13 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * 适用于单元模块的辅助工具类，依托于MultiTools实现，但有相对少变的线程池
  *
  * @author Create by liuwenhao on 2022/4/18 11:25
  */
+@SuppressWarnings("unused")
 public class FixedMultiTools {
 
     ExecutorService executorService;

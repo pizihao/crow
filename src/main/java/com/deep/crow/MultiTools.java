@@ -15,6 +15,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
+ * 适用于单元模块的辅助工具类
+ *
  * @author Create by liuwenhao on 2022/4/12 23:32
  */
 @SuppressWarnings("unused")
