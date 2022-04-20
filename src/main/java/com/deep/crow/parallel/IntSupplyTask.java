@@ -1,0 +1,30 @@
+package com.deep.crow.parallel;
+
+import com.deep.crow.multi.Multi;
+import com.deep.crow.multi.MultiHelper;
+
+import java.util.concurrent.ExecutorService;
+import java.util.function.IntSupplier;
+
+/**
+ * <h2>可以得到一个int的异步计算</h2>
+ *
+ * @author Create by liuwenhao on 2022/4/20 19:28
+ */
+public class IntSupplyTask implements ParallelTask {
+
+    IntSupplier intSupplier;
+
+    ExecutorService executorService;
+
+    public IntSupplyTask(IntSupplier intSupplier, ExecutorService executorService) {
+        this.intSupplier = intSupplier;
+        this.executorService = executorService;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <U> Multi<U> assembling() {
+        return (Multi<U>) MultiHelper.supplyAsync(executorService, () -> intSupplier.getAsInt());
+    }
+}
