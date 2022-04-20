@@ -9,8 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,14 +20,13 @@ import java.util.stream.Collectors;
 public class ParallelMulti {
 
     /**
-     * 线程池
-     */
-    ExecutorService executorService;
-
-    /**
      * Multi
      */
     final List<Multi<?>> multiList = new ArrayList<>();
+    /**
+     * 线程池
+     */
+    ExecutorService executorService;
 
     private ParallelMulti(ExecutorService executorService) {
         this.executorService = executorService;
@@ -63,6 +61,63 @@ public class ParallelMulti {
     public <T> ParallelMulti add(Supplier<T> s) {
         Objects.requireNonNull(s);
         ParallelTask parallelTask = new SupplyTask<>(s, executorService);
+        Multi<T> multi = parallelTask.assembling();
+        synchronized (multiList) {
+            multiList.add(multi);
+        }
+        return this;
+    }
+
+    /**
+     * <h2>添加一个{@link IntSupplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param s Supplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/4/12 16:07
+     */
+    public <T> ParallelMulti add(IntSupplier s) {
+        Objects.requireNonNull(s);
+        ParallelTask parallelTask = new IntSupplyTask(s, executorService);
+        Multi<T> multi = parallelTask.assembling();
+        synchronized (multiList) {
+            multiList.add(multi);
+        }
+        return this;
+    }
+
+    /**
+     * <h2>添加一个{@link LongSupplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param s Supplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/4/12 16:07
+     */
+    public <T> ParallelMulti add(LongSupplier s) {
+        Objects.requireNonNull(s);
+        ParallelTask parallelTask = new LongSupplyTask(s, executorService);
+        Multi<T> multi = parallelTask.assembling();
+        synchronized (multiList) {
+            multiList.add(multi);
+        }
+        return this;
+    }
+
+    /**
+     * <h2>添加一个{@link DoubleSupplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param s Supplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/4/12 16:07
+     */
+    public <T> ParallelMulti add(DoubleSupplier s) {
+        Objects.requireNonNull(s);
+        ParallelTask parallelTask = new DoubleSupplyTask(s, executorService);
         Multi<T> multi = parallelTask.assembling();
         synchronized (multiList) {
             multiList.add(multi);
