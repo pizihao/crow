@@ -222,7 +222,7 @@ public class ParallelMulti {
      */
     public <R> R thenExecTuple(Function<? super Tuple, R> function) {
         Objects.requireNonNull(function);
-        Tuple tuple = get();
+        Tuple tuple = resultTuple();
         return function.apply(tuple);
     }
 
@@ -236,7 +236,7 @@ public class ParallelMulti {
      */
     public <R> R thenExecList(Function<? super List<?>, R> function) {
         Objects.requireNonNull(function);
-        List<?> result = result();
+        List<?> result = resultList();
         return function.apply(result);
     }
 
@@ -273,7 +273,7 @@ public class ParallelMulti {
      */
     public <T> T thenApply(Supplier<T> supplier) {
         Objects.requireNonNull(supplier);
-        get();
+        resultTuple();
         return supplier.get();
     }
 
@@ -285,7 +285,7 @@ public class ParallelMulti {
      */
     public void thenRun(Runnable runnable) {
         Objects.requireNonNull(runnable);
-        get();
+        resultTuple();
         runnable.run();
     }
 
@@ -295,7 +295,7 @@ public class ParallelMulti {
      * @return java.util.List<?>
      * @author Created by liuwenhao on 2022/4/12 23:16
      */
-    public List<?> result() {
+    public List<?> resultList() {
         return multiList.stream().map(Multi::join).collect(Collectors.toList());
     }
 
@@ -305,10 +305,22 @@ public class ParallelMulti {
      * @return Tuple
      * @author Created by liuwenhao on 2022/4/12 23:16
      */
-    public Tuple get() {
-        List<?> resultList = result();
+    public Tuple resultTuple() {
+        List<?> resultList = resultList();
         Object[] resultArray = resultList.toArray();
         return new Tuple(resultArray);
+    }
+
+    /**
+     * <h2>获取结果</h2>
+     * 如果存在多个符合条件的则返回最先遍历到的
+     *
+     * @return T 一个未知的类型
+     * @author Created by liuwenhao on 2022/4/12 23:16
+     */
+    public <T> T get() {
+        List<?> resultList = resultList();
+        return null;
     }
 
 }
