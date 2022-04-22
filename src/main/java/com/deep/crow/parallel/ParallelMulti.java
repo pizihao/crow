@@ -318,7 +318,7 @@ public class ParallelMulti {
      * @return T 一个未知的类型
      * @author Created by liuwenhao on 2022/4/12 23:16
      */
-    public <T> T get() {
+    public <T> T get(Class<T> clazz) {
         List<?> resultList = resultList();
         return null;
     }
