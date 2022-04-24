@@ -3,7 +3,9 @@ package com.deep.crow.parallel;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
+import com.deep.crow.util.TypeUtil;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -313,14 +315,71 @@ public class ParallelMulti {
 
     /**
      * <h2>获取结果</h2>
-     * 如果存在多个符合条件的则返回最先遍历到的
+     * 如果存在多个符合条件的则返回最先遍历到的<br>
+     * 不适用于存在泛型的情况
      *
      * @return T 一个未知的类型
      * @author Created by liuwenhao on 2022/4/12 23:16
      */
     public <T> T get(Class<T> clazz) {
-        List<?> resultList = resultList();
-        return null;
+        return TypeUtil.screenClass(resultList(), clazz);
+    }
+
+    /**
+     * <h2>获取结果</h2>
+     * 如果存在多个符合条件的则组成集List集合返回<br>
+     * 不适用于存在泛型的情况
+     *
+     * @return T 一个未知的类型
+     * @author Created by liuwenhao on 2022/4/12 23:16
+     */
+    public <T> List<T> getList(Class<T> clazz) {
+        return TypeUtil.screenClasses(resultList(), clazz);
+    }
+
+    /**
+     * <h2>获取结果</h2>
+     * 如果存在多个符合条件的则返回最先遍历到的<br>
+     *
+     * @return T 一个未知的类型
+     * @author Created by liuwenhao on 2022/4/12 23:16
+     */
+    public <T> T get(Type type) {
+        return TypeUtil.screenType(resultList(), type);
+    }
+
+    /**
+     * <h2>获取结果</h2>
+     * 如果存在多个符合条件的则组成集List集合返回<br>
+     *
+     * @return T 一个未知的类型
+     * @author Created by liuwenhao on 2022/4/12 23:16
+     */
+    public <T> List<T> getList(Type type) {
+        return TypeUtil.screenTypes(resultList(), type);
+    }
+
+
+    /**
+     * <h2>获取结果</h2>
+     * 如果存在多个符合条件的则返回最先遍历到的<br>
+     *
+     * @return T 一个未知的类型
+     * @author Created by liuwenhao on 2022/4/12 23:16
+     */
+    public <T> T get(Supplier<Type> supplier) {
+        return TypeUtil.screenType(resultList(), supplier.get());
+    }
+
+    /**
+     * <h2>获取结果</h2>
+     * 如果存在多个符合条件的则组成集List集合返回<br>
+     *
+     * @return T 一个未知的类型
+     * @author Created by liuwenhao on 2022/4/12 23:16
+     */
+    public <T> List<T> getList(Supplier<Type> supplier) {
+        return TypeUtil.screenTypes(resultList(), supplier.get());
     }
 
 }

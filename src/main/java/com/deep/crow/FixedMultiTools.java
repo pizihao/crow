@@ -6,6 +6,7 @@ import com.deep.crow.parallel.ParallelMulti;
 import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
@@ -35,6 +36,30 @@ public class FixedMultiTools {
     // ================================Multi====================================
 
     /**
+     * 获取执行结果，通过type匹配
+     *
+     * @param c    过程集合
+     * @param type 结果类型
+     * @return Tuple
+     * @author Created by liuwenhao on 2022/4/9 22:51
+     */
+    public static <T> T multipleGet(List<Multi<?>> c, Type type) {
+        return MultiTools.multipleGet(c, type);
+    }
+
+    /**
+     * 获取执行结果，通过type匹配
+     *
+     * @param c    过程集合
+     * @param type 结果类型
+     * @return Tuple
+     * @author Created by liuwenhao on 2022/4/9 22:51
+     */
+    public static <T> T multipleGet(List<Multi<?>> c, Supplier<Type> type) {
+        return MultiTools.multipleGet(c, type);
+    }
+
+    /**
      * <h2>创建一个Multi</h2>
      *
      * @param supplier 任务
@@ -45,6 +70,8 @@ public class FixedMultiTools {
     public <U> Multi<U> supplyAsync(Supplier<U> supplier) {
         return MultiTools.supplyAsync(executorService, supplier);
     }
+
+    // ================================SerialMulti====================================
 
     /**
      * <h2>创建一个Multi</h2>
@@ -69,9 +96,6 @@ public class FixedMultiTools {
         return MultiHelper.create(executorService);
     }
 
-    // ================================SerialMulti====================================
-
-
     public <T> SerialMulti<T> serialMulti() {
         return SerialMulti.of(executorService);
     }
@@ -80,21 +104,21 @@ public class FixedMultiTools {
         return SerialMulti.of(executorService, supplier);
     }
 
+    // ================================ParallelMulti====================================
+
     public SerialMulti<Void> serialMulti(Runnable runnable) {
         return SerialMulti.of(executorService, runnable);
     }
+
+    // ======================================操作=========================================
 
     public <T> SerialMulti<T> serialMulti(Multi<T> multi) {
         return SerialMulti.of(multi);
     }
 
-    // ================================ParallelMulti====================================
-
     public ParallelMulti parallelMulti() {
         return ParallelMulti.of(executorService);
     }
-
-    // ======================================操作=========================================
 
     /**
      * <h2>等待两个Multi执行完成，并使用其结果执行任务</h2>
@@ -217,6 +241,5 @@ public class FixedMultiTools {
     public Tuple multipleTuple(List<Multi<?>> c) {
         return MultiTools.multipleTuple(c);
     }
-
 
 }

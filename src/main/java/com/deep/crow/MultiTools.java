@@ -5,7 +5,9 @@ import com.deep.crow.multi.MultiHelper;
 import com.deep.crow.parallel.ParallelMulti;
 import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
+import com.deep.crow.util.TypeUtil;
 
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.BiConsumer;
@@ -187,5 +189,28 @@ public class MultiTools {
         return new Tuple(resultArray);
     }
 
+    /**
+     * 获取执行结果，通过type匹配
+     *
+     * @param c    过程集合
+     * @param type 结果类型
+     * @return Tuple
+     * @author Created by liuwenhao on 2022/4/9 22:51
+     */
+    public static <T> T multipleGet(List<Multi<?>> c, Type type) {
+        return TypeUtil.screenType(multipleList(c), type);
+    }
+
+    /**
+     * 获取执行结果，通过type匹配
+     *
+     * @param c    过程集合
+     * @param type 结果类型
+     * @return Tuple
+     * @author Created by liuwenhao on 2022/4/9 22:51
+     */
+    public static <T> T multipleGet(List<Multi<?>> c, Supplier<Type> type) {
+        return TypeUtil.screenType(multipleList(c), type.get());
+    }
 
 }
