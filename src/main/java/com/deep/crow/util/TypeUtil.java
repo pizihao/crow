@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -119,19 +120,19 @@ public class TypeUtil {
      * @date 2022/4/24 16:27
      */
     public static <T> T screenType(Iterable<?> l, Type type) {
+        /*
+         * o及其泛型是否与parameterizedType兼容，
+         * 1，通过API获取o被擦除的泛型类型，和传入的类型进行对比，相同则返回
+         *      但是并没有找到对应的API，因为o的类型是Object，o如果存在泛型，那么也是Object，
+         *      会被直接擦除，所以并不支持这种获取方式。
+         * 2，通过序列化的方式，先通过参数指明类型进行序列化
+         *      如果成功，则说明类型兼容，反之不兼容
+         *      这需要借助 Jackson 的支持
+         */
         CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
         ObjectMapper objectMapper = ObjectMapperFactory.get();
         for (Object o : l) {
             try {
-                /*
-                 * o及其泛型是否与parameterizedType兼容，
-                 * 1，通过API获取o被擦除的泛型类型，和传入的类型进行对比，相同则返回
-                 *      但是并没有找到对应的API，因为t的类型是Object，o如果存在泛型，那么也是Object，
-                 *      所以并不支持这种获取方式。
-                 * 2，通过序列化的方式，先通过参数指明类型进行序列化，再进行反序列化
-                 *      如果全部成功，则说明类型兼容，反之不兼容
-                 *      这需要借助 Jackson 的支持
-                 */
                 String valueAsString = objectMapper.writeValueAsString(o);
                 objectMapper.readValue(valueAsString, typeReference);
                 return (T) o;
@@ -167,6 +168,24 @@ public class TypeUtil {
             }
         }
         return tList;
+    }
+
+    /**
+     * <h2>推断结果类型</h2>
+     * 在一个未知的结果集中匹配指定类型的项，匹配成功则直接返回<br>
+     * 通过调用方接收的类型进行推断<br>
+     * 无匹配选项则抛出异常
+     *
+     * @param l 结果集
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/24 17:56
+     */
+    public static <T> T inferClass(Iterable<?> l) throws NoSuchMethodException {
+        Method method = TypeUtil.class.getMethod("inferClass", Iterable.class);
+        Type returnType = method.getGenericReturnType();
+        System.out.println(returnType);
+        return screenType(l, returnType);
     }
 
     /**

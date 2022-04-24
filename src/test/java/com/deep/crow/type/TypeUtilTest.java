@@ -14,7 +14,7 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 public class TypeUtilTest {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchMethodException {
         List<Integer> list1 = new ArrayList<>();
         list1.add(1);
         list1.add(2);
@@ -36,7 +36,8 @@ public class TypeUtilTest {
 //        utilTest.test2(listObj);
 //        utilTest.test3(listObj);
 //        utilTest.test4(listObj);
-        utilTest.test5(listObj);
+//        utilTest.test5(listObj);
+        utilTest.test6(listObj);
     }
 
     public void test1(List<Object> listObj) {
@@ -67,6 +68,11 @@ public class TypeUtilTest {
             .add(Integer.class)
             .build();
         List<List<Integer>> screenType = TypeUtil.screenTypes(listObj, type);
+        System.out.println(screenType);
+    }
+
+    public void test6(List<Object> listObj) throws NoSuchMethodException {
+        List<Integer> screenType = TypeUtil.inferClass(listObj);
         System.out.println(screenType);
     }
 }
