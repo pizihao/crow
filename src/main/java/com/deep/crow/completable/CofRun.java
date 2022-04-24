@@ -9,8 +9,11 @@ import java.util.concurrent.ExecutorService;
  * <p>{@link Runnable}本身无返回值，故定义整个容器中本次执行的任务个数为其返回值</p>
  * <p>如果不在程序中进行等待则无法得知任务是否运行完成</p>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 11:18
  */
+@Deprecated
+@SuppressWarnings("unused deprecated")
 abstract class CofRun implements Cof<Runnable, Integer> {
 
     protected List<CofTask<Runnable>> runs;

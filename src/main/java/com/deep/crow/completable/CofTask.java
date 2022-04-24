@@ -9,9 +9,11 @@ import java.util.function.Supplier;
  * <p>注意：同一个容器中任务的类型应保证相同</p>
  * <p>name为各个任务的唯一标识</p>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 10:45
  */
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings("unused deprecated")
 public final class CofTask<T> {
 
     protected T task;

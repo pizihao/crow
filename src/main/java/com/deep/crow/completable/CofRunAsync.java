@@ -35,8 +35,11 @@ import java.util.stream.Collectors;
  *  1
  * </pre>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/12/21 9:42
  */
+@Deprecated
+@SuppressWarnings("unused deprecated")
 class CofRunAsync extends CofRun {
 
     @Override

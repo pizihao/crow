@@ -24,8 +24,11 @@ import java.util.stream.Collectors;
  * }
  * </pre>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 11:45
  */
+@Deprecated
+@SuppressWarnings("unused deprecated")
 class CofSupplyMap extends CofSupply<Map<String, Object>> {
 
     @Override

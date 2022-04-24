@@ -14,8 +14,11 @@ import java.util.stream.Collectors;
  * <p>根据各个任务中执行的定义位置进行执行</p>
  * <p>具体的返回类型任交由子类定义</p>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 11:24
  */
+@Deprecated
+@SuppressWarnings("unused deprecated")
 abstract class CofSupply<R> implements Cof<Supplier<Object>, R> {
 
     protected List<CofTask<Supplier<Object>>> supplies;

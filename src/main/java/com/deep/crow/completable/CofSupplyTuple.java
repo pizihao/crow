@@ -28,8 +28,11 @@ import java.util.stream.Collectors;
  * }
  * </pre>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 11:51
  */
+@Deprecated
+@SuppressWarnings("unused deprecated")
 class CofSupplyTuple extends CofSupply<Tuple> {
 
     @Override

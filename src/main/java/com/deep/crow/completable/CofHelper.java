@@ -17,9 +17,11 @@ import java.util.function.Supplier;
  *     <li>{@link CofRunBlock}</li>
  * </ul>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 16:07
  */
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings("unused deprecated")
 public class CofHelper {
     private CofHelper() {
     }

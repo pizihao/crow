@@ -24,9 +24,11 @@ import java.util.function.Supplier;
  *     <li>R: 容器最终返回值类型，如：{@link Map}或{@link Tuple}</li>
  * </ul>
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/26 10:08
  */
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings("unused deprecated")
 public interface Cof<S, R> {
 
     /**

@@ -6,9 +6,11 @@ import java.util.concurrent.CompletableFuture;
  * <h2>Completable签名</h2>
  * 建立任务名和completableFuture实例的关联关系
  *
+ * @deprecated {@link com.deep.crow.multi.Multi}
  * @author Create by liuwenhao on 2021/11/11 11:05
  */
-@SuppressWarnings("unused")
+@Deprecated
+@SuppressWarnings("unused deprecated")
 class Signature<T> {
 
     private final String name;
