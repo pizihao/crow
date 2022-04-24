@@ -1,7 +1,7 @@
 package com.deep.crow.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.deep.crow.User;
+
 import java.util.Set;
 
 /**
