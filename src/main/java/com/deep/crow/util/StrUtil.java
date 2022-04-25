@@ -63,7 +63,6 @@ public class StrUtil {
                 builder.append(src, offset, start - offset - 1).append(openToken);
                 offset = start + openToken.length();
             } else {
-                // found open token. let's search close token.
                 if (expression == null) {
                     expression = new StringBuilder();
                 } else {
@@ -74,7 +73,6 @@ public class StrUtil {
                 int end = text.indexOf(closeToken, offset);
                 while (end > -1) {
                     if (end > offset && src[end - 1] == '\\') {
-                        // this close token is escaped. remove the backslash and continue.
                         expression.append(src, offset, end - offset - 1).append(closeToken);
                         offset = end + closeToken.length();
                         end = text.indexOf(closeToken, offset);

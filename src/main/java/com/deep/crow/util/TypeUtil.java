@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -124,7 +123,7 @@ public class TypeUtil {
          * o及其泛型是否与parameterizedType兼容，
          * 1，通过API获取o被擦除的泛型类型，和传入的类型进行对比，相同则返回
          *      但是并没有找到对应的API，因为o的类型是Object，o如果存在泛型，那么也是Object，
-         *      会被直接擦除，所以并不支持这种获取方式。
+         *      其真实类型是未知的，所以并不支持这种获取方式。
          * 2，通过序列化的方式，先通过参数指明类型进行序列化
          *      如果成功，则说明类型兼容，反之不兼容
          *      这需要借助 Jackson 的支持
@@ -181,11 +180,11 @@ public class TypeUtil {
      * @author liuwenhao
      * @date 2022/4/24 17:56
      */
-    public static <T> T inferClass(Iterable<?> l) throws NoSuchMethodException {
-        Method method = TypeUtil.class.getMethod("inferClass", Iterable.class);
-        Type returnType = method.getGenericReturnType();
-        System.out.println(returnType);
-        return screenType(l, returnType);
+    public static <T> T inferClass(Iterable<?> l) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+
+
+        return null;
     }
 
     /**

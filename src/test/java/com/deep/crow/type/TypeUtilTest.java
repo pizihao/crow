@@ -71,7 +71,7 @@ public class TypeUtilTest {
         System.out.println(screenType);
     }
 
-    public void test6(List<Object> listObj) throws NoSuchMethodException {
+    public void test6(List<Object> listObj) {
         List<Integer> screenType = TypeUtil.inferClass(listObj);
         System.out.println(screenType);
     }
