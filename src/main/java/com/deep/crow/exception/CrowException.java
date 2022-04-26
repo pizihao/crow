@@ -14,12 +14,20 @@ public class CrowException extends RuntimeException {
         super();
     }
 
+    public CrowException(Throwable throwable) {
+        super(throwable);
+    }
+
     public CrowException(String message) {
         super(message);
     }
 
     public static CrowException exception(String message) {
         return new CrowException(message);
+    }
+
+    public static CrowException exception(Throwable throwable) {
+        return new CrowException(throwable);
     }
 
     public static CrowException exception(String format, Object... elements) {
@@ -32,6 +40,10 @@ public class CrowException extends RuntimeException {
 
     public static CrowException of(String format, Object... elements) {
         throw CrowException.exception(format, elements);
+    }
+
+    public static CrowException of(Throwable throwable) {
+        throw CrowException.exception(throwable);
     }
 
 }
