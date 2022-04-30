@@ -242,4 +242,31 @@ public class FixedMultiTools {
         return MultiTools.multipleTuple(c);
     }
 
+
+    /**
+     * <h2>填充实例</h2>
+     * 直接修改参数对象
+     * @param c 过程集合
+     * @param t 需要填充的实例对象
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public <T> T getForInstance(List<Multi<?>> c, T t) {
+        return MultiTools.getForInstance(c, t);
+    }
+
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param c     过程集合
+     * @param clazz 需要填充的类
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public <T> T getForClass(List<Multi<?>> c, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        return MultiTools.getForClass(c, clazz);
+    }
+
 }

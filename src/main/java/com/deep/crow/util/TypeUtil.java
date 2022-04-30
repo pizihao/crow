@@ -222,6 +222,37 @@ public class TypeUtil {
     }
 
     /**
+     * <h2>根据类型填充属性</h2>
+     * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
+     * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
+     *
+     * @param l       结果集
+     * @param clazz   需要填充的类
+     * @author liuwenhao
+     * @date 2022/4/26 9:02
+     */
+    public static <T> T fillClass(Iterable<?> l, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        return fillClass(l, clazz, false);
+    }
+
+    /**
+     * <h2>根据类型填充属性</h2>
+     * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
+     * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
+     *
+     * @param l       结果集
+     * @param clazz   需要填充的类
+     * @param isCover 是否覆盖
+     * @author liuwenhao
+     * @date 2022/4/26 9:02
+     */
+    public static <T> T fillClass(Iterable<?> l, Class<T> clazz, boolean isCover) throws InstantiationException, IllegalAccessException {
+        T instance = clazz.newInstance();
+        fillInstance(l, instance, isCover);
+        return instance;
+    }
+
+    /**
      * <h2>验证类型是否匹配</h2>
      *
      * @param typeReference 类型

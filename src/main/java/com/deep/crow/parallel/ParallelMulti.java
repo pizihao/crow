@@ -382,4 +382,29 @@ public class ParallelMulti {
         return TypeUtil.screenTypes(resultList(), supplier.get());
     }
 
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param t 需要填充的实例对象
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public <T> T getForInstance(T t) {
+        TypeUtil.fillInstance(resultList(), t, false);
+        return t;
+    }
+
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param clazz 需要填充的类
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public <T> T getForClass(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        return TypeUtil.fillClass(resultList(), clazz, false);
+    }
+
 }

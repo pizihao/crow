@@ -213,4 +213,31 @@ public class MultiTools {
         return TypeUtil.screenType(multipleList(c), type.get());
     }
 
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param c 过程集合
+     * @param t 需要填充的实例对象
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public static  <T> T getForInstance(List<Multi<?>> c, T t) {
+        TypeUtil.fillInstance(multipleList(c), t, false);
+        return t;
+    }
+
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param c     过程集合
+     * @param clazz 需要填充的类
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public static  <T> T getForClass(List<Multi<?>> c, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+        return TypeUtil.fillClass(multipleList(c), clazz, false);
+    }
+
 }
