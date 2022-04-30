@@ -1,16 +1,19 @@
-package com.deep.crow;
+package com.deep.crow.model;
 
 /**
  * <h2></h2>
  *
- * @author Create by liuwenhao on 2022/4/14 10:39
+ * @author Create by liuwenhao on 2022/4/28 11:35
  */
-public class User {
+public class Dog {
 
     private String name;
 
-    public User(String name) {
+    public Dog(String name) {
         this.name = name;
+    }
+
+    public Dog() {
     }
 
     public String getName() {
@@ -23,7 +26,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Dog{" +
             "name='" + name + '\'' +
             '}';
     }

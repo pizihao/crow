@@ -1,6 +1,6 @@
 package com.deep.crow.util;
 
-import com.deep.crow.User;
+import com.deep.crow.model.User;
 
 import java.util.Set;
 

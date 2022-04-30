@@ -1,6 +1,4 @@
-package com.deep.crow.type;
-
-import com.deep.crow.User;
+package com.deep.crow.model;
 
 import java.util.List;
 

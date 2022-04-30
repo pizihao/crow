@@ -39,7 +39,7 @@ public class TypeUtil {
      * @author liuwenhao
      * @date 2022/4/22 19:33
      */
-    public static <T> T screenClass(Iterable<?> l, Class<?> clazz) {
+    public static <T> T screenClass(Iterable<?> l, Class<T> clazz) {
         for (Object o : l) {
             boolean instance = clazz.isInstance(o);
             if (instance) {
@@ -114,7 +114,7 @@ public class TypeUtil {
     /**
      * <h2>筛选结果类型</h2>
      * 在一个未知的结果集中匹配指定类型的项<br>
-     * 无匹配选项择抛出异常
+     * 无匹配选项则抛出异常，在填充时会忽略带有单个String泛型的类型
      *
      * @param l    结果集
      * @param type 检索的类型
@@ -132,12 +132,24 @@ public class TypeUtil {
          *      如果成功，则说明类型兼容，反之不兼容
          *      这需要 Jackson 的支持
          */
-        CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
-        ObjectMapper objectMapper = ObjectMapperFactory.get();
-        for (Object o : l) {
-            boolean match = isMatch(typeReference, o, objectMapper);
-            if (match) {
-                return (T) o;
+
+        if (type instanceof ParameterizedType) {
+            Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+            boolean sign = false;
+            for (Type argument : arguments) {
+                sign = argument != String.class.getGenericSuperclass();
+            }
+            if (sign) {
+                // 不希望带有全是String类型的泛型
+                CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
+                ObjectMapper objectMapper = ObjectMapperFactory.get();
+                for (Object o : l) {
+                    boolean match = isMatch(typeReference, o, objectMapper);
+                    if (match) {
+                        return (T) o;
+                    }
+                }
+
             }
         }
         throw CrowException.exception("无可匹配类型，{}", type.getTypeName());
@@ -179,10 +191,26 @@ public class TypeUtil {
      * @date 2022/4/26 9:02
      */
     public static <T> void fillInstance(Iterable<?> l, T t) {
+        fillInstance(l, t, false);
+    }
+
+    /**
+     * <h2>根据类型填充属性</h2>
+     * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
+     * 按对象的填充方式，在填充时不会影响到已有的数据在填充之前需要使用到反射获取属性类型<br>
+     * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
+     *
+     * @param l       结果集
+     * @param t       需要填充的类对象
+     * @param isCover 是否覆盖
+     * @author liuwenhao
+     * @date 2022/4/26 9:02
+     */
+    public static <T> void fillInstance(Iterable<?> l, T t, boolean isCover) {
         Set<Field> fields = ReflectionUtils.getAllFields(t.getClass());
         try {
             for (Object o : l) {
-                TypeMatching typeMatching = new TypeMatching(fields, o);
+                TypeMatching typeMatching = new TypeMatching(fields, o, isCover);
                 Field matching = typeMatching.matching(t);
                 if (matching != null) {
                     fields.remove(matching);
@@ -191,21 +219,6 @@ public class TypeUtil {
         } catch (IllegalAccessException | IntrospectionException | InvocationTargetException e) {
             throw new CrowException(e);
         }
-    }
-
-    /**
-     * <h2>推断结果类型</h2>
-     * 在一个未知的结果集中匹配指定类型的项，匹配成功则直接返回<br>
-     * 通过调用方接收的类型进行推断<br>
-     * 无匹配选项则抛出异常
-     *
-     * @param l 结果集
-     * @return T
-     * @author liuwenhao
-     * @date 2022/4/24 17:56
-     */
-    public static <T> T inferClass(Iterable<?> l) {
-        return null;
     }
 
     /**
@@ -275,22 +288,15 @@ public class TypeUtil {
         public Field matching(Object obj) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
             ObjectMapper objectMapper = ObjectMapperFactory.get();
             for (Field field : fields) {
+                if (!isString(field)) {
+                    continue;
+                }
                 String property = field.getName();
                 PropertyDescriptor descriptor = new PropertyDescriptor(property, obj.getClass());
                 Method readMethod = descriptor.getReadMethod();
                 Object result = readMethod.invoke(obj);
-                if (Objects.isNull(result)) {
-                    boolean sign;
-                    Type type = field.getGenericType();
-                    if (type instanceof ParameterizedType) {
-                        // 参数化类型的情况
-                        ParameterizedType parameterizedType = (ParameterizedType) type;
-                        CrowTypeReference<?> typeReference = CrowTypeReference.make(parameterizedType);
-                        sign = isMatch(typeReference, o, objectMapper);
-                    } else {
-                        // 普通类型的情况
-                        sign = field.getType().isInstance(o);
-                    }
+                if (isCover || Objects.isNull(result)) {
+                    boolean sign = isAccordWith(field, objectMapper);
                     if (sign) {
                         Method writeMethod = descriptor.getWriteMethod();
                         writeMethod.invoke(obj, o);
@@ -302,9 +308,52 @@ public class TypeUtil {
             return null;
         }
 
+        /**
+         * <h2>验证字段与实例对象是否可以兼容</h2>
+         *
+         * @param field        字段属性
+         * @param objectMapper ObjectMapper
+         * @return boolean
+         * @author liuwenhao
+         * @date 2022/4/27 9:38
+         */
+        private boolean isAccordWith(Field field, ObjectMapper objectMapper) {
+            Type type = field.getGenericType();
+            if (type instanceof ParameterizedType) {
+                // 参数化类型的情况
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                CrowTypeReference<?> typeReference = CrowTypeReference.make(parameterizedType);
+                return isMatch(typeReference, o, objectMapper);
+            } else {
+                // 普通类型的情况
+                return field.getType().isInstance(o);
+            }
+        }
+
+        /**
+         * <h2>验证是否存在String类型</h2>
+         *
+         * @param field 字段属性
+         * @return boolean
+         * @author liuwenhao
+         * @date 2022/4/28 10:46
+         */
+        private boolean isString(Field field) {
+            Objects.requireNonNull(field);
+            Type type = field.getGenericType();
+            if (type instanceof ParameterizedType) {
+                Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+                for (Type argument : arguments) {
+                    if (argument != String.class.getGenericSuperclass()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            return true;
+        }
 
     }
-
 
     /**
      * 协助泛型检索

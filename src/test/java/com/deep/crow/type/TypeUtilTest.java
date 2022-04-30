@@ -1,6 +1,7 @@
 package com.deep.crow.type;
 
-import com.deep.crow.User;
+import com.deep.crow.model.Person;
+import com.deep.crow.model.User;
 import com.deep.crow.util.TypeUtil;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class TypeUtilTest {
         User user1 = new User("刘");
         User user2 = new User("wen");
         Integer integer = 10;
+        String str = "456";
 
         List<Object> listObj = new ArrayList<>();
         listObj.add(list4);
@@ -37,18 +39,18 @@ public class TypeUtilTest {
         listObj.add(user1);
         listObj.add(user2);
         listObj.add(integer);
+        listObj.add(str);
         TypeUtilTest utilTest = new TypeUtilTest();
-//        utilTest.test1(listObj);
+        utilTest.test1(listObj);
 //        utilTest.test2(listObj);
 //        utilTest.test3(listObj);
 //        utilTest.test4(listObj);
 //        utilTest.test5(listObj);
-//        utilTest.test6(listObj);
-        utilTest.test7(listObj);
+//        utilTest.test7(listObj);
     }
 
     public void test1(List<Object> listObj) {
-        List<Integer> screenTypes = TypeUtil.screenClass(listObj, List.class);
+        String screenTypes = TypeUtil.screenClass(listObj, String.class);
         System.out.println(screenTypes);
     }
 
@@ -75,11 +77,6 @@ public class TypeUtilTest {
             .add(Integer.class)
             .build();
         List<List<Integer>> screenType = TypeUtil.screenTypes(listObj, type);
-        System.out.println(screenType);
-    }
-
-    public void test6(List<Object> listObj) {
-        List<Integer> screenType = TypeUtil.inferClass(listObj);
         System.out.println(screenType);
     }
 
