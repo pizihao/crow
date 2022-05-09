@@ -10,7 +10,6 @@ import org.reflections.ReflectionUtils;
 import javax.annotation.Nullable;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.io.IOException;
 import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * <h2>反射工具类</h2>
+ * <h2>类型填充工具类</h2>
  *
  * @author Create by liuwenhao on 2022/4/22 19:25
  */
@@ -226,8 +225,8 @@ public class TypeUtil {
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
      * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
      *
-     * @param l       结果集
-     * @param clazz   需要填充的类
+     * @param l     结果集
+     * @param clazz 需要填充的类
      * @author liuwenhao
      * @date 2022/4/26 9:02
      */
@@ -264,13 +263,11 @@ public class TypeUtil {
      */
     private static boolean isMatch(CrowTypeReference<?> typeReference, Object o, ObjectMapper objectMapper) {
         try {
-            String valueAsString = objectMapper.writeValueAsString(o);
-            objectMapper.readValue(valueAsString, typeReference);
+            objectMapper.convertValue(o, typeReference);
             return true;
-        } catch (IOException ignored) {
-            // 不符合的数据
+        } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 
     /**

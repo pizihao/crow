@@ -14,7 +14,7 @@ import java.util.List;
 public class SeniorTypeUtilTest {
 
     public static void main(String[] args) {
-        parameter();
+        packing();
     }
 
     private static void example() {
@@ -80,6 +80,54 @@ public class SeniorTypeUtilTest {
         list.add(users);
         TypeUtil.fillInstance(list, animal);
         System.out.println(animal);
+    }
+
+    /**
+     * 测试包装类型
+     * Integer，Long，Double，Character，Float，Byte，Short，Boolean
+     *
+     * @author liuwenhao
+     * @date 2022/5/9 10:16
+     */
+    private static void packing() {
+        List<Integer> integers = new ArrayList<>();
+        integers.add(1);
+        integers.add(2);
+        List<Double> doubles = new ArrayList<>();
+        doubles.add(1.20001);
+        doubles.add(20.220002);
+        List<Float> floats = new ArrayList<>();
+        floats.add(1.1f);
+        floats.add(1.556f);
+        List<Short> shorts = new ArrayList<>();
+        shorts.add((short) 4);
+        shorts.add((short) 1288);
+        List<Byte> bytes = new ArrayList<>();
+        bytes.add((byte) 125);
+        bytes.add((byte) 15);
+        List<Long> longs = new ArrayList<>();
+        longs.add(45L);
+        longs.add(45487L);
+        List<Character> characters = new ArrayList<>();
+        characters.add('a');
+        characters.add('Z');
+        List<Boolean> booleans = new ArrayList<>();
+        booleans.add(true);
+        booleans.add(false);
+
+        Basic basic = new Basic();
+        List<Object> list = new ArrayList<>();
+        list.add(longs);
+        list.add(integers);
+        list.add(shorts);
+        list.add(characters);
+        list.add(bytes);
+        list.add(floats);
+        list.add(doubles);
+        list.add(booleans);
+        TypeUtil.fillInstance(list, basic);
+        System.out.println(basic);
+
     }
 
 }
