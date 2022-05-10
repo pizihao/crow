@@ -41,12 +41,12 @@ public class TypeUtilTest {
         listObj.add(integer);
         listObj.add(str);
         TypeUtilTest utilTest = new TypeUtilTest();
-        utilTest.test1(listObj);
+//        utilTest.test1(listObj);
 //        utilTest.test2(listObj);
 //        utilTest.test3(listObj);
 //        utilTest.test4(listObj);
 //        utilTest.test5(listObj);
-//        utilTest.test7(listObj);
+        utilTest.test7(listObj);
     }
 
     public void test1(List<Object> listObj) {

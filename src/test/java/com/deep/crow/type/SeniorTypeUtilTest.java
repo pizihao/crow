@@ -93,6 +93,9 @@ public class SeniorTypeUtilTest {
         List<Integer> integers = new ArrayList<>();
         integers.add(1);
         integers.add(2);
+        List<String> strings = new ArrayList<>();
+        strings.add("123");
+        strings.add("456");
         List<Double> doubles = new ArrayList<>();
         doubles.add(1.20001);
         doubles.add(20.220002);
@@ -124,6 +127,7 @@ public class SeniorTypeUtilTest {
         list.add(bytes);
         list.add(floats);
         list.add(doubles);
+        list.add(strings);
         list.add(booleans);
         TypeUtil.fillInstance(list, basic);
         System.out.println(basic);

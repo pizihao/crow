@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * <h2></h2>
@@ -20,8 +21,8 @@ public class SerializeTest {
         longs.add(4563L);
         ObjectMapper objectMapper = ObjectMapperFactory.get();
 
-//        String valueAsString = objectMapper.writeValueAsString(longs);
-//        System.out.println(valueAsString);
+        String valueAsString = objectMapper.writeValueAsString(longs);
+        System.out.println(valueAsString);
         List<Long> longList = objectMapper.convertValue(longs, new TypeReference<List<Long>>() {
         });
         System.out.println(longList);
@@ -30,5 +31,26 @@ public class SerializeTest {
 //        });
 //        System.out.println(list);
 
+    }
+
+     public static class LongType {
+        String type = "java.lang.Long";
+        Long aLong;
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public Long getaLong() {
+            return aLong;
+        }
+
+        public void setaLong(Long aLong) {
+            this.aLong = aLong;
+        }
     }
 }

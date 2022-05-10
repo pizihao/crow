@@ -9,6 +9,7 @@ import java.util.List;
  */
 public class Basic {
 
+    List<String> strings;
     List<Integer> integers;
     List<Double> doubles;
     List<Float> floats;
@@ -17,6 +18,14 @@ public class Basic {
     List<Long> longs;
     List<Character> characters;
     List<Boolean> booleans;
+
+    public List<String> getStrings() {
+        return strings;
+    }
+
+    public void setStrings(List<String> strings) {
+        this.strings = strings;
+    }
 
     public List<Integer> getIntegers() {
         return integers;
@@ -85,7 +94,8 @@ public class Basic {
     @Override
     public String toString() {
         return "Basic{" +
-            "integers=" + integers +
+            "strings=" + strings +
+            ", integers=" + integers +
             ", doubles=" + doubles +
             ", floats=" + floats +
             ", shorts=" + shorts +

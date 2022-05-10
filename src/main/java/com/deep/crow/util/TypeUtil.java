@@ -113,7 +113,7 @@ public class TypeUtil {
     /**
      * <h2>筛选结果类型</h2>
      * 在一个未知的结果集中匹配指定类型的项<br>
-     * 无匹配选项则抛出异常，在填充时会忽略带有单个String泛型的类型
+     * 无匹配选项则抛出异常
      *
      * @param l    结果集
      * @param type 检索的类型
@@ -197,7 +197,7 @@ public class TypeUtil {
      * <h2>根据类型填充属性</h2>
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
      * 按对象的填充方式，在填充时不会影响到已有的数据在填充之前需要使用到反射获取属性类型<br>
-     * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
+     * 这需要 reflections 的支持
      *
      * @param l       结果集
      * @param t       需要填充的类对象
@@ -316,9 +316,6 @@ public class TypeUtil {
         public Field matching(Object obj) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
             ObjectMapper objectMapper = ObjectMapperFactory.get();
             for (Field field : fields) {
-                if (!isString(field)) {
-                    continue;
-                }
                 String property = field.getName();
                 PropertyDescriptor descriptor = new PropertyDescriptor(property, obj.getClass());
                 Method readMethod = descriptor.getReadMethod();
@@ -356,29 +353,6 @@ public class TypeUtil {
                 // 普通类型的情况
                 return field.getType().isInstance(o);
             }
-        }
-
-        /**
-         * <h2>验证是否存在String类型</h2>
-         *
-         * @param field 字段属性
-         * @return boolean
-         * @author liuwenhao
-         * @date 2022/4/28 10:46
-         */
-        private boolean isString(Field field) {
-            Objects.requireNonNull(field);
-            Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
-                for (Type argument : arguments) {
-                    if (argument != String.class.getGenericSuperclass()) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-            return true;
         }
 
     }
