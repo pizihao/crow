@@ -1,5 +1,6 @@
 package com.deep.crow.type;
 
+import com.deep.crow.FixedMultiTools;
 import com.deep.crow.model.*;
 import com.deep.crow.util.TypeUtil;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public class SeniorTypeUtilTest {
 
     public static void main(String[] args) {
-        packing();
+        parallelPacking();
     }
 
     private static void example() {
@@ -132,6 +133,65 @@ public class SeniorTypeUtilTest {
         TypeUtil.fillInstance(list, basic);
         System.out.println(basic);
 
+    }
+
+    private static void parallelPacking() {
+        Basic basic = new Basic();
+        FixedMultiTools multiTools = new FixedMultiTools();
+        Basic instance = multiTools.parallelMulti()
+            .add(() -> {
+                List<Integer> integers = new ArrayList<>();
+                integers.add(1);
+                integers.add(777);
+                return integers;
+            }).add(() -> {
+                List<String> strings = new ArrayList<>();
+                strings.add("123");
+                strings.add("456");
+                return strings;
+            }).add(() -> {
+                List<Double> doubles = new ArrayList<>();
+                doubles.add(1.20001);
+                doubles.add(20.220002);
+                return doubles;
+            }).add(() -> {
+                List<Float> floats = new ArrayList<>();
+                floats.add(1.1f);
+                floats.add(1.556f);
+                return floats;
+            }).add(() -> {
+                List<Short> shorts = new ArrayList<>();
+                shorts.add((short) 4);
+                shorts.add((short) 1288);
+                return shorts;
+            }).add(() -> {
+                List<Byte> bytes = new ArrayList<>();
+                bytes.add((byte) 125);
+                bytes.add((byte) 15);
+                return bytes;
+            }).add(() -> {
+                List<Long> longs = new ArrayList<>();
+                longs.add(45L);
+                longs.add(45487L);
+                return longs;
+            }).add(() -> {
+                List<Character> characters = new ArrayList<>();
+                characters.add('a');
+                characters.add('Z');
+                return characters;
+            }).add(() -> {
+                List<Boolean> booleans = new ArrayList<>();
+                booleans.add(true);
+                booleans.add(false);
+                return booleans;
+            }).add(() -> {
+                List<Integer> integers = new ArrayList<>();
+                integers.add(2);
+                integers.add(888);
+                return integers;
+            })
+            .getForInstance(basic);
+        System.out.println(instance);
     }
 
 }
