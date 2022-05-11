@@ -15,7 +15,7 @@ import java.util.List;
 public class SeniorTypeUtilTest {
 
     public static void main(String[] args) {
-        parallelPacking();
+        packingCover();
     }
 
     private static void example() {
@@ -131,6 +131,57 @@ public class SeniorTypeUtilTest {
         list.add(strings);
         list.add(booleans);
         TypeUtil.fillInstance(list, basic);
+        System.out.println(basic);
+
+    }
+
+
+    private static void packingCover() {
+        List<Integer> integers = new ArrayList<>();
+        integers.add(1);
+        integers.add(2);
+        List<String> strings = new ArrayList<>();
+        strings.add("123");
+        strings.add("456");
+        List<Double> doubles = new ArrayList<>();
+        doubles.add(1.20001);
+        doubles.add(20.220002);
+        List<Float> floats = new ArrayList<>();
+        floats.add(1.1f);
+        floats.add(1.556f);
+        List<Short> shorts = new ArrayList<>();
+        shorts.add((short) 4);
+        shorts.add((short) 1288);
+        List<Byte> bytes = new ArrayList<>();
+        bytes.add((byte) 125);
+        bytes.add((byte) 15);
+        List<Long> longs = new ArrayList<>();
+        longs.add(45L);
+        longs.add(45487L);
+        List<Character> characters = new ArrayList<>();
+        characters.add('a');
+        characters.add('Z');
+        List<Boolean> booleans = new ArrayList<>();
+        booleans.add(true);
+        booleans.add(false);
+
+        List<Long> longCover = new ArrayList<>();
+        longCover.add(1354L);
+        longCover.add(3545L);
+
+        Basic basic = new Basic();
+        basic.setLongs(longCover);
+        List<Object> list = new ArrayList<>();
+        list.add(longs);
+        list.add(integers);
+        list.add(shorts);
+        list.add(characters);
+        list.add(bytes);
+        list.add(floats);
+        list.add(doubles);
+        list.add(strings);
+        list.add(booleans);
+        TypeUtil.fillInstance(list, basic, false);
         System.out.println(basic);
 
     }

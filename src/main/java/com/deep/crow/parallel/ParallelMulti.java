@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
  *
  * @author Create by liuwenhao on 2022/4/11 17:15
  */
+@SuppressWarnings("unused")
 public class ParallelMulti {
 
     /**
@@ -391,7 +392,20 @@ public class ParallelMulti {
      * @date 2022/4/30 11:21
      */
     public <T> T getForInstance(T t) {
-        TypeUtil.fillInstance(resultList(), t, false);
+        return getForInstance(t, false);
+    }
+
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param t       需要填充的实例对象
+     * @param isCover 是否覆盖已有的数据
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public <T> T getForInstance(T t, boolean isCover) {
+        TypeUtil.fillInstance(resultList(), t, isCover);
         return t;
     }
 
@@ -404,7 +418,20 @@ public class ParallelMulti {
      * @date 2022/4/30 11:21
      */
     public <T> T getForClass(Class<T> clazz) throws InstantiationException, IllegalAccessException {
-        return TypeUtil.fillClass(resultList(), clazz, false);
+        return getForClass(clazz, false);
+    }
+
+    /**
+     * <h2>填充实例</h2>
+     *
+     * @param clazz   需要填充的类
+     * @param isCover 是否覆盖已有的数据
+     * @return T
+     * @author liuwenhao
+     * @date 2022/4/30 11:21
+     */
+    public <T> T getForClass(Class<T> clazz, boolean isCover) throws InstantiationException, IllegalAccessException {
+        return TypeUtil.fillClass(resultList(), clazz, isCover);
     }
 
 }
