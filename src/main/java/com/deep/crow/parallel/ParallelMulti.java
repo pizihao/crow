@@ -442,7 +442,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/4/30 11:21
      */
-    public <T> T getForClass(Class<T> clazz) throws InstantiationException, IllegalAccessException {
+    public <T> T getForClass(Class<T> clazz) {
         return getForClass(clazz, false);
     }
 
@@ -455,7 +455,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/4/30 11:21
      */
-    public <T> T getForClass(Class<T> clazz, boolean isCover) throws InstantiationException, IllegalAccessException {
+    public <T> T getForClass(Class<T> clazz, boolean isCover) {
         return TypeUtil.fillClass(resultList(), clazz, isCover);
     }
 

@@ -253,7 +253,7 @@ public class MultiTools {
      * @author liuwenhao
      * @date 2022/4/30 11:21
      */
-    public static <T> T getForClass(List<Multi<?>> c, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+    public static <T> T getForClass(List<Multi<?>> c, Class<T> clazz) {
         return TypeUtil.fillClass(multipleList(c), clazz, false);
     }
 

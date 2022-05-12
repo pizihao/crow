@@ -263,6 +263,7 @@ public class FixedMultiTools {
     /**
      * <h2>填充实例</h2>
      * 直接修改参数对象
+     *
      * @param c 过程集合
      * @param t 需要填充的实例对象
      * @return T
@@ -282,7 +283,7 @@ public class FixedMultiTools {
      * @author liuwenhao
      * @date 2022/4/30 11:21
      */
-    public <T> T getForClass(List<Multi<?>> c, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+    public <T> T getForClass(List<Multi<?>> c, Class<T> clazz) {
         return MultiTools.getForClass(c, clazz);
     }
 

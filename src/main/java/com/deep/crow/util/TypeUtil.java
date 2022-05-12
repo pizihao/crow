@@ -3,18 +3,16 @@ package com.deep.crow.util;
 import com.deep.crow.exception.CrowException;
 import com.deep.crow.jackson.ObjectMapperFactory;
 import com.deep.crow.type.ParameterizedTypeImpl;
+import com.esotericsoftware.reflectasm.ConstructorAccess;
+import com.esotericsoftware.reflectasm.FieldAccess;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.reflections.ReflectionUtils;
 
-import javax.annotation.Nullable;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * <h2>类型填充工具类</h2>
@@ -139,7 +137,6 @@ public class TypeUtil {
                 sign = argument != String.class.getGenericSuperclass();
             }
             if (sign) {
-                // 不希望带有全是String类型的泛型
                 CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
                 ObjectMapper objectMapper = ObjectMapperFactory.get();
                 for (Object o : l) {
@@ -182,7 +179,6 @@ public class TypeUtil {
      * <h2>根据类型填充属性</h2>
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
      * 按对象的填充方式，在填充时不会影响到已有的数据在填充之前需要使用到反射获取属性类型<br>
-     * 这需要 reflections 的支持
      *
      * @param l 结果集
      * @param t 需要填充的类对象
@@ -197,7 +193,6 @@ public class TypeUtil {
      * <h2>根据类型填充属性</h2>
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
      * 按对象的填充方式，在填充时不会影响到已有的数据在填充之前需要使用到反射获取属性类型<br>
-     * 这需要 reflections 的支持
      *
      * @param l       结果集
      * @param t       需要填充的类对象
@@ -206,17 +201,15 @@ public class TypeUtil {
      * @date 2022/4/26 9:02
      */
     public static <T> void fillInstance(Iterable<?> l, T t, boolean isCover) {
-        Set<Field> fields = ReflectionUtils.getAllFields(t.getClass());
-        try {
-            for (Object o : l) {
-                TypeMatching typeMatching = new TypeMatching(fields, o, isCover);
-                Field matching = typeMatching.matching(t);
-                if (matching != null) {
-                    fields.remove(matching);
-                }
+        FieldAccess fieldAccess = FieldAccess.get(t.getClass());
+        Set<Field> fields = Arrays.stream(fieldAccess.getFields()).collect(Collectors.toSet());
+
+        for (Object o : l) {
+            TypeMatching typeMatching = new TypeMatching(fields, o, fieldAccess, isCover);
+            Field matching = typeMatching.matching(t);
+            if (matching != null) {
+                fields.remove(matching);
             }
-        } catch (IllegalAccessException | IntrospectionException | InvocationTargetException e) {
-            throw new CrowException(e);
         }
     }
 
@@ -230,7 +223,7 @@ public class TypeUtil {
      * @author liuwenhao
      * @date 2022/4/26 9:02
      */
-    public static <T> T fillClass(Iterable<?> l, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+    public static <T> T fillClass(Iterable<?> l, Class<T> clazz) {
         return fillClass(l, clazz, false);
     }
 
@@ -245,10 +238,11 @@ public class TypeUtil {
      * @author liuwenhao
      * @date 2022/4/26 9:02
      */
-    public static <T> T fillClass(Iterable<?> l, Class<T> clazz, boolean isCover) throws InstantiationException, IllegalAccessException {
-        T instance = clazz.newInstance();
-        fillInstance(l, instance, isCover);
-        return instance;
+    public static <T> T fillClass(Iterable<?> l, Class<T> clazz, boolean isCover) {
+        ConstructorAccess<T> constructorAccess = ConstructorAccess.get(clazz);
+        T t = constructorAccess.newInstance();
+        fillInstance(l, t, isCover);
+        return t;
     }
 
     /**
@@ -288,18 +282,26 @@ public class TypeUtil {
         Object o;
 
         /**
+         * 操作实例字段
+         */
+        FieldAccess fieldAccess;
+
+        /**
          * 是否覆盖
          */
         boolean isCover;
 
-        public TypeMatching(Set<Field> fields, Object o, boolean isCover) {
+        public TypeMatching(Set<Field> fields, Object o,
+                            FieldAccess fieldAccess, boolean isCover) {
             this.fields = fields;
             this.o = o;
             this.isCover = isCover;
+            this.fieldAccess = fieldAccess;
         }
 
-        public TypeMatching(Set<Field> fields, Object o) {
-            this(fields, o, false);
+        public TypeMatching(Set<Field> fields, Object o,
+                            FieldAccess fieldAccess) {
+            this(fields, o, fieldAccess, false);
         }
 
         /**
@@ -312,19 +314,15 @@ public class TypeUtil {
          * @author liuwenhao
          * @date 2022/4/26 11:00
          */
-        @Nullable
-        public Field matching(Object obj) throws IllegalAccessException, IntrospectionException, InvocationTargetException {
+        public Field matching(Object obj) {
             ObjectMapper objectMapper = ObjectMapperFactory.get();
             for (Field field : fields) {
                 String property = field.getName();
-                PropertyDescriptor descriptor = new PropertyDescriptor(property, obj.getClass());
-                Method readMethod = descriptor.getReadMethod();
-                Object result = readMethod.invoke(obj);
+                Object result = fieldAccess.get(obj, property);
                 if (isCover || Objects.isNull(result)) {
                     boolean sign = isAccordWith(field, objectMapper);
                     if (sign) {
-                        Method writeMethod = descriptor.getWriteMethod();
-                        writeMethod.invoke(obj, o);
+                        fieldAccess.set(obj, property, o);
                         return field;
                     }
                 }
