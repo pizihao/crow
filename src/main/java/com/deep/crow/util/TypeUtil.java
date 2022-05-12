@@ -223,7 +223,7 @@ public class TypeUtil {
     /**
      * <h2>根据类型填充属性</h2>
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
-     * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
+     * 这需要 reflections 的支持
      *
      * @param l     结果集
      * @param clazz 需要填充的类
@@ -237,7 +237,7 @@ public class TypeUtil {
     /**
      * <h2>根据类型填充属性</h2>
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
-     * 这需要 reflections 的支持，并且在填充时会忽略带有单个String泛型的类型
+     * 这需要 reflections 的支持
      *
      * @param l       结果集
      * @param clazz   需要填充的类

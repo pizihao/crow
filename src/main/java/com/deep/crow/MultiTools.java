@@ -10,10 +10,7 @@ import com.deep.crow.util.TypeUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 import java.util.stream.Collectors;
 
 /**
@@ -107,18 +104,6 @@ public class MultiTools {
     }
 
     /**
-     * <h2>并行Multi转化成串行Multi</h2>
-     *
-     * @param <R>      结果类型
-     * @param function 任务
-     * @return R 结果
-     * @author Created by liuwenhao on 2022/4/12 23:20
-     */
-    public static <R> SerialMulti<R> toSerialTuple(ParallelMulti parallelMulti, Function<? super Tuple, SerialMulti<R>> function) {
-        return parallelMulti.toSerialTuple(function);
-    }
-
-    /**
      * <h2>获取并行Multi结果并执行任务</h2>
      *
      * @param <R>      结果类型
@@ -128,6 +113,38 @@ public class MultiTools {
      */
     public static <R> R parallelList(ParallelMulti parallelMulti, Function<? super List<?>, R> function) {
         return parallelMulti.thenExecList(function);
+    }
+
+    /**
+     * <h2>获取并行Multi结果并执行任务</h2>
+     *
+     * @param consumer 任务
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public static void parallelTuple(ParallelMulti parallelMulti, Consumer<? super Tuple> consumer) {
+        parallelMulti.thenExecTuple(consumer);
+    }
+
+    /**
+     * <h2>获取并行Multi结果并执行任务</h2>
+     *
+     * @param consumer 任务
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public static void parallelList(ParallelMulti parallelMulti, Consumer<? super List<?>> consumer) {
+        parallelMulti.thenExecList(consumer);
+    }
+
+    /**
+     * <h2>并行Multi转化成串行Multi</h2>
+     *
+     * @param <R>      结果类型
+     * @param function 任务
+     * @return R 结果
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public static <R> SerialMulti<R> toSerialTuple(ParallelMulti parallelMulti, Function<? super Tuple, SerialMulti<R>> function) {
+        return parallelMulti.toSerialTuple(function);
     }
 
     /**
@@ -222,7 +239,7 @@ public class MultiTools {
      * @author liuwenhao
      * @date 2022/4/30 11:21
      */
-    public static  <T> T getForInstance(List<Multi<?>> c, T t) {
+    public static <T> T getForInstance(List<Multi<?>> c, T t) {
         TypeUtil.fillInstance(multipleList(c), t, false);
         return t;
     }
@@ -236,7 +253,7 @@ public class MultiTools {
      * @author liuwenhao
      * @date 2022/4/30 11:21
      */
-    public static  <T> T getForClass(List<Multi<?>> c, Class<T> clazz) throws InstantiationException, IllegalAccessException {
+    public static <T> T getForClass(List<Multi<?>> c, Class<T> clazz) throws InstantiationException, IllegalAccessException {
         return TypeUtil.fillClass(multipleList(c), clazz, false);
     }
 

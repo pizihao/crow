@@ -150,8 +150,8 @@ public class ParallelMulti {
 
     /**
      * <h2>添加一个异常任务节点</h2>
-     * 统一添加，针对所有的任务，会在执行时添加到队尾<T>
-     * 仅会在已添加的Multi中执行
+     * 统一添加，针对所有的任务，会在调用方法时添加到队尾<T>
+     * 仅会在已添加的Multi中发生异常时执行
      *
      * @param fn 异常任务
      * @return com.deep.crow.task.parallel.ParallelMulti
@@ -241,6 +241,31 @@ public class ParallelMulti {
         Objects.requireNonNull(function);
         List<?> result = resultList();
         return function.apply(result);
+    }
+
+
+    /**
+     * <h2>获取结果并执行任务</h2>
+     *
+     * @param consumer 任务
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public void thenExecTuple(Consumer<? super Tuple> consumer) {
+        Objects.requireNonNull(consumer);
+        Tuple tuple = resultTuple();
+        consumer.accept(tuple);
+    }
+
+    /**
+     * <h2>获取结果并执行任务</h2>
+     *
+     * @param consumer 任务
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public void thenExecList(Consumer<? super List<?>> consumer) {
+        Objects.requireNonNull(consumer);
+        List<?> result = resultList();
+        consumer.accept(result);
     }
 
     /**
@@ -374,7 +399,7 @@ public class ParallelMulti {
 
     /**
      * <h2>获取结果</h2>
-     * 如果存在多个符合条件的则组成集List集合返回<br>
+     * 如果存在多个符合条件的则组成List集合返回<br>
      *
      * @return T 一个未知的类型
      * @author Created by liuwenhao on 2022/4/12 23:16

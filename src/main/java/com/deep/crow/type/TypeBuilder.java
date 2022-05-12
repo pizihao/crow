@@ -190,7 +190,7 @@ public class TypeBuilder {
 
     public Type build() {
         if (builder != null) {
-            throw new CrowException("嵌套情况下请先调用 endNested()");
+            throw new CrowException("嵌套情况下请先调用 parent()");
         }
         return getType();
     }

@@ -8,7 +8,7 @@ import java.util.function.*;
  * @author Create by liuwenhao on 2022/4/9 21:55
  */
 @SuppressWarnings("unchecked unused")
-public class MultiImpl<T> implements Multi<T> {
+public class    MultiImpl<T> implements Multi<T> {
 
     CompletableFuture<T> completableFuture;
 

@@ -10,10 +10,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 /**
  * 适用于单元模块的辅助工具类，依托于MultiTools实现，但有相对少变的线程池
@@ -162,18 +159,6 @@ public class FixedMultiTools {
     }
 
     /**
-     * <h2>并行Multi转化成串行Multi</h2>
-     *
-     * @param <R>      结果类型
-     * @param function 任务
-     * @return R 结果
-     * @author Created by liuwenhao on 2022/4/12 23:20
-     */
-    public <R> SerialMulti<R> toSerialTuple(ParallelMulti parallelMulti, Function<? super Tuple, SerialMulti<R>> function) {
-        return MultiTools.toSerialTuple(parallelMulti, function);
-    }
-
-    /**
      * <h2>获取并行Multi结果并执行任务</h2>
      *
      * @param <R>      结果类型
@@ -183,6 +168,38 @@ public class FixedMultiTools {
      */
     public <R> R parallelList(ParallelMulti parallelMulti, Function<? super List<?>, R> function) {
         return MultiTools.parallelList(parallelMulti, function);
+    }
+
+    /**
+     * <h2>获取并行Multi结果并执行任务</h2>
+     *
+     * @param consumer 任务
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public void parallelTuple(ParallelMulti parallelMulti, Consumer<? super Tuple> consumer) {
+        MultiTools.parallelTuple(parallelMulti, consumer);
+    }
+
+    /**
+     * <h2>获取并行Multi结果并执行任务</h2>
+     *
+     * @param consumer 任务
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public void parallelList(ParallelMulti parallelMulti, Consumer<? super List<?>> consumer) {
+        MultiTools.parallelList(parallelMulti, consumer);
+    }
+
+    /**
+     * <h2>并行Multi转化成串行Multi</h2>
+     *
+     * @param <R>      结果类型
+     * @param function 任务
+     * @return R 结果
+     * @author Created by liuwenhao on 2022/4/12 23:20
+     */
+    public <R> SerialMulti<R> toSerialTuple(ParallelMulti parallelMulti, Function<? super Tuple, SerialMulti<R>> function) {
+        return MultiTools.toSerialTuple(parallelMulti, function);
     }
 
     /**
