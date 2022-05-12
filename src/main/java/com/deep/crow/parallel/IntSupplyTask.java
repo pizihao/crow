@@ -11,7 +11,7 @@ import java.util.function.IntSupplier;
  *
  * @author Create by liuwenhao on 2022/4/20 19:28
  */
-public class IntSupplyTask implements ParallelTask {
+class IntSupplyTask implements ParallelTask {
 
     IntSupplier intSupplier;
 

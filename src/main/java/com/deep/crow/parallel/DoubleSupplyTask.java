@@ -11,7 +11,7 @@ import java.util.function.DoubleSupplier;
  *
  * @author Create by liuwenhao on 2022/4/20 19:34
  */
-public class DoubleSupplyTask implements ParallelTask {
+class DoubleSupplyTask implements ParallelTask {
 
     DoubleSupplier doubleSupplier;
 

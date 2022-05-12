@@ -11,7 +11,7 @@ import java.util.function.LongSupplier;
  *
  * @author Create by liuwenhao on 2022/4/20 19:32
  */
-public class LongSupplyTask implements ParallelTask {
+class LongSupplyTask implements ParallelTask {
 
     LongSupplier longSupplier;
 
