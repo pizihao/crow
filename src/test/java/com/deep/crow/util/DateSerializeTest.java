@@ -5,8 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,16 +19,17 @@ import java.util.List;
  */
 public class DateSerializeTest {
     public static void main(String[] args) throws JsonProcessingException {
-        List<LocalDateTime> localDateTimes = new ArrayList<>();
-        LocalDateTime date = LocalDateTime.now();
-        localDateTimes.add(date);
-        localDateTimes.add(date.plusMinutes(30));
+        List<Date> localDateTimes = new ArrayList<>();
+        Date date1 = new Date();
+        localDateTimes.add(date1);
+        Date date2 = new Date();
+        localDateTimes.add(date2);
         System.out.println(localDateTimes);
         ObjectMapper objectMapper = ObjectMapperFactory.get();
 
         String valueAsString = objectMapper.writeValueAsString(localDateTimes);
         System.out.println(valueAsString);
-        List<LocalDateTime> longList = objectMapper.convertValue(localDateTimes, new TypeReference<List<LocalDateTime>>() {
+        List<Date> longList = objectMapper.convertValue(localDateTimes, new TypeReference<List<Date>>() {
         });
         System.out.println(longList);
 

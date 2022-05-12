@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 
 /**
  * <h2>基本数据类型反序列化</h2>
@@ -25,10 +26,14 @@ public abstract class TypeDeserializer<T> extends JsonDeserializer<T> {
         int length = getType().length();
         String type = text.substring(0, length);
         if (!getType().equals(type)) {
-            throw CrowException.exception("类型映射错误，{} -- {}", getType(), type);
+            throw CrowException.exception("类型映射错误 -- {}", getType());
         }
         String value = text.substring(type.length());
-        return getResult(value);
+        try {
+            return getResult(value);
+        } catch (DateTimeParseException e) {
+            throw CrowException.exception("类型映射错误 -- {}", getType());
+        }
     }
 
 }
