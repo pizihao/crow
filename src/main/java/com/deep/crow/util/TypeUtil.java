@@ -49,7 +49,7 @@ public class TypeUtil {
     /**
      * <h2>筛选结果类型</h2>
      * 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
-     * 无匹配选项则抛出异常
+     * 无匹配选项则获得空集合
      *
      * @param l     结果集
      * @param clazz 目标类
@@ -131,19 +131,12 @@ public class TypeUtil {
          */
 
         if (type instanceof ParameterizedType) {
-            Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
-            boolean sign = false;
-            for (Type argument : arguments) {
-                sign = argument != String.class.getGenericSuperclass();
-            }
-            if (sign) {
-                CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
-                ObjectMapper objectMapper = ObjectMapperFactory.get();
-                for (Object o : l) {
-                    boolean match = isMatch(typeReference, o, objectMapper);
-                    if (match) {
-                        return (T) o;
-                    }
+            CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
+            ObjectMapper objectMapper = ObjectMapperFactory.get();
+            for (Object o : l) {
+                boolean match = isMatch(typeReference, o, objectMapper);
+                if (match) {
+                    return (T) o;
                 }
 
             }
@@ -326,7 +319,6 @@ public class TypeUtil {
                         return field;
                     }
                 }
-                // 如果obj中本来就存在数据，那么不予处理
             }
             return null;
         }
