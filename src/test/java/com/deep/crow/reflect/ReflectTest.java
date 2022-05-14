@@ -4,8 +4,10 @@ import com.deep.crow.ThreadPool;
 import com.deep.crow.model.Basic;
 import com.deep.crow.parallel.ParallelMulti;
 import com.deep.crow.serial.SerialMulti;
+import com.deep.crow.type.TypeBuilder;
 import com.esotericsoftware.reflectasm.MethodAccess;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
@@ -18,25 +20,24 @@ import java.util.function.Consumer;
 public class ReflectTest {
     public static void main(String[] args) {
         ExecutorService executorService = ThreadPool.executorService();
-        SerialMulti<Integer> serialMulti1 = SerialMulti.of(executorService, () -> 10)
-            .add(integer -> integer + 10);
-        SerialMulti<Integer> serialMulti2 = SerialMulti.of(executorService, () -> 20)
-            .add(integer -> integer + 20);
-        SerialMulti<Integer> serialMulti3 = SerialMulti.of(executorService, () -> 30)
-            .add(integer -> integer + 30);
+        List<String> str = ParallelMulti.of(executorService)
+            .add(() -> {
+                List<Integer> list = new ArrayList<>();
+                list.add(1);
+                return list;
+            })
+            .add(() -> {
+                List<String> list = new ArrayList<>();
+                list.add("Multi");
+                return list;
+            })
+            .add(() -> {
+                List<Thread> list = new ArrayList<>();
+                list.add(new Thread());
+                return list;
+            })
+            .get(TypeBuilder.list(String.class));
 
-        ParallelMulti parallelMulti = ParallelMulti.of(executorService)
-            .add(serialMulti1)
-            .add(serialMulti2)
-            .add(serialMulti3);
-
-        parallelMulti.thenRun(() -> System.out.println("处理完成"));
-        parallelMulti.thenExecList((Consumer<List<?>>) System.out::println);
-        String thenExecList = parallelMulti.thenExecList(objects -> {
-            System.out.println(objects);
-            return "执行完成";
-        });
-        System.out.println(thenExecList);
-
+        System.out.println(str);
     }
 }

@@ -11,7 +11,6 @@ public class Basic {
 
     List<String> strings;
     List<Integer> integers;
-    List<Integer> repeat;
     List<Double> doubles;
     List<Float> floats;
     List<Short> shorts;
@@ -92,20 +91,11 @@ public class Basic {
         this.booleans = booleans;
     }
 
-    public List<Integer> getRepeat() {
-        return repeat;
-    }
-
-    public void setRepeat(List<Integer> repeat) {
-        this.repeat = repeat;
-    }
-
     @Override
     public String toString() {
         return "Basic{" +
             "strings=" + strings +
             ", integers=" + integers +
-            ", repeat=" + repeat +
             ", doubles=" + doubles +
             ", floats=" + floats +
             ", shorts=" + shorts +

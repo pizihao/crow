@@ -15,7 +15,7 @@ import java.util.List;
 public class SeniorTypeUtilTest {
 
     public static void main(String[] args) {
-        packingCover();
+        parallelPacking();
     }
 
     private static void example() {

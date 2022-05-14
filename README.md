@@ -263,5 +263,236 @@ public static void main(String[] args) {
 
 ### 2，类型匹配
 
+类型匹配是针对串行化的执行会出现多个结果的情况进行优化，让并行化的结果获取更加便捷
+
+#### 1，Class匹配
+
+主要针对结果不存在泛型的情况，其优点是速度快，缺点是存在局限性不支持泛型
+
+示例：
+
+~~~java
+public static void main(String[] args) {
+    ExecutorService executorService = ThreadPool.executorService();
 
 
+    String str = ParallelMulti.of(executorService)
+        .add(() -> 12)
+        .add(() -> "Multi")
+        .add(() -> new Thread())
+        .get(String.class);
+
+    System.out.println(str);
+}
+// 结果
+// Multi
+~~~
+
+#### 2，Type匹配
+
+在兼容Class匹配的基础上支持对泛型的匹配，TypeBuilder被用于类型的构建
+
+示例：
+
+~~~java
+public static void main(String[] args) {
+    ExecutorService executorService = ThreadPool.executorService();
+    List<String> str = ParallelMulti.of(executorService)
+        .add(() -> {
+            List<Integer> list = new ArrayList<>();
+            list.add(1);
+            return list;
+        })
+        .add(() -> {
+            List<String> list = new ArrayList<>();
+            list.add("Multi");
+            return list;
+        })
+        .add(() -> {
+            List<Thread> list = new ArrayList<>();
+            list.add(new Thread());
+            return list;
+        })
+        .get(TypeBuilder.list(String.class));
+
+    System.out.println(str);
+}
+// 结果
+// [Multi]
+~~~
+
+#### 3，类型填充
+
+区别于类型匹配功能，是将一个并行化任务的结果按照类型和顺序的匹配关系直接填充到一个类中。
+
+示例：
+
+~~~java
+public class Basic {
+
+    List<String> strings;
+    List<Integer> integers;
+    List<Double> doubles;
+    List<Float> floats;
+    List<Short> shorts;
+    List<Byte> bytes;
+    List<Long> longs;
+    List<Character> characters;
+    List<Boolean> booleans;
+
+    public List<String> getStrings() {
+        return strings;
+    }
+
+    public void setStrings(List<String> strings) {
+        this.strings = strings;
+    }
+
+    public List<Integer> getIntegers() {
+        return integers;
+    }
+
+    public void setIntegers(List<Integer> integers) {
+        this.integers = integers;
+    }
+
+    public List<Double> getDoubles() {
+        return doubles;
+    }
+
+    public void setDoubles(List<Double> doubles) {
+        this.doubles = doubles;
+    }
+
+    public List<Float> getFloats() {
+        return floats;
+    }
+
+    public void setFloats(List<Float> floats) {
+        this.floats = floats;
+    }
+
+    public List<Short> getShorts() {
+        return shorts;
+    }
+
+    public void setShorts(List<Short> shorts) {
+        this.shorts = shorts;
+    }
+
+    public List<Byte> getBytes() {
+        return bytes;
+    }
+
+    public void setBytes(List<Byte> bytes) {
+        this.bytes = bytes;
+    }
+
+    public List<Long> getLongs() {
+        return longs;
+    }
+
+    public void setLongs(List<Long> longs) {
+        this.longs = longs;
+    }
+
+    public List<Character> getCharacters() {
+        return characters;
+    }
+
+    public void setCharacters(List<Character> characters) {
+        this.characters = characters;
+    }
+
+    public List<Boolean> getBooleans() {
+        return booleans;
+    }
+
+    public void setBooleans(List<Boolean> booleans) {
+        this.booleans = booleans;
+    }
+
+    @Override
+    public String toString() {
+        return "Basic{" +
+            "strings=" + strings +
+            ", integers=" + integers +
+            ", doubles=" + doubles +
+            ", floats=" + floats +
+            ", shorts=" + shorts +
+            ", bytes=" + bytes +
+            ", longs=" + longs +
+            ", characters=" + characters +
+            ", booleans=" + booleans +
+            '}';
+    }
+}
+// =================================================
+
+public static void main(String[] args) {
+
+    Basic basic = new Basic();
+    FixedMultiTools multiTools = new FixedMultiTools();
+    Basic instance = multiTools.parallelMulti()
+        .add(() -> {
+            List<Integer> integers = new ArrayList<>();
+            integers.add(1);
+            integers.add(777);
+            return integers;
+        }).add(() -> {
+        List<String> strings = new ArrayList<>();
+        strings.add("123");
+        strings.add("456");
+        return strings;
+    }).add(() -> {
+        List<Double> doubles = new ArrayList<>();
+        doubles.add(1.20001);
+        doubles.add(20.220002);
+        return doubles;
+    }).add(() -> {
+        List<Float> floats = new ArrayList<>();
+        floats.add(1.1f);
+        floats.add(1.556f);
+        return floats;
+    }).add(() -> {
+        List<Short> shorts = new ArrayList<>();
+        shorts.add((short) 4);
+        shorts.add((short) 1288);
+        return shorts;
+    }).add(() -> {
+        List<Byte> bytes = new ArrayList<>();
+        bytes.add((byte) 125);
+        bytes.add((byte) 15);
+        return bytes;
+    }).add(() -> {
+        List<Long> longs = new ArrayList<>();
+        longs.add(45L);
+        longs.add(45487L);
+        return longs;
+    }).add(() -> {
+        List<Character> characters = new ArrayList<>();
+        characters.add('a');
+        characters.add('Z');
+        return characters;
+    }).add(() -> {
+        List<Boolean> booleans = new ArrayList<>();
+        booleans.add(true);
+        booleans.add(false);
+        return booleans;
+    }).add(() -> {
+        List<Integer> integers = new ArrayList<>();
+        integers.add(2);
+        integers.add(888);
+        return integers;
+    })
+        .getForInstance(basic);
+    System.out.println(instance);
+
+}
+// 结果:
+// Basic{strings=[123, 456], integers=[1, 777], doubles=[1.20001, 20.220002], floats=[1.1, 1.556], shorts=[4, 1288], bytes=[125, 15], longs=[45, 45487], characters=[a, Z], booleans=[true, false]}
+~~~
+
+## 其他
+
+FixedMultiTools和MultiTools
