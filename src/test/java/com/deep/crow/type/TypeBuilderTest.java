@@ -19,13 +19,17 @@ public class TypeBuilderTest {
             .build();
         System.out.println(list.getTypeName());
 
+        Type build = TypeBuilder.make(Map.class)
+            .add(String.class)
+            .add(Integer.class)
+            .build();
+        System.out.println(build);
+
         Type map = TypeBuilder.make(Map.class)
             .add(Integer.class)
             .add(User.class)
             .build();
         System.out.println(map.getTypeName());
-
-
         Type list0 = TypeBuilder.make(Map.class)
             .add(Integer.class)
             .nested(List.class)
@@ -33,17 +37,9 @@ public class TypeBuilderTest {
             .parent()
             .build();
         System.out.println(list0.getTypeName());
-
         Type list1 = TypeBuilder.make(User.class)
             .build();
         System.out.println(list1.getTypeName());
-
-        Type list2 = TypeBuilder.make(List.class)
-            .add(Integer.class)
-            .add(User.class)
-            .build();
-        System.out.println(list2.getTypeName());
-
     }
 
 }

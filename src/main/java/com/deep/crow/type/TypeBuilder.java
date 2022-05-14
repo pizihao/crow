@@ -172,13 +172,13 @@ public class TypeBuilder {
 
     public TypeBuilder addExtends(Class<?>... classes) {
         Objects.requireNonNull(classes);
-        WildcardTypeImpl wildcardType = WildcardTypeImpl.make(null, classes);
+        WildcardTypeImpl wildcardType = new WildcardTypeImpl(null, classes);
         return add(wildcardType);
     }
 
     public TypeBuilder addSuper(Class<?>... classes) {
         Objects.requireNonNull(classes);
-        WildcardTypeImpl wildcardType = WildcardTypeImpl.make(classes, null);
+        WildcardTypeImpl wildcardType = new WildcardTypeImpl(classes, null);
         return add(wildcardType);
     }
 

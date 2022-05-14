@@ -15,61 +15,90 @@ import java.util.Arrays;
  */
 @SuppressWarnings("unused")
 public class WildcardTypeImpl implements WildcardType {
-    private final Type[] upperBounds;
-    private final Type[] lowerBounds;
+    private final Class<?>[] upper;
+    private final Class<?>[] lower;
 
-    private WildcardTypeImpl(Type[] upper, Type[] lower) {
-        this.upperBounds = upper;
-        this.lowerBounds = lower;
+    public WildcardTypeImpl(Class<?>[] lower, Class<?>[] upper) {
+        this.lower = lower != null ? lower : new Class[0];
+        this.upper = upper != null ? upper : new Class[0];
+
+        checkArgs();
     }
 
-    public static WildcardTypeImpl make(Type[] upper, Type[] lower) {
-        return new WildcardTypeImpl(upper, lower);
+    private void checkArgs() {
+        if (lower.length == 0 && upper.length == 0) {
+            throw new IllegalArgumentException("lower or upper can't be null");
+        }
+
+        checkArgs(lower);
+        checkArgs(upper);
+    }
+
+    private void checkArgs(Class<?>[] args) {
+        for (int i = 1; i < args.length; i++) {
+            Class<?> clazz = args[i];
+            if (!clazz.isInterface()) {
+                throw new IllegalArgumentException(clazz.getName() + " not a interface!");
+            }
+        }
     }
 
     @Override
     public Type[] getUpperBounds() {
-        return this.upperBounds.clone();
+        return upper;
     }
 
     @Override
     public Type[] getLowerBounds() {
-        return this.lowerBounds.clone();
+        return lower;
     }
 
-    public boolean equals(Object obj) {
-        if (!(obj instanceof WildcardType)) {
-            return false;
-        } else {
-            WildcardType wildcardType = (WildcardType) obj;
-            return Arrays.equals(this.upperBounds, wildcardType.getUpperBounds())
-                && Arrays.equals(this.lowerBounds, wildcardType.getLowerBounds());
-        }
-    }
-
-    public int hashCode() {
-        return Arrays.hashCode(this.upperBounds) ^ Arrays.hashCode(this.lowerBounds);
-    }
-
+    @Override
     public String toString() {
-        StringBuilder stringBuilder;
-        Type[] types;
-        if (this.lowerBounds.length == 0) {
-            if (this.upperBounds.length == 0 || Object.class == this.upperBounds[0]) {
+        if (upper.length > 0) {
+            if (upper[0] == Object.class) {
                 return "?";
             }
-            types = this.upperBounds;
-            stringBuilder = new StringBuilder("? extends ");
+            return getTypeString("? extends ", upper);
         } else {
-            types = this.lowerBounds;
-            stringBuilder = new StringBuilder("? super ");
+            return getTypeString("? super ", lower);
         }
-        for (int i = 0; i < types.length; ++i) {
-            if (i > 0) {
-                stringBuilder.append(" & ");
+    }
+
+    private String getTypeString(String prefix, Class<?>[] type) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(prefix);
+
+        for (int i = 0; i < type.length; i++) {
+            if (i != 0) {
+                sb.append(" & ");
             }
-            stringBuilder.append(types[i] instanceof Class ? ((Class<?>) types[i]).getName() : types[i].toString());
+            sb.append(type[i].getName());
         }
-        return stringBuilder.toString();
+
+        return sb.toString();
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        WildcardTypeImpl that = (WildcardTypeImpl) o;
+
+        return Arrays.equals(upper, that.upper) && Arrays.equals(lower, that.lower);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Arrays.hashCode(upper);
+        result = 31 * result + Arrays.hashCode(lower);
+        return result;
     }
 }

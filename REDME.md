@@ -2,7 +2,9 @@
 
 基于CompletableFuture对多线程串行化执行的扩展和精简，通过组合的关系避开CompletableFuture中复杂的逻辑结构，并精炼出其核心常用的功能进行扩展。简化CompletableFuture的串行化执行方式，对CompletableFuture并行化执行结果的后去方式进行扩充，并将两者进行结合，实现串行化和并行化的互相转化。
 
-使用
+
+
+快速使用
 ---
 
 引入依赖：
@@ -144,7 +146,122 @@ A --> B --> G
 同样可以使用ParallelMulti来实现上述模型的机制：
 
 ~~~java
+public static void main(String[] args) {
+    ExecutorService executorService = ThreadPool.executorService();
+    SerialMulti<Integer> serialMulti1 = SerialMulti.of(executorService, () -> 10)
+        .add(integer -> integer + 10);
+    SerialMulti<Integer> serialMulti2 = SerialMulti.of(executorService, () -> 20)
+        .add(integer -> integer + 20);
+    SerialMulti<Integer> serialMulti3 = SerialMulti.of(executorService, () -> 30)
+        .add(integer -> integer + 30);
+
+    List<?> objects = ParallelMulti.of(executorService)
+        .add(serialMulti1)
+        .add(serialMulti2)
+        .add(serialMulti3)
+        .resultList();
+
+    System.out.println(objects);
+
+}
+// 结果：
+// [20, 40, 60]
 ~~~
+
+#### 2，有交集并行化
+
+~~~mermaid
+graph LR
+A --> D --> E --> H
+A --> C --> F --> H
+A --> B --> G --> H
+~~~
+
+以上仅是一个简略的模型，A同样可以看作是一个无意义的节点，三组并行执行的任务最终都汇聚向了H，H之后可能也会存在任务，此时A->H这个模型就可以看成是一个串行化结构的一个节点。这也是一种复杂的串行化模型
+
+在ParallelMulti存在交集处理的方法：
+
+~~~java
+public static void main(String[] args) {
+    ExecutorService executorService = ThreadPool.executorService();
+    SerialMulti<Integer> serialMulti1 = SerialMulti.of(executorService, () -> 10)
+        .add(integer -> integer + 10);
+    SerialMulti<Integer> serialMulti2 = SerialMulti.of(executorService, () -> 20)
+        .add(integer -> integer + 20);
+    SerialMulti<Integer> serialMulti3 = SerialMulti.of(executorService, () -> 30)
+        .add(integer -> integer + 30);
+
+    ParallelMulti parallelMulti = ParallelMulti.of(executorService)
+        .add(serialMulti1)
+        .add(serialMulti2)
+        .add(serialMulti3);
+
+    parallelMulti.thenRun(() -> System.out.println("处理完成"));
+    parallelMulti.thenExecList((Consumer<List<?>>) System.out::println);
+    String thenExecList = parallelMulti.thenExecList(objects -> {
+        System.out.println(objects);
+        return "执行完成";
+    });
+    System.out.println(thenExecList);
+
+}
+// 结果
+// 处理完成
+// [20, 40, 60]
+// [20, 40, 60]
+// 执行完成
+~~~
+
+## 更多
+
+### 1，泛型支持
+
+参考：[TypeBuilder](https://github.com/ikidou/TypeBuilder)，提供了快速创建泛型的方式，包含对泛型上限和下限的控制和泛型嵌套的控制。
+
+1. 创建一个List<Integer\>
+
+   ~~~java
+   Type build = TypeBuilder.make(List.class)
+       .add(Integer.class)
+       .build();
+   ~~~
+
+2. 创建一个List<？super Integer\>
+
+   ~~~java
+   Type build = TypeBuilder.make(List.class)
+       .addSuper(Integer.class)
+       .build();
+   ~~~
+
+3. 创建一个Map<String, Integer\>，对于多个泛型的类来说，类型被确定的顺序就是泛型的顺序，如下：String会成为key，Integer会成为value
+
+   ~~~java
+   Type build = TypeBuilder.make(Map.class)
+       .add(String.class)
+       .add(Integer.class)
+       .build();
+   ~~~
+
+4. 创建一个Map<String, List<Integer\>>，通过一个嵌套结构控制嵌套的泛型关系
+
+   ~~~java
+   Type build = TypeBuilder.make(Map.class)
+       .add(String.class)
+       .nested(List.class)
+       .add(Integer.class)
+       .parent()
+       .build();
+   ~~~
+
+5. 创建一个String，如果不执行泛型则直接创建一个和Class兼容的类型
+
+   ~~~java
+   Type build = TypeBuilder.make(Integer.class)
+       .build();
+   ~~~
+
+### 2，类型匹配
 
 
 
