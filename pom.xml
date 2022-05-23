@@ -4,9 +4,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.pizihao</groupId>
     <artifactId>crow</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>crow</name>
     <description>A black crow</description>
+    <url>https://github.com/pizihao/crow</url>
     <properties>
         <java.version>1.8</java.version>
     </properties>
@@ -41,7 +42,7 @@
     <scm>
         <connection>scm:git:git@github.com:pizihao/crow.git</connection>
         <developerConnection>scm:git:git@github.com:pizihao/crow.git</developerConnection>
-        <url>git@github.com:pizihao/crow.git</url>
+        <url>https://github.com/pizihao/crow</url>
     </scm>
 
     <!-- issue -->
@@ -63,7 +64,7 @@
     </developers>
 
     <build>
-        <pluginManagement>
+<!--        <pluginManagement>-->
             <plugins>
                 <!-- 编译插件 -->
                 <plugin>
@@ -75,7 +76,6 @@
                         <target>1.8</target>
                     </configuration>
                 </plugin>
-
                 <!-- Javadoc -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -83,6 +83,9 @@
                     <version>3.1.1</version>
                     <executions>
                         <execution>
+                            <configuration>
+                                <doclint>none</doclint>
+                            </configuration>
                             <phase>package</phase>
                             <goals>
                                 <goal>jar</goal>
@@ -90,48 +93,39 @@
                         </execution>
                     </executions>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M6</version>
+                    <configuration>
+                        <argLine>-Xmx1024m</argLine>
+                    </configuration>
+                </plugin>
             </plugins>
-        </pluginManagement>
+<!--        </pluginManagement>-->
     </build>
 
 
     <profiles>
         <profile>
             <id>release</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>oss</id>
-                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                    <id>oss</id>
-                    <url>https://s01.oss.sonatype.orgservice/local/staging/deploy/maven2</url>
-                </repository>
-            </distributionManagement>
             <build>
-                <pluginManagement>
+<!--                <pluginManagement>-->
                     <plugins>
                         <!-- Source -->
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
-<!--                            <artifactId>maven-source-plugin</artifactId>-->
-                            <artifactId>maven-release-plugin</artifactId>
-                            <version>2.5.3</version>
-<!--                            <executions>-->
-<!--                                <execution>-->
-<!--                                    <id>oss</id>-->
-<!--                                    <phase>package</phase>-->
-<!--                                    <goals>-->
-<!--                                        <goal>jar-no-fork</goal>-->
-<!--                                    </goals>-->
-<!--                                </execution>-->
-<!--                            </executions>-->
-                            <configuration>
-                                <autoVersionSubmodules>true</autoVersionSubmodules>
-                                <useReleaseProfile>false</useReleaseProfile>
-                                <releaseProfiles>release</releaseProfiles>
-                                <goals>deploy</goals>
-                            </configuration>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>3.2.1</version>
+                            <executions>
+                                <execution>
+                                    <id>oss</id>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>jar-no-fork</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
                         </plugin>
                         <!-- Gpg Signature -->
                         <plugin>
@@ -156,11 +150,26 @@
                             <configuration>
                                 <serverId>oss</serverId>
                                 <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
+                                <autoReleaseAfterClose>false</autoReleaseAfterClose>
                             </configuration>
                         </plugin>
                     </plugins>
-                </pluginManagement>
+<!--                </pluginManagement>-->
             </build>
+
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>oss</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>oss</id>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+            <properties>
+                <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+            </properties>
         </profile>
     </profiles>
 </project>
