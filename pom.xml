@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.pizihao</groupId>
     <artifactId>crow</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.3-SNAPSHOT</version>
     <name>crow</name>
     <description>A black crow</description>
     <properties>
@@ -71,8 +71,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.8.1</version>
                     <configuration>
-                        <source>${maven.compiler.source}</source>
-                        <target>${maven.compiler.target}</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                     </configuration>
                 </plugin>
 
@@ -114,17 +114,24 @@
                         <!-- Source -->
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>3.0.1</version>
-                            <executions>
-                                <execution>
-                                    <id>oss</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>jar-no-fork</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
+<!--                            <artifactId>maven-source-plugin</artifactId>-->
+                            <artifactId>maven-release-plugin</artifactId>
+                            <version>2.5.3</version>
+<!--                            <executions>-->
+<!--                                <execution>-->
+<!--                                    <id>oss</id>-->
+<!--                                    <phase>package</phase>-->
+<!--                                    <goals>-->
+<!--                                        <goal>jar-no-fork</goal>-->
+<!--                                    </goals>-->
+<!--                                </execution>-->
+<!--                            </executions>-->
+                            <configuration>
+                                <autoVersionSubmodules>true</autoVersionSubmodules>
+                                <useReleaseProfile>false</useReleaseProfile>
+                                <releaseProfiles>release</releaseProfiles>
+                                <goals>deploy</goals>
+                            </configuration>
                         </plugin>
                         <!-- Gpg Signature -->
                         <plugin>
@@ -149,7 +156,6 @@
                             <configuration>
                                 <serverId>oss</serverId>
                                 <nexusUrl>https://s01.oss.sonatype.org</nexusUrl>
-                                <autoReleaseAfterClose>true</autoReleaseAfterClose>
                             </configuration>
                         </plugin>
                     </plugins>
