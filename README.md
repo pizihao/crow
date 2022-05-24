@@ -19,7 +19,7 @@
 
 ### 串行化
 
-通过本项目进行串行话的任务执行有两中方式：
+通过本项目进行串行话的任务执行有两种方式：
 
 串行化的执行过程如下图所示：
 
@@ -43,7 +43,7 @@ public static void main(String[] args) {
         .join();
     System.out.println(join);
 }
-// 输入：
+// 结果为：
 // 5
 // 31
 ~~~
@@ -93,7 +93,7 @@ public static void main(String[] args) {
 // 测试
 ~~~
 
-SerialMulti是对Multi的简单疯转，仅仅包含有关串行化的核心方法，如thenApply，thenAccept，thenRun和exceptionally
+SerialMulti是对Multi的简单封装，仅仅包含有关串行化的核心方法，如thenApply，thenAccept，thenRun和exceptionally
 
 ### 并行化
 
