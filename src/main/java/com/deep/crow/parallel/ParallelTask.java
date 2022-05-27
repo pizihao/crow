@@ -1,13 +1,14 @@
 package com.deep.crow.parallel;
 
 import com.deep.crow.multi.Multi;
+import com.deep.crow.task.Task;
 
 /**
  * <h2>并行任务</h2>
  *
  * @author Create by liuwenhao on 2022/4/11 11:38
  */
-interface ParallelTask {
+interface ParallelTask extends Task {
 
     /**
      * <h2>将任务装配到Multi中</h2>

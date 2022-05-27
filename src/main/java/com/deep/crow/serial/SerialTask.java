@@ -1,6 +1,7 @@
 package com.deep.crow.serial;
 
 import com.deep.crow.multi.Multi;
+import com.deep.crow.task.Task;
 
 
 /**
@@ -9,7 +10,7 @@ import com.deep.crow.multi.Multi;
  *
  * @author Create by liuwenhao on 2022/4/11 10:03
  */
-interface SerialTask<T> {
+interface SerialTask<T> extends Task {
 
     /**
      * <h2>追加一个任务</h2>
