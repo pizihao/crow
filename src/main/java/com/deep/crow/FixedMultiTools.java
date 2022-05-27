@@ -30,6 +30,16 @@ public class FixedMultiTools {
         this.executorService = executorService;
     }
 
+    // ================================Builder====================================
+
+    public static FixedMultiTools builder(ExecutorService executorService) {
+        return new FixedMultiTools(executorService);
+    }
+
+    public static FixedMultiTools builder() {
+        return new FixedMultiTools();
+    }
+
     // ================================Multi====================================
 
     /**
@@ -68,8 +78,6 @@ public class FixedMultiTools {
         return MultiTools.supplyAsync(executorService, supplier);
     }
 
-    // ================================SerialMulti====================================
-
     /**
      * <h2>创建一个Multi</h2>
      *
@@ -93,6 +101,8 @@ public class FixedMultiTools {
         return MultiHelper.create(executorService);
     }
 
+    // ================================SerialMulti====================================
+
     public <T> SerialMulti<T> serialMulti() {
         return SerialMulti.of(executorService);
     }
@@ -101,21 +111,21 @@ public class FixedMultiTools {
         return SerialMulti.of(executorService, supplier);
     }
 
-    // ================================ParallelMulti====================================
-
     public SerialMulti<Void> serialMulti(Runnable runnable) {
         return SerialMulti.of(executorService, runnable);
     }
-
-    // ======================================操作=========================================
 
     public <T> SerialMulti<T> serialMulti(Multi<T> multi) {
         return SerialMulti.of(multi);
     }
 
+    // ================================ParallelMulti====================================
+
     public ParallelMulti parallelMulti() {
         return ParallelMulti.of(executorService);
     }
+
+    // ======================================操作=========================================
 
     /**
      * <h2>等待两个Multi执行完成，并使用其结果执行任务</h2>
