@@ -11,9 +11,9 @@
 
 ~~~xml
 <dependency>
-    <groupId>com.deep.crow</groupId>
+    <groupId>io.github.pizihao</groupId>
     <artifactId>crow</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 </dependency>
 ~~~
 
@@ -95,6 +95,8 @@ public static void main(String[] args) {
 
 SerialMulti是对Multi的简单封装，仅仅包含有关串行化的核心方法，如thenApply，thenAccept，thenRun和exceptionally
 
+
+
 ### 并行化
 
 并行化的执行过程如下图所示：
@@ -168,6 +170,8 @@ public static void main(String[] args) {
 // [20, 40, 60]
 ~~~
 
+注意：ParallelMulti再执行时并不会保留中间过程的结果
+
 #### 2，有交集并行化
 
 ~~~mermaid
@@ -211,6 +215,45 @@ public static void main(String[] args) {
 // [20, 40, 60]
 // 执行完成
 ~~~
+
+### 任务调用顺序
+
+在由一个根节点触发的多元化串行化的执行方法中，如果存在一个较长的链状调用，并且每个任务的执行时间都较长的话，会形成一个“先来后执行”的调用结构，这不同于一般的串行化和并行化结构，其本质依然是并行化，但是和并行化有着完全不同的任务调用顺序，比如：存在这样的几个任务，A，B，C，D，E，F，G
+
+> A为根节点，由A衍生出B,C,D。如下图：
+
+~~~mermaid
+graph LR
+A --> B
+A --> C
+A --> D
+~~~
+
+正常情况上看这是一个简单的并行化模型，在crow的简化下，这个链的执行顺序为B –> C -> D，并行化的结构下A只是BCD为一个组的象征，没有任何意义，当A有了实际的功能，A就成为了BCD三个任务的交点，如果按照装入顺序为B -> C -> D来看的话最终的调用顺序就是 A -> D -> C -> B，这是在每个任务的执行时间都较长的情况下。而经过这样的转化就无法通过转入的索引值来获取返回结果。
+
+> 如果加入E，F，G在转入顺序是这样的情况下：
+
+~~~mermaid
+graph LR
+A --> B --> E
+A --> C --> F
+A --> D --> G
+~~~
+
+考虑到正常业务中的方法耗时，其调用顺序是这样的：
+
+~~~mermaid
+graph LR
+A --> D --> G
+A --> C --> F
+A --> B --> E
+D --> C
+C --> B
+~~~
+
+A -> D -> G -> C -> F -> B -> E,这种情况在单纯的串行化和并行化调用中并不会存在，如果试图在一个Multi上建立分支，如上图中的A -> B -> E 和 A -> C -> F 的关系，当然 Multi是支持这种情况的，不过这样的组织结构会让代码变得更加凌乱
+
+> 如果出现了上述的业务情况，可以使用ParallelMulti来代替Multi，即A和B，C，D，E，F，G 区分来看，将B，C，D，E，F，G合并为一个ParallelMult此处使用P来表示。其和无交集并行化的结构相似，这样就可以使用SerialMulti来构建模型了，其结构为：A -> Z
 
 ## 更多
 

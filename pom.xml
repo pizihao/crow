@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.pizihao</groupId>
     <artifactId>crow</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.5</version>
     <name>crow</name>
     <description>A black crow</description>
     <url>https://github.com/pizihao/crow</url>
@@ -96,7 +96,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.0.0-M6</version>
+                    <version>3.0.0-M5</version>
                     <configuration>
                         <argLine>-Xmx1024m</argLine>
                     </configuration>
