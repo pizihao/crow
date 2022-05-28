@@ -243,6 +243,28 @@ UniApply是UniCompletion的子类，UniCompletion是Completion的子类。
 
 最终(b，c，d).src = A，A.stack = d，D.stack = g。g.next = C。。。依次类推整个CompletableFuture就执行完成了。
 
+### 任务之间的关联
+
+> 如下图的任务执行：
+
+~~~mermaid
+graph LR
+A --> B --> D --> G --> J --> M --> O
+A --> C --> E --> H --> K --> M 
+C --> F --> I --> L --> N --> O
+I --> K
+
+~~~
+
+​	其中出现了分叉和交汇的情况，这可以归类为一种行为，如A --> B 和A --> C 这一步可以看成是A的分叉行为、H--> K和I --> K这一步可以看成是任务的交汇行为，其特点是有共同的起点或是共同的终点，且在一个步长内结束。
+
+​	那么现在可以使用一个对象去概括这两种行为，如分叉：
+
+~~~java
+~~~
+
+
+
 
 
 
