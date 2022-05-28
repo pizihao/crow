@@ -24,6 +24,7 @@ public class MultiTools {
     private MultiTools() {
     }
 
+
     /**
      * <h2>创建一个Multi</h2>
      *
@@ -61,6 +62,50 @@ public class MultiTools {
     public static <T> Multi<T> create(ExecutorService executorService) {
         return MultiHelper.create(executorService);
     }
+
+
+    // ================================SerialMulti====================================
+
+    public static <T> SerialMulti<T> serialMulti(ExecutorService executorService) {
+        return SerialMulti.of(executorService);
+    }
+
+    public static <T> SerialMulti<T> serialMulti() {
+        return SerialMulti.of();
+    }
+
+    public static <T> SerialMulti<T> serialMulti(ExecutorService executorService, Supplier<T> supplier) {
+        return SerialMulti.of(executorService, supplier);
+    }
+
+    public static <T> SerialMulti<T> serialMulti(Supplier<T> supplier) {
+        return SerialMulti.of(supplier);
+    }
+
+    public static SerialMulti<Void> serialMulti(ExecutorService executorService, Runnable runnable) {
+        return SerialMulti.of(executorService, runnable);
+    }
+
+    public static SerialMulti<Void> serialMulti(Runnable runnable) {
+        return SerialMulti.of(runnable);
+    }
+
+    public static <T> SerialMulti<T> serialMulti(Multi<T> multi) {
+        return SerialMulti.of(multi);
+    }
+
+    // ================================ParallelMulti====================================
+
+    public static ParallelMulti parallelMulti(ExecutorService executorService) {
+        return ParallelMulti.of(executorService);
+    }
+
+    public static ParallelMulti parallelMulti() {
+        return ParallelMulti.of();
+    }
+
+
+    // ================================操作====================================
 
     /**
      * <h2>等待两个Multi执行完成，并使用其结果执行任务</h2>
