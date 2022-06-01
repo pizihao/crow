@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.pizihao</groupId>
     <artifactId>crow</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
     <name>crow</name>
     <description>A black crow</description>
     <url>https://github.com/pizihao/crow</url>
