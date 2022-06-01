@@ -195,7 +195,7 @@ public class TypeUtil {
      */
     public static <T> void fillInstance(Iterable<?> l, T t, boolean isCover) {
         FieldAccess fieldAccess = FieldAccess.get(t.getClass());
-        Set<Field> fields = Arrays.stream(fieldAccess.getFields()).collect(Collectors.toSet());
+        List<Field> fields = new ArrayList<>(Arrays.asList(fieldAccess.getFields()));
 
         for (Object o : l) {
             TypeMatching typeMatching = new TypeMatching(fields, o, fieldAccess, isCover);
@@ -267,7 +267,7 @@ public class TypeUtil {
         /**
          * 字段集
          */
-        Set<Field> fields;
+        List<Field> fields;
 
         /**
          * 实例对象
@@ -284,7 +284,7 @@ public class TypeUtil {
          */
         boolean isCover;
 
-        public TypeMatching(Set<Field> fields, Object o,
+        public TypeMatching(List<Field> fields, Object o,
                             FieldAccess fieldAccess, boolean isCover) {
             this.fields = fields;
             this.o = o;
@@ -292,7 +292,7 @@ public class TypeUtil {
             this.fieldAccess = fieldAccess;
         }
 
-        public TypeMatching(Set<Field> fields, Object o,
+        public TypeMatching(List<Field> fields, Object o,
                             FieldAccess fieldAccess) {
             this(fields, o, fieldAccess, false);
         }
