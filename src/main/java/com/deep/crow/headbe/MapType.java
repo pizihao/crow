@@ -9,7 +9,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * <h2>映射集合校验器</h2>
+ * <h2>映射集合压缩器</h2>
  *
  * @author Create by liuwenhao on 2022/6/2 15:48
  */

@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <h2>类型校验器辅助</h2>
+ * <h2>类型压缩器辅助</h2>
  *
  * @author Create by liuwenhao on 2022/6/2 16:09
  */
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NestedTypeHelper {
 
     /*
-     * 类型和校验器的映射关系
+     * 类型和压缩器的映射关系
      */
     private static final Map<Class<?>, Class<? extends NestedType>> nestedTypeMap = new ConcurrentHashMap<>();
 
@@ -29,7 +29,7 @@ public class NestedTypeHelper {
     }
 
     /**
-     * <h2>通过类型获取一组校验器</h2>
+     * <h2>通过类型获取一组压缩器</h2>
      *
      * @param type         类型
      * @param o            需要判断的对象
@@ -45,7 +45,7 @@ public class NestedTypeHelper {
     }
 
     /**
-     * <h2>通过类型获取一组校验器</h2>
+     * <h2>通过类型获取一组压缩器</h2>
      *
      * @param type         类型
      * @param o            需要判断的对象
@@ -70,9 +70,9 @@ public class NestedTypeHelper {
     }
 
     /**
-     * <h2>添加一组校验器映射</h2>
+     * <h2>添加一组压缩器映射</h2>
      * 高级别的抽象会覆盖低级别的抽象<br>
-     * 所以注册的校验器不一定会生效
+     * 所以注册的压缩器不一定会生效
      *
      * @param key   键
      * @param value 值

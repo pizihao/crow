@@ -375,6 +375,8 @@ public static void main(String[] args) {
 示例：
 
 ~~~java
+@Data
+@ToString
 public class Basic {
 
     List<String> strings;
@@ -387,92 +389,6 @@ public class Basic {
     List<Character> characters;
     List<Boolean> booleans;
 
-    public List<String> getStrings() {
-        return strings;
-    }
-
-    public void setStrings(List<String> strings) {
-        this.strings = strings;
-    }
-
-    public List<Integer> getIntegers() {
-        return integers;
-    }
-
-    public void setIntegers(List<Integer> integers) {
-        this.integers = integers;
-    }
-
-    public List<Double> getDoubles() {
-        return doubles;
-    }
-
-    public void setDoubles(List<Double> doubles) {
-        this.doubles = doubles;
-    }
-
-    public List<Float> getFloats() {
-        return floats;
-    }
-
-    public void setFloats(List<Float> floats) {
-        this.floats = floats;
-    }
-
-    public List<Short> getShorts() {
-        return shorts;
-    }
-
-    public void setShorts(List<Short> shorts) {
-        this.shorts = shorts;
-    }
-
-    public List<Byte> getBytes() {
-        return bytes;
-    }
-
-    public void setBytes(List<Byte> bytes) {
-        this.bytes = bytes;
-    }
-
-    public List<Long> getLongs() {
-        return longs;
-    }
-
-    public void setLongs(List<Long> longs) {
-        this.longs = longs;
-    }
-
-    public List<Character> getCharacters() {
-        return characters;
-    }
-
-    public void setCharacters(List<Character> characters) {
-        this.characters = characters;
-    }
-
-    public List<Boolean> getBooleans() {
-        return booleans;
-    }
-
-    public void setBooleans(List<Boolean> booleans) {
-        this.booleans = booleans;
-    }
-
-    @Override
-    public String toString() {
-        return "Basic{" +
-            "strings=" + strings +
-            ", integers=" + integers +
-            ", doubles=" + doubles +
-            ", floats=" + floats +
-            ", shorts=" + shorts +
-            ", bytes=" + bytes +
-            ", longs=" + longs +
-            ", characters=" + characters +
-            ", booleans=" + booleans +
-            '}';
-    }
 }
 // =================================================
 
@@ -487,51 +403,51 @@ public static void main(String[] args) {
             integers.add(777);
             return integers;
         }).add(() -> {
-        List<String> strings = new ArrayList<>();
-        strings.add("123");
-        strings.add("456");
-        return strings;
-    }).add(() -> {
-        List<Double> doubles = new ArrayList<>();
-        doubles.add(1.20001);
-        doubles.add(20.220002);
-        return doubles;
-    }).add(() -> {
-        List<Float> floats = new ArrayList<>();
-        floats.add(1.1f);
-        floats.add(1.556f);
-        return floats;
-    }).add(() -> {
-        List<Short> shorts = new ArrayList<>();
-        shorts.add((short) 4);
-        shorts.add((short) 1288);
-        return shorts;
-    }).add(() -> {
-        List<Byte> bytes = new ArrayList<>();
-        bytes.add((byte) 125);
-        bytes.add((byte) 15);
-        return bytes;
-    }).add(() -> {
-        List<Long> longs = new ArrayList<>();
-        longs.add(45L);
-        longs.add(45487L);
-        return longs;
-    }).add(() -> {
-        List<Character> characters = new ArrayList<>();
-        characters.add('a');
-        characters.add('Z');
-        return characters;
-    }).add(() -> {
-        List<Boolean> booleans = new ArrayList<>();
-        booleans.add(true);
-        booleans.add(false);
-        return booleans;
-    }).add(() -> {
-        List<Integer> integers = new ArrayList<>();
-        integers.add(2);
-        integers.add(888);
-        return integers;
-    })
+            List<String> strings = new ArrayList<>();
+            strings.add("123");
+            strings.add("456");
+            return strings;
+        }).add(() -> {
+            List<Double> doubles = new ArrayList<>();
+            doubles.add(1.20001);
+            doubles.add(20.220002);
+            return doubles;
+        }).add(() -> {
+            List<Float> floats = new ArrayList<>();
+            floats.add(1.1f);
+            floats.add(1.556f);
+            return floats;
+        }).add(() -> {
+            List<Short> shorts = new ArrayList<>();
+            shorts.add((short) 4);
+            shorts.add((short) 1288);
+            return shorts;
+        }).add(() -> {
+            List<Byte> bytes = new ArrayList<>();
+            bytes.add((byte) 125);
+            bytes.add((byte) 15);
+            return bytes;
+        }).add(() -> {
+            List<Long> longs = new ArrayList<>();
+            longs.add(45L);
+            longs.add(45487L);
+            return longs;
+        }).add(() -> {
+            List<Character> characters = new ArrayList<>();
+            characters.add('a');
+            characters.add('Z');
+            return characters;
+        }).add(() -> {
+            List<Boolean> booleans = new ArrayList<>();
+            booleans.add(true);
+            booleans.add(false);
+            return booleans;
+        }).add(() -> {
+            List<Integer> integers = new ArrayList<>();
+            integers.add(2);
+            integers.add(888);
+            return integers;
+        })
         .getForInstance(basic);
     System.out.println(instance);
 
@@ -539,6 +455,10 @@ public static void main(String[] args) {
 // 结果:
 // Basic{strings=[123, 456], integers=[1, 777], doubles=[1.20001, 20.220002], floats=[1.1, 1.556], shorts=[4, 1288], bytes=[125, 15], longs=[45, 45487], characters=[a, Z], booleans=[true, false]}
 ~~~
+
+### 4，类型压缩器
+
+类型压缩器用于将一个大型的对象压缩为一个完全兼容的小型的对象，从而可以更快速的进行序列化。
 
 ## 其他
 
