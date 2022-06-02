@@ -3,7 +3,7 @@ package com.deep.crow.parallel;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
-import com.deep.crow.util.TypeUtil;
+import com.deep.crow.headbe.TypeUtil;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

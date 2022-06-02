@@ -1,18 +1,17 @@
-package com.deep.crow.util;
+package com.deep.crow.headbe;
 
 import com.deep.crow.exception.CrowException;
 import com.deep.crow.jackson.ObjectMapperFactory;
+import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.type.ParameterizedTypeImpl;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.FieldAccess;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * <h2>类型填充工具类</h2>
@@ -334,40 +333,10 @@ public class TypeUtil {
          */
         private boolean isAccordWith(Field field, ObjectMapper objectMapper) {
             Type type = field.getGenericType();
-            if (type instanceof ParameterizedType) {
-                // 参数化类型的情况
-                ParameterizedType parameterizedType = (ParameterizedType) type;
-                CrowTypeReference<?> typeReference = CrowTypeReference.make(parameterizedType);
-                return isMatch(typeReference, o, objectMapper);
-            } else {
-                // 普通类型的情况
-                return field.getType().isInstance(o);
-            }
+            NestedType nestedType = NestedTypeHelper.getType(type, o, objectMapper);
+            return nestedType.check();
         }
 
     }
 
-    /**
-     * 协助泛型检索
-     *
-     * @author Create by liuwenhao on 2022/4/22 19:25
-     */
-    static class CrowTypeReference<T> extends TypeReference<T> {
-
-        Type type;
-
-        private CrowTypeReference(Type type) {
-            super();
-            this.type = type;
-        }
-
-        public static <T> CrowTypeReference<T> make(Type type) {
-            return new CrowTypeReference<>(type);
-        }
-
-        @Override
-        public Type getType() {
-            return type;
-        }
-    }
 }
