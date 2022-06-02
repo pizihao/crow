@@ -1,6 +1,7 @@
 package com.deep.crow.type;
 
 import com.deep.crow.model.User;
+import junit.framework.TestCase;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -11,9 +12,9 @@ import java.util.Map;
  *
  * @author Create by liuwenhao on 2022/4/24 12:49
  */
-public class TypeBuilderTest {
+public class TypeBuilderTest extends TestCase {
 
-    public static void main(String[] args) {
+    public void testBuilder() {
         Type list = TypeBuilder.make(List.class)
             .add(User.class)
             .build();

@@ -3,8 +3,8 @@ package com.deep.crow.type;
 import com.deep.crow.model.Person;
 import com.deep.crow.model.User;
 import com.deep.crow.headbe.TypeUtil;
+import junit.framework.TestCase;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +15,8 @@ import java.util.List;
  * @author Create by liuwenhao on 2022/4/24 12:49
  */
 @SuppressWarnings("unchecked")
-public class TypeUtilTest {
-    public static void main(String[] args) throws IOException, NoSuchMethodException {
+public class TypeUtilTest extends TestCase {
+    public List<Object> fill() {
         List<Integer> list1 = new ArrayList<>();
         list1.add(1);
         list1.add(2);
@@ -40,31 +40,29 @@ public class TypeUtilTest {
         listObj.add(user2);
         listObj.add(integer);
         listObj.add(str);
-        TypeUtilTest utilTest = new TypeUtilTest();
-//        utilTest.test1(listObj);
-//        utilTest.test2(listObj);
-//        utilTest.test3(listObj);
-//        utilTest.test4(listObj);
-//        utilTest.test5(listObj);
-        utilTest.test7(listObj);
+        return listObj;
     }
 
-    public void test1(List<Object> listObj) {
+    public void test1() {
+        List<Object> listObj = fill();
         String screenTypes = TypeUtil.screenClass(listObj, String.class);
         System.out.println(screenTypes);
     }
 
-    public void test2(List<Object> listObj) {
+    public void test2() {
+        List<Object> listObj = fill();
         List<Integer> screenTypes = TypeUtil.screenType(listObj, List.class, Integer.class);
         System.out.println(screenTypes);
     }
 
-    public void test3(List<Object> listObj) {
+    public void test3() {
+        List<Object> listObj = fill();
         List<List<Integer>> screenTypes = TypeUtil.screenTypes(listObj, List.class, Integer.class);
         System.out.println(screenTypes);
     }
 
-    public void test4(List<Object> listObj) {
+    public void test4() {
+        List<Object> listObj = fill();
         Type type = TypeBuilder.make(List.class)
             .add(Integer.class)
             .build();
@@ -72,7 +70,8 @@ public class TypeUtilTest {
         System.out.println(screenType);
     }
 
-    public void test5(List<Object> listObj) {
+    public void test5() {
+        List<Object> listObj = fill();
         Type type = TypeBuilder.make(List.class)
             .add(Integer.class)
             .build();
@@ -80,7 +79,8 @@ public class TypeUtilTest {
         System.out.println(screenType);
     }
 
-    public void test7(List<Object> listObj) {
+    public void test7() {
+        List<Object> listObj = fill();
         Person person = new Person();
         TypeUtil.fillInstance(listObj, person);
         System.out.println(person);

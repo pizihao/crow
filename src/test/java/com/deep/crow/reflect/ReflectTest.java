@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * @author Create by liuwenhao on 2022/5/13 0:11
  */
 public class ReflectTest {
-    public static void main(String[] args) {
+    public void testReflect() {
         ExecutorService executorService = ThreadPool.executorService();
         List<String> str = ParallelMulti.of(executorService)
             .add(() -> {

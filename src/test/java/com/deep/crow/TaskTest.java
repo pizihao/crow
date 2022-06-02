@@ -2,15 +2,16 @@ package com.deep.crow;
 
 import com.deep.crow.serial.SerialMulti;
 import com.fasterxml.jackson.core.type.TypeReference;
+import junit.framework.TestCase;
 
 /**
  * <h2></h2>
  *
  * @author Create by liuwenhao on 2022/4/11 15:08
  */
-public class TaskTest {
+public class TaskTest  extends TestCase {
 
-    public static void main(String[] args) {
+    public void testTask() {
         Integer integer = SerialMulti.of(() -> System.out.println(1))
             .add(unused -> 5)
             .add(i -> {

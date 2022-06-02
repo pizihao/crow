@@ -3,6 +3,7 @@ package com.deep.crow.type;
 import com.deep.crow.FixedMultiTools;
 import com.deep.crow.model.*;
 import com.deep.crow.headbe.TypeUtil;
+import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +13,10 @@ import java.util.List;
  *
  * @author Create by liuwenhao on 2022/4/28 10:33
  */
-public class SeniorTypeUtilTest {
+public class SeniorTypeUtilTest extends TestCase {
 
-    public static void main(String[] args) {
-        parallelPacking();
-    }
 
-    private static void example() {
+    private  void testExample() {
         Bird bird = new Bird();
         bird.setName("鸟");
         Cat cat = new Cat();
@@ -39,7 +37,7 @@ public class SeniorTypeUtilTest {
         System.out.println(animal);
     }
 
-    private static void parameter() {
+    private  void testParameter() {
         Bird bird1 = new Bird();
         bird1.setName("鸟1");
         Bird bird2 = new Bird();
@@ -90,7 +88,7 @@ public class SeniorTypeUtilTest {
      * @author liuwenhao
      * @date 2022/5/9 10:16
      */
-    private static void packing() {
+    private void testPacking() {
         List<Integer> integers = new ArrayList<>();
         integers.add(1);
         integers.add(2);
@@ -136,7 +134,7 @@ public class SeniorTypeUtilTest {
     }
 
 
-    private static void packingCover() {
+    private  void testPackingCover() {
         List<Integer> integers = new ArrayList<>();
         integers.add(1);
         integers.add(2);
@@ -186,7 +184,7 @@ public class SeniorTypeUtilTest {
 
     }
 
-    private static void parallelPacking() {
+    private void testParallelPacking() {
         Basic basic = new Basic();
         FixedMultiTools multiTools = new FixedMultiTools();
         Basic instance = multiTools.parallelMulti()

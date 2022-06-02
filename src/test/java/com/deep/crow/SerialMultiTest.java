@@ -1,6 +1,7 @@
 package com.deep.crow;
 
 import com.deep.crow.serial.SerialMulti;
+import junit.framework.TestCase;
 
 import java.util.concurrent.ExecutorService;
 
@@ -9,16 +10,10 @@ import java.util.concurrent.ExecutorService;
  *
  * @author Create by liuwenhao on 2022/4/18 2:55
  */
-public class SerialMultiTest {
-    public static void main(String[] args) {
-        SerialMultiTest multiTest = new SerialMultiTest();
-        multiTest.addTest();
-    }
+public class SerialMultiTest extends TestCase {
 
-    public void addTest() {
-
+    public void testAdd() {
         ExecutorService executorService = ThreadPool.executorService();
-
         SerialMulti<Object> of = SerialMulti.of(executorService);
         Integer join = of.add(() -> System.out.println("新增一个 runnable"))
             .add(() -> {

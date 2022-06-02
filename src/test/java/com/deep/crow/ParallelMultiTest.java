@@ -2,6 +2,7 @@ package com.deep.crow;
 
 import com.deep.crow.exception.CrowException;
 import com.deep.crow.parallel.ParallelMulti;
+import junit.framework.TestCase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,14 +13,9 @@ import java.util.function.Supplier;
  *
  * @author Create by liuwenhao on 2022/4/2 16:08
  */
-public class ParallelMultiTest {
+public class ParallelMultiTest extends TestCase {
 
-    public static void main(String[] args) {
-        ParallelMultiTest multiTest = new ParallelMultiTest();
-        multiTest.parallelTest();
-    }
-
-    public void parallelTest() {
+    public void testParallel() {
 
         ExecutorService executorService = ThreadPool.executorService();
         ParallelMulti of = ParallelMulti.of(executorService);

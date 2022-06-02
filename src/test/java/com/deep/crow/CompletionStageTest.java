@@ -1,5 +1,7 @@
 package com.deep.crow;
 
+import junit.framework.TestCase;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -8,9 +10,9 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Create by liuwenhao on 2022/4/2 16:08
  */
-public class CompletionStageTest {
+public class CompletionStageTest extends TestCase {
 
-    public static void main(String[] args) throws Exception {
+    public void testCompletableFuture() throws InterruptedException {
         CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
             try {
                 TimeUnit.SECONDS.sleep(10);

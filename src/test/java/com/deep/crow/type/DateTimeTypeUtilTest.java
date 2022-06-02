@@ -2,6 +2,7 @@ package com.deep.crow.type;
 
 import com.deep.crow.model.*;
 import com.deep.crow.headbe.TypeUtil;
+import junit.framework.TestCase;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,13 +17,9 @@ import java.util.List;
  *
  * @author Create by liuwenhao on 2022/5/11 11:40
  */
-public class DateTimeTypeUtilTest {
+public class DateTimeTypeUtilTest  extends TestCase {
 
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
-        example();
-    }
-
-    private static void example() throws InstantiationException, IllegalAccessException {
+    private static void testExample() {
         List<LocalDateTime> localDateTimes = new ArrayList<>();
         localDateTimes.add(LocalDateTime.now());
         localDateTimes.add(LocalDateTime.now().plusMinutes(10));

@@ -2,6 +2,7 @@ package com.deep.crow;
 
 import com.deep.crow.exception.CrowException;
 import com.deep.crow.multi.MultiHelper;
+import junit.framework.TestCase;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -11,10 +12,9 @@ import java.util.concurrent.ExecutorService;
  *
  * @author Create by liuwenhao on 2022/4/7 16:09
  */
-public class ThrowableTest {
+public class ThrowableTest extends TestCase {
 
-    public static void main(String[] args) {
-
+    public void testThrowable() {
         ExecutorService executorService = ThreadPool.executorService();
         MultiHelper
             .runAsync(executorService, () -> System.out.println(1))
