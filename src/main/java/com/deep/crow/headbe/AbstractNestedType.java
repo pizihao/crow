@@ -14,7 +14,7 @@ public abstract class AbstractNestedType implements NestedType {
     Type type;
     ObjectMapper objectMapper;
 
-    public AbstractNestedType(Object o, Type type, ObjectMapper objectMapper) {
+    AbstractNestedType(Object o, Type type, ObjectMapper objectMapper) {
         this.o = o;
         this.type = type;
         this.objectMapper = objectMapper;

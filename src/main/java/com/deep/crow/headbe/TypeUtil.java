@@ -311,12 +311,9 @@ public class TypeUtil {
             for (Field field : fields) {
                 String property = field.getName();
                 Object result = fieldAccess.get(obj, property);
-                if (isCover || Objects.isNull(result)) {
-                    boolean sign = isAccordWith(field, objectMapper);
-                    if (sign) {
-                        fieldAccess.set(obj, property, o);
-                        return field;
-                    }
+                if ((isCover || Objects.isNull(result)) && isAccordWith(field, objectMapper)) {
+                    fieldAccess.set(obj, property, o);
+                    return field;
                 }
             }
             return null;

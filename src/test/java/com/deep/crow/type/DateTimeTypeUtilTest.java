@@ -1,7 +1,7 @@
 package com.deep.crow.type;
 
 import com.deep.crow.model.*;
-import com.deep.crow.util.TypeUtil;
+import com.deep.crow.headbe.TypeUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -78,17 +79,37 @@ public class NestedTypeHelper {
      * @author liuwenhao
      * @date 2022/6/2 16:17
      */
-    public void register(Class<?> key, Class<? extends NestedType> value) {
+    public synchronized void register(Class<?> key, Class<? extends NestedType> value) {
+        int flag = -1;
+        int removeFlag = -1;
+        Class<?> aClass = null;
         for (Class<?> cls : nestedTypeMap.keySet()) {
             if (!cls.isAssignableFrom(key)) {
-                nestedTypeMap.put(key, value);
+                flag = flag + 1;
                 if (key.isAssignableFrom(cls)) {
-                    nestedTypeMap.remove(cls);
+                    removeFlag = removeFlag + 1;
+                    aClass = cls;
                 }
-                return;
             }
         }
+        if (flag == nestedTypeMap.size()){
+            nestedTypeMap.put(key, value);
+        }
+        if (removeFlag > 0){
+            nestedTypeMap.remove(aClass);
+        }
+
     }
 
+    /**
+     * <h2>获取所有的值</h2>
+     *
+     * @return java.util.Map<java.lang.Class<?>,java.lang.Class<? extends com.deep.crow.headbe.NestedType>>
+     * @author liuwenhao
+     * @date 2022/6/2 18:43
+     */
+    public Map<Class<?>, Class<? extends NestedType>> getMap(){
+        return new HashMap<>(nestedTypeMap);
+    }
 
 }

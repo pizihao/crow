@@ -2,7 +2,7 @@ package com.deep.crow.type;
 
 import com.deep.crow.model.Person;
 import com.deep.crow.model.User;
-import com.deep.crow.util.TypeUtil;
+import com.deep.crow.headbe.TypeUtil;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
