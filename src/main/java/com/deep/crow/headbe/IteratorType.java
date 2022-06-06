@@ -28,10 +28,12 @@ public class IteratorType extends AbstractNestedType {
     @Override
     public boolean check() {
         try {
-            Type argument = ((ParameterizedType) type).getActualTypeArguments()[0];
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type argument = parameterizedType.getActualTypeArguments()[0];
+            Type rawType = parameterizedType.getRawType();
             CrowTypeReference<?> typeReference = CrowTypeReference.make(argument);
             objectMapper.convertValue(split(), typeReference);
-            return true;
+            return o.getClass().isAssignableFrom((Class<?>) rawType);
         } catch (Exception e) {
             return false;
         }
