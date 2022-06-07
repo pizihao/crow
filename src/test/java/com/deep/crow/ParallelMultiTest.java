@@ -31,15 +31,11 @@ public class ParallelMultiTest extends TestCase {
 //            })
             .add(() -> {
                 try {
-                    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 System.out.println("==========================");
-            })
-            .add(throwable -> {
-                System.out.println(Thread.currentThread().getName());
-                throw CrowException.exception("异常信息");
             })
             .thenExecTuple(t -> {
                 for (Object o : t) {

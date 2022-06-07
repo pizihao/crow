@@ -42,8 +42,6 @@ public class ThrowableTest extends TestCase {
         }).thenApply(integer -> {
             System.out.println(integer);
             return 142;
-        }).thenApply(integer -> integer / 0).exceptionally(throwable -> {
-            throw CrowException.exception("异常线程 -> {}", Thread.currentThread().getName());
         }).join();
 
         CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> 1).thenApply(integer -> "1");

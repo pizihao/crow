@@ -41,7 +41,7 @@ public class TypeUtilTest extends TestCase {
         list.add(dogs);
         list.add(users);
         List<Animal> animal = new ArrayList<>();
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 100; i++) {
             animal.add(new Animal());
         }
         long l = System.currentTimeMillis();
@@ -78,7 +78,7 @@ public class TypeUtilTest extends TestCase {
         List<Dog> dogs = new ArrayList<>();
 
         List<Object> list = new ArrayList<>();
-        for (int i = 0; i < 1000000; i++) {
+        for (int i = 0; i < 100; i++) {
             Bird bird1 = new Bird();
             bird1.setName("鸟1");
             birds.add(bird1);
@@ -98,7 +98,7 @@ public class TypeUtilTest extends TestCase {
         list.add(dogs);
         list.add(users);
         List<Animal> animal = new ArrayList<>();
-        for (int i = 0; i < 10000000; i++) {
+        for (int i = 0; i < 1000; i++) {
             animal.add(new Animal());
         }
         long l = System.currentTimeMillis();

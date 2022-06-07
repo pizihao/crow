@@ -16,7 +16,7 @@ import java.util.List;
 public class SeniorTypeUtilTest extends TestCase {
 
 
-    private  void testExample() {
+    public   void testExample() {
         Bird bird = new Bird();
         bird.setName("鸟");
         Cat cat = new Cat();
@@ -37,7 +37,7 @@ public class SeniorTypeUtilTest extends TestCase {
         System.out.println(animal);
     }
 
-    private  void testParameter() {
+    public  void testParameter() {
         Bird bird1 = new Bird();
         bird1.setName("鸟1");
         Bird bird2 = new Bird();
@@ -88,7 +88,7 @@ public class SeniorTypeUtilTest extends TestCase {
      * @author liuwenhao
      * @date 2022/5/9 10:16
      */
-    private void testPacking() {
+    public void testPacking() {
         List<Integer> integers = new ArrayList<>();
         integers.add(1);
         integers.add(2);
@@ -134,7 +134,7 @@ public class SeniorTypeUtilTest extends TestCase {
     }
 
 
-    private  void testPackingCover() {
+    public  void testPackingCover() {
         List<Integer> integers = new ArrayList<>();
         integers.add(1);
         integers.add(2);
@@ -184,7 +184,7 @@ public class SeniorTypeUtilTest extends TestCase {
 
     }
 
-    private void testParallelPacking() {
+    public void testParallelPacking() {
         Basic basic = new Basic();
         FixedMultiTools multiTools = new FixedMultiTools();
         Basic instance = multiTools.parallelMulti()

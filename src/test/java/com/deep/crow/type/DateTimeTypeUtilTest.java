@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class DateTimeTypeUtilTest  extends TestCase {
 
-    private static void testExample() {
+    public static void testExample() {
         List<LocalDateTime> localDateTimes = new ArrayList<>();
         localDateTimes.add(LocalDateTime.now());
         localDateTimes.add(LocalDateTime.now().plusMinutes(10));
