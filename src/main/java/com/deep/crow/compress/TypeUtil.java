@@ -4,6 +4,7 @@ import com.deep.crow.exception.CrowException;
 import com.deep.crow.jackson.ObjectMapperFactory;
 import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.type.ParameterizedTypeImpl;
+import com.deep.crow.util.ContainerUtil;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.FieldAccess;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -207,6 +208,50 @@ public class TypeUtil {
 
     /**
      * <h2>根据类型填充属性</h2>
+     * 批量处理的形式，针对单个对象的处理和#{@link #fillInstance(Iterable, Object, boolean)}相同
+     *
+     * @param l       结果集
+     * @param ts      需要填充的类对象集合
+     * @param isCover 是否覆盖
+     * @return java.util.Collection<T>
+     * @author liuwenhao
+     * @date 2022/6/7 13:26
+     */
+    public static <T> Collection<T> fillCollection(Iterable<?> l, Collection<T> ts, boolean isCover) {
+        T element = ContainerUtil.getFirstElement(ts);
+        if (Objects.isNull(element)) {
+            return ts;
+        }
+        FieldAccess fieldAccess = FieldAccess.get(element.getClass());
+        List<Field> fields = new ArrayList<>(Arrays.asList(fieldAccess.getFields()));
+
+        for (Object o : l) {
+            TypeMatching typeMatching = new TypeMatchingBatch<>(fields, o, fieldAccess, isCover, ts);
+            Field matching = typeMatching.matching(element);
+            if (matching != null) {
+                fields.remove(matching);
+            }
+        }
+        return ts;
+    }
+
+    /**
+     * <h2>根据类型填充属性</h2>
+     * 批量处理的形式，针对单个对象的处理和#{@link #fillInstance(Iterable, Object, boolean)}相同
+     *
+     * @param l  结果集
+     * @param ts 需要填充的类对象集合
+     * @return java.util.Collection<T>
+     * @author liuwenhao
+     * @date 2022/6/7 13:26
+     */
+    public static <T> Collection<T> fillCollection(Iterable<?> l, Collection<T> ts) {
+        return fillCollection(l, ts, false);
+    }
+
+
+    /**
+     * <h2>根据类型填充属性</h2>
      * 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
      * 这需要 reflections 的支持
      *
@@ -311,7 +356,7 @@ public class TypeUtil {
             for (Field field : fields) {
                 String property = field.getName();
                 Object result = fieldAccess.get(obj, property);
-                if ((isCover || Objects.isNull(result)) && isAccordWith(field, objectMapper)) {
+                if ((isCover || Objects.isNull(result)) && isAccordWith(field, obj, objectMapper)) {
                     fieldAccess.set(obj, property, o);
                     return field;
                 }
@@ -319,21 +364,75 @@ public class TypeUtil {
             return null;
         }
 
+    }
+
+
+    /**
+     * 对比字段类型和对象类型，批量处理
+     *
+     * @author Create by liuwenhao on 2022/4/22 19:25
+     */
+    static class TypeMatchingBatch<T> extends TypeMatching {
+
         /**
-         * <h2>验证字段与实例对象是否可以兼容</h2>
-         *
-         * @param field        字段属性
-         * @param objectMapper ObjectMapper
-         * @return boolean
-         * @author liuwenhao
-         * @date 2022/4/27 9:38
+         * 需要填充的类对象集合
          */
-        private boolean isAccordWith(Field field, ObjectMapper objectMapper) {
-            Type type = field.getGenericType();
-            Compress nestedType = CompressHelper.getType(type, o, objectMapper);
-            return nestedType.check();
+        Collection<T> collection;
+
+        public TypeMatchingBatch(List<Field> fields, Object o, FieldAccess fieldAccess, boolean isCover, Collection<T> collection) {
+            super(fields, o, fieldAccess, isCover);
+            this.collection = collection;
         }
 
+        public TypeMatchingBatch(List<Field> fields, Object o, FieldAccess fieldAccess, Collection<T> collection) {
+            super(fields, o, fieldAccess);
+            this.collection = collection;
+        }
+
+        /**
+         * <h2>在fields中寻找和object相对应的类型</h2>
+         * 匹配成功后将数据加入到obj中<br>
+         * 通过PropertyDescriptor完成匹配和填充操作
+         *
+         * @param obj 需要填充的对象
+         * @return 返回匹配到的字段，如果未匹配则返回null
+         * @author liuwenhao
+         * @date 2022/4/26 11:00
+         */
+        @Override
+        public Field matching(Object obj) {
+            ObjectMapper objectMapper = ObjectMapperFactory.get();
+            for (Field field : fields) {
+                String property = field.getName();
+                Object result = fieldAccess.get(obj, property);
+                if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
+                    long l = System.currentTimeMillis();
+                    collection.forEach(t -> fieldAccess.set(t, property, o));
+                    long t = System.currentTimeMillis();
+                    System.out.println(t - l);
+                    return field;
+                }
+            }
+            return null;
+        }
+
+
+    }
+
+    /**
+     * <h2>验证字段与实例对象是否可以兼容</h2>
+     *
+     * @param field        字段属性
+     * @param o            实例对象
+     * @param objectMapper ObjectMapper
+     * @return boolean
+     * @author liuwenhao
+     * @date 2022/4/27 9:38
+     */
+    private static boolean isAccordWith(Field field, Object o, ObjectMapper objectMapper) {
+        Type type = field.getType();
+        Compress compress = CompressHelper.getType(type, o, objectMapper);
+        return compress.check();
     }
 
 }

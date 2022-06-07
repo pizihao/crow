@@ -462,7 +462,7 @@ public static void main(String[] args) {
 
 其思路为用部分代表整体，系统中默认提供了对Iterator类型和Map类型的压缩器，使用时可自行扩展。
 
-详情可见[wiki](https://github.com/pizihao/crow.wiki.git)开发日志0.0.7部分。
+详情可见[wiki](https://github.com/pizihao/crow/wiki)开发日志0.0.7部分。
 
 ## 其他
 
