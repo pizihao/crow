@@ -14,14 +14,14 @@ import java.lang.reflect.Type;
  * @author Create by liuwenhao on 2022/6/2 15:28
  */
 @SuppressWarnings("unchecked")
-public class IteratorType extends AbstractNestedType {
+public class IteratorCompress extends AbstractCompress {
 
-    public IteratorType(Object o, Type type, ObjectMapper objectMapper) {
+    public IteratorCompress(Object o, Type type, ObjectMapper objectMapper) {
         super(o, type, objectMapper);
     }
 
     @Override
-    public <T> T split() {
+    public <T> T compress() {
         return type instanceof ParameterizedType ? (T) ContainerUtil.getFirstElement((Iterable<?>) o) : null;
     }
 
@@ -32,7 +32,7 @@ public class IteratorType extends AbstractNestedType {
             Type argument = parameterizedType.getActualTypeArguments()[0];
             Type rawType = parameterizedType.getRawType();
             CrowTypeReference<?> typeReference = CrowTypeReference.make(argument);
-            objectMapper.convertValue(split(), typeReference);
+            objectMapper.convertValue(compress(), typeReference);
             return o.getClass().isAssignableFrom((Class<?>) rawType);
         } catch (Exception e) {
             return false;

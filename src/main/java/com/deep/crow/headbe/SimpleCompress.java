@@ -10,20 +10,20 @@ import java.lang.reflect.Type;
  * @author Create by liuwenhao on 2022/6/2 14:29
  */
 @SuppressWarnings("unchecked")
-public class SimpleType extends AbstractNestedType {
+public class SimpleCompress extends AbstractCompress {
 
-    public SimpleType(Object o, Type type, ObjectMapper objectMapper) {
+    public SimpleCompress(Object o, Type type, ObjectMapper objectMapper) {
         super(o, type, objectMapper);
     }
 
     @Override
-    public <T> T split() {
+    public <T> T compress() {
         return (T) o;
     }
 
     @Override
     public boolean check() {
-        return ((Class<?>) type).isInstance(split());
+        return ((Class<?>) type).isInstance(compress());
     }
 
 }

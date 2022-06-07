@@ -14,21 +14,21 @@ import java.util.Map;
  * @author Create by liuwenhao on 2022/6/2 15:48
  */
 @SuppressWarnings("unchecked")
-public class MapType extends AbstractNestedType {
+public class MapCompress extends AbstractCompress {
 
-    public MapType(Object o, Type type, ObjectMapper objectMapper) {
+    public MapCompress(Object o, Type type, ObjectMapper objectMapper) {
         super(o, type, objectMapper);
     }
 
     @Override
-    public <T> T split() {
+    public <T> T compress() {
         Map<?, ?> map = (Map<?, ?>) o;
         return (T) ContainerUtil.getFirstKeyValue(map);
     }
 
     @Override
     public boolean check() {
-        Map.Entry<?, ?> firstKeyValue = split();
+        Map.Entry<?, ?> firstKeyValue = compress();
         ParameterizedType parameterizedType = (ParameterizedType) type;
         Type keyArgument = parameterizedType.getActualTypeArguments()[0];
         Type valueArgument = parameterizedType.getActualTypeArguments()[1];

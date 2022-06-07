@@ -4,12 +4,12 @@ import junit.framework.TestCase;
 
 import java.util.List;
 
-public class NestedTypeHelperTest extends TestCase {
+public class NestedCompressTest extends TestCase {
 
     public void testRegister() {
-        NestedTypeHelper nestedTypeHelper = new NestedTypeHelper();
+        CompressHelper nestedTypeHelper = new CompressHelper();
 
-        nestedTypeHelper.register(List.class,DefaultType.class);
+        nestedTypeHelper.register(List.class, DefaultCompress.class);
         System.out.println(nestedTypeHelper.getMap());
     }
 }

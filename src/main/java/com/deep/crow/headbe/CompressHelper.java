@@ -16,16 +16,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Create by liuwenhao on 2022/6/2 16:09
  */
 @SuppressWarnings("unused")
-public class NestedTypeHelper {
+public class CompressHelper {
 
     /*
      * 类型和压缩器的映射关系
      */
-    private static final Map<Class<?>, Class<? extends NestedType>> nestedTypeMap = new ConcurrentHashMap<>();
+    private static final Map<Class<?>, Class<? extends Compress>> compressMap = new ConcurrentHashMap<>();
 
     static {
-        nestedTypeMap.put(Iterable.class, IteratorType.class);
-        nestedTypeMap.put(Map.class, MapType.class);
+        compressMap.put(Iterable.class, IteratorCompress.class);
+        compressMap.put(Map.class, MapCompress.class);
     }
 
     /**
@@ -38,10 +38,10 @@ public class NestedTypeHelper {
      * @author liuwenhao
      * @date 2022/6/2 16:48
      */
-    public static NestedType getType(Type type, Object o, ObjectMapper objectMapper) {
+    public static Compress getType(Type type, Object o, ObjectMapper objectMapper) {
         return (type instanceof ParameterizedType)
             ? get(o, type, objectMapper)
-            : new SimpleType(o, type, objectMapper);
+            : new SimpleCompress(o, type, objectMapper);
     }
 
     /**
@@ -54,19 +54,19 @@ public class NestedTypeHelper {
      * @author liuwenhao
      * @date 2022/6/2 17:26
      */
-    private static NestedType get(Object o, Type type, ObjectMapper objectMapper) {
-        for (Map.Entry<Class<?>, Class<? extends NestedType>> entry : nestedTypeMap.entrySet()) {
+    private static Compress get(Object o, Type type, ObjectMapper objectMapper) {
+        for (Map.Entry<Class<?>, Class<? extends Compress>> entry : compressMap.entrySet()) {
             if (entry.getKey().isInstance(o)) {
-                Class<? extends NestedType> aClass = nestedTypeMap.get(entry.getKey());
+                Class<? extends Compress> aClass = compressMap.get(entry.getKey());
                 try {
-                    Constructor<? extends NestedType> constructor = aClass.getConstructor(Object.class, Type.class, ObjectMapper.class);
+                    Constructor<? extends Compress> constructor = aClass.getConstructor(Object.class, Type.class, ObjectMapper.class);
                     return constructor.newInstance(o, type, objectMapper);
                 } catch (Exception e) {
                     throw CrowException.exception(e);
                 }
             }
         }
-        return new DefaultType(o, type, objectMapper);
+        return new DefaultCompress(o, type, objectMapper);
     }
 
     /**
@@ -79,11 +79,11 @@ public class NestedTypeHelper {
      * @author liuwenhao
      * @date 2022/6/2 16:17
      */
-    public synchronized void register(Class<?> key, Class<? extends NestedType> value) {
+    public synchronized void register(Class<?> key, Class<? extends Compress> value) {
         int flag = -1;
         int removeFlag = -1;
         Class<?> aClass = null;
-        for (Class<?> cls : nestedTypeMap.keySet()) {
+        for (Class<?> cls : compressMap.keySet()) {
             if (!cls.isAssignableFrom(key)) {
                 flag = flag + 1;
                 if (key.isAssignableFrom(cls)) {
@@ -92,11 +92,11 @@ public class NestedTypeHelper {
                 }
             }
         }
-        if (flag == nestedTypeMap.size()){
-            nestedTypeMap.put(key, value);
+        if (flag == compressMap.size()){
+            compressMap.put(key, value);
         }
         if (removeFlag > 0){
-            nestedTypeMap.remove(aClass);
+            compressMap.remove(aClass);
         }
 
     }
@@ -108,8 +108,8 @@ public class NestedTypeHelper {
      * @author liuwenhao
      * @date 2022/6/2 18:43
      */
-    public Map<Class<?>, Class<? extends NestedType>> getMap(){
-        return new HashMap<>(nestedTypeMap);
+    public Map<Class<?>, Class<? extends Compress>> getMap(){
+        return new HashMap<>(compressMap);
     }
 
 }

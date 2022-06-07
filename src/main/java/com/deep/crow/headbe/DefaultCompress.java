@@ -11,14 +11,14 @@ import java.lang.reflect.Type;
  * @author Create by liuwenhao on 2022/6/2 15:38
  */
 @SuppressWarnings("unchecked")
-public class DefaultType extends AbstractNestedType {
+public class DefaultCompress extends AbstractCompress {
 
-    public DefaultType(Object o, Type type, ObjectMapper objectMapper) {
+    public DefaultCompress(Object o, Type type, ObjectMapper objectMapper) {
         super(o, type, objectMapper);
     }
 
     @Override
-    public <T> T split() {
+    public <T> T compress() {
         return (T) o;
     }
 
@@ -26,7 +26,7 @@ public class DefaultType extends AbstractNestedType {
     public boolean check() {
         try {
             CrowTypeReference<?> typeReference = CrowTypeReference.make(type);
-            objectMapper.convertValue(split(), typeReference);
+            objectMapper.convertValue(compress(), typeReference);
             return true;
         } catch (Exception e) {
             return false;

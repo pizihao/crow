@@ -330,7 +330,7 @@ public class TypeUtil {
          */
         private boolean isAccordWith(Field field, ObjectMapper objectMapper) {
             Type type = field.getGenericType();
-            NestedType nestedType = NestedTypeHelper.getType(type, o, objectMapper);
+            Compress nestedType = CompressHelper.getType(type, o, objectMapper);
             return nestedType.check();
         }
 

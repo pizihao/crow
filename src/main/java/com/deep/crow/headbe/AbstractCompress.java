@@ -9,12 +9,12 @@ import java.lang.reflect.Type;
  *
  * @author Create by liuwenhao on 2022/6/2 16:19
  */
-public abstract class AbstractNestedType implements NestedType {
+public abstract class AbstractCompress implements Compress {
     Object o;
     Type type;
     ObjectMapper objectMapper;
 
-    AbstractNestedType(Object o, Type type, ObjectMapper objectMapper) {
+    AbstractCompress(Object o, Type type, ObjectMapper objectMapper) {
         this.o = o;
         this.type = type;
         this.objectMapper = objectMapper;
