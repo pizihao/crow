@@ -456,9 +456,13 @@ public static void main(String[] args) {
 // Basic{strings=[123, 456], integers=[1, 777], doubles=[1.20001, 20.220002], floats=[1.1, 1.556], shorts=[4, 1288], bytes=[125, 15], longs=[45, 45487], characters=[a, Z], booleans=[true, false]}
 ~~~
 
-### 4，类型压缩器
+### 3，类型压缩器
 
 类型压缩器用于将一个大型的对象压缩为一个完全兼容的小型的对象，从而可以更快速的进行序列化。
+
+其思路为用部分代表整体，系统中默认提供了对Iterator类型和Map类型的压缩器，使用时可自行扩展。
+
+详情可见[wiki](https://github.com/pizihao/crow.wiki.git)开发日志0.0.7部分。
 
 ## 其他
 

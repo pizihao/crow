@@ -1,7 +1,8 @@
-package com.deep.crow.headbe;
+package com.deep.crow.compress;
 
 /**
- * <h2>参数化类型处理，即存在泛型的类型</h2>
+ * <h2>对象压缩器</h2>
+ * 用部分代表整体，将一个大的对象压缩成小的对象，并且小对象可以兼容大对象的类型
  *
  * @author Create by liuwenhao on 2022/6/2 13:31
  */
@@ -21,7 +22,6 @@ interface Compress {
     /**
      * <h2>检查</h2>
      *
-     * @param o 需要验证的对象
      * @return boolean
      * @author liuwenhao
      * @date 2022/6/2 14:27

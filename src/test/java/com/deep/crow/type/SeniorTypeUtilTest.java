@@ -2,7 +2,7 @@ package com.deep.crow.type;
 
 import com.deep.crow.FixedMultiTools;
 import com.deep.crow.model.*;
-import com.deep.crow.headbe.TypeUtil;
+import com.deep.crow.compress.TypeUtil;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;

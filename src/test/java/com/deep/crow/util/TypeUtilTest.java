@@ -1,6 +1,6 @@
 package com.deep.crow.util;
 
-import com.deep.crow.headbe.TypeUtil;
+import com.deep.crow.compress.TypeUtil;
 import com.deep.crow.model.*;
 import junit.framework.TestCase;
 

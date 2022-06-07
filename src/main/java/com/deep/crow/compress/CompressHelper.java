@@ -1,4 +1,4 @@
-package com.deep.crow.headbe;
+package com.deep.crow.compress;
 
 import com.deep.crow.exception.CrowException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,6 +8,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -92,23 +93,54 @@ public class CompressHelper {
                 }
             }
         }
-        if (flag == compressMap.size()){
+        if (flag == compressMap.size()) {
             compressMap.put(key, value);
         }
-        if (removeFlag > 0){
+        if (removeFlag > 0) {
             compressMap.remove(aClass);
         }
 
     }
 
     /**
+     * <h2>顶级覆盖</h2>
+     * 指定一组件键值对，如果已存在则覆盖，不存在则新增<br>
+     * 覆盖时会找到键类型的抽象级别最高的一组进行覆盖<br>
+     * 如果新指定的键类型抽象级别更高则会删除抽象级别更低的键<br>
+     * 例如指定了 List Compress，则会覆盖 Iterable IteratorCompress，最终的结果为：Iterable Compress
+     *
+     * @param key   键
+     * @param value 值
+     * @author liuwenhao
+     * @date 2022/6/7 10:31
+     */
+    public synchronized void topLevelCover(Class<?> key, Class<? extends Compress> value) {
+        Class<?> coverKey = key;
+        Class<?> delKey = null;
+        for (Class<?> cls : compressMap.keySet()) {
+            // 是否存在低级别的抽象
+            if (key.isAssignableFrom(cls)) {
+                delKey = cls;
+            }
+            // 存在高级别的抽象
+            if (cls.isAssignableFrom(key)) {
+                coverKey = cls;
+            }
+        }
+        if (Objects.nonNull(delKey)){
+            compressMap.remove(delKey);
+        }
+        compressMap.put(coverKey, value);
+    }
+
+    /**
      * <h2>获取所有的值</h2>
      *
-     * @return java.util.Map<java.lang.Class<?>,java.lang.Class<? extends com.deep.crow.headbe.NestedType>>
+     * @return java.util.Map<java.lang.Class < ?>,java.lang.Class<? extends com.deep.crow.headbe.NestedType>>
      * @author liuwenhao
      * @date 2022/6/2 18:43
      */
-    public Map<Class<?>, Class<? extends Compress>> getMap(){
+    public Map<Class<?>, Class<? extends Compress>> getMap() {
         return new HashMap<>(compressMap);
     }
 
