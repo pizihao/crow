@@ -8,6 +8,7 @@ import com.deep.crow.util.Tuple;
 import com.deep.crow.compress.TypeUtil;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.*;
@@ -300,6 +301,20 @@ public class MultiTools {
      */
     public static <T> T getForClass(List<Multi<?>> c, Class<T> clazz) {
         return TypeUtil.fillClass(multipleList(c), clazz, false);
+    }
+
+    /**
+     * <h2>批量填充</h2>
+     * 默认不覆盖
+     *
+     * @param c  过程集合
+     * @param ts 需要填充的类对象集合
+     * @return java.util.Collection<T>
+     * @author liuwenhao
+     * @date 2022/6/7 17:01
+     */
+    public static <T> Collection<T> batchForInstance(List<Multi<?>> c, Collection<T> ts) {
+        return TypeUtil.fillCollection(multipleList(c), ts, false);
     }
 
 }

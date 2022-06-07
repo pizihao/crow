@@ -1,5 +1,6 @@
 package com.deep.crow;
 
+import com.deep.crow.compress.TypeUtil;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
 import com.deep.crow.parallel.ParallelMulti;
@@ -7,6 +8,7 @@ import com.deep.crow.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
@@ -297,4 +299,17 @@ public class FixedMultiTools {
         return MultiTools.getForClass(c, clazz);
     }
 
+    /**
+     * <h2>批量填充</h2>
+     * 默认不覆盖
+     *
+     * @param c  过程集合
+     * @param ts 需要填充的类对象集合
+     * @return java.util.Collection<T>
+     * @author liuwenhao
+     * @date 2022/6/7 17:01
+     */
+    public static <T> Collection<T> batchForInstance(List<Multi<?>> c, Collection<T> ts) {
+        return MultiTools.batchForInstance(c, ts);
+    }
 }

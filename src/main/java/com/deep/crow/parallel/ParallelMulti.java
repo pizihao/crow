@@ -7,6 +7,7 @@ import com.deep.crow.compress.TypeUtil;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -457,6 +458,32 @@ public class ParallelMulti {
      */
     public <T> T getForClass(Class<T> clazz, boolean isCover) {
         return TypeUtil.fillClass(resultList(), clazz, isCover);
+    }
+
+    /**
+     * <h2>批量填充</h2>
+     *
+     * @param ts      需要填充的类对象集合
+     * @param isCover 是否覆盖
+     * @return java.util.Collection<T>
+     * @author liuwenhao
+     * @date 2022/6/7 17:01
+     */
+    public <T> Collection<T> batchForInstance(Collection<T> ts, boolean isCover) {
+        return TypeUtil.fillCollection(resultList(), ts, isCover);
+    }
+
+    /**
+     * <h2>批量填充</h2>
+     * 默认不覆盖
+     *
+     * @param ts 需要填充的类对象集合
+     * @return java.util.Collection<T>
+     * @author liuwenhao
+     * @date 2022/6/7 17:01
+     */
+    public <T> Collection<T> batchForInstance(Collection<T> ts) {
+        return batchForInstance(ts, false);
     }
 
 }

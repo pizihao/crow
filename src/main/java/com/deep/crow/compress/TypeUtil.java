@@ -208,7 +208,7 @@ public class TypeUtil {
 
     /**
      * <h2>根据类型填充属性</h2>
-     * 批量处理的形式，针对单个对象的处理和#{@link #fillInstance(Iterable, Object, boolean)}相同
+     * 批量处理的形式，针对单个对象的处理和{@link #fillInstance(Iterable, Object, boolean)}相同
      *
      * @param l       结果集
      * @param ts      需要填充的类对象集合
@@ -237,7 +237,7 @@ public class TypeUtil {
 
     /**
      * <h2>根据类型填充属性</h2>
-     * 批量处理的形式，针对单个对象的处理和#{@link #fillInstance(Iterable, Object, boolean)}相同
+     * 批量处理的形式，针对单个对象的处理和{@link #fillInstance(Iterable, Object, boolean)}相同
      *
      * @param l  结果集
      * @param ts 需要填充的类对象集合
@@ -406,10 +406,7 @@ public class TypeUtil {
                 String property = field.getName();
                 Object result = fieldAccess.get(obj, property);
                 if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
-                    long l = System.currentTimeMillis();
                     collection.forEach(t -> fieldAccess.set(t, property, o));
-                    long t = System.currentTimeMillis();
-                    System.out.println(t - l);
                     return field;
                 }
             }
