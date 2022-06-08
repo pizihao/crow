@@ -35,7 +35,7 @@ public class CompressHelper {
      * @param type         类型
      * @param o            需要判断的对象
      * @param objectMapper objectMapper
-     * @return com.deep.crow.headbe.NestedType
+     * @return com.deep.crow.compress.Compress
      * @author liuwenhao
      * @date 2022/6/2 16:48
      */
@@ -51,7 +51,7 @@ public class CompressHelper {
      * @param type         类型
      * @param o            需要判断的对象
      * @param objectMapper objectMapper
-     * @return com.deep.crow.headbe.NestedType
+     * @return com.deep.crow.compress.Compress
      * @author liuwenhao
      * @date 2022/6/2 17:26
      */
@@ -136,7 +136,7 @@ public class CompressHelper {
     /**
      * <h2>获取所有的值</h2>
      *
-     * @return java.util.Map<java.lang.Class < ?>,java.lang.Class<? extends com.deep.crow.headbe.NestedType>>
+     * @return java.util.Map<java.lang.Class < ?>,java.lang.Class<? extends com.deep.crow.compress.Compress>>
      * @author liuwenhao
      * @date 2022/6/2 18:43
      */
