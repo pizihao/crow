@@ -1,12 +1,10 @@
 package com.deep.crow;
 
-import com.deep.crow.exception.CrowException;
-import com.deep.crow.parallel.ParallelMulti;
+import com.deep.crow.task.parallel.ParallelMulti;
 import junit.framework.TestCase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 /**
  * <h2>test</h2>

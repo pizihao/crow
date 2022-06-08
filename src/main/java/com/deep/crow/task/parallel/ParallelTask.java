@@ -1,4 +1,4 @@
-package com.deep.crow.parallel;
+package com.deep.crow.task.parallel;
 
 import com.deep.crow.multi.Multi;
 import com.deep.crow.task.Task;

@@ -1,6 +1,6 @@
 package com.deep.crow;
 
-import com.deep.crow.serial.SerialMulti;
+import com.deep.crow.task.serial.SerialMulti;
 import junit.framework.TestCase;
 
 import java.util.concurrent.ExecutorService;

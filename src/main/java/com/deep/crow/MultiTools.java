@@ -2,8 +2,8 @@ package com.deep.crow;
 
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
-import com.deep.crow.parallel.ParallelMulti;
-import com.deep.crow.serial.SerialMulti;
+import com.deep.crow.task.parallel.ParallelMulti;
+import com.deep.crow.task.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
 import com.deep.crow.compress.TypeUtil;
 

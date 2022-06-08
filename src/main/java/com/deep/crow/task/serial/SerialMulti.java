@@ -1,8 +1,8 @@
-package com.deep.crow.serial;
+package com.deep.crow.task.serial;
 
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
-import com.deep.crow.parallel.ParallelMulti;
+import com.deep.crow.task.parallel.ParallelMulti;
 
 import java.util.Objects;
 import java.util.concurrent.*;

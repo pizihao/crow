@@ -1,16 +1,12 @@
 package com.deep.crow.reflect;
 
 import com.deep.crow.ThreadPool;
-import com.deep.crow.model.Basic;
-import com.deep.crow.parallel.ParallelMulti;
-import com.deep.crow.serial.SerialMulti;
+import com.deep.crow.task.parallel.ParallelMulti;
 import com.deep.crow.type.TypeBuilder;
-import com.esotericsoftware.reflectasm.MethodAccess;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 /**
  * <h2></h2>
