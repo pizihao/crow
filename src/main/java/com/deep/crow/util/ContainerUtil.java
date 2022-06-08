@@ -3,7 +3,8 @@ package com.deep.crow.util;
 import java.util.*;
 
 /**
- * <h2></h2>
+ * <h2>涉及某些容器的操作工具类</h2>
+ * 如java提供的容器工具：{@link Collection},{@link Queue}等
  *
  * @author Create by liuwenhao on 2022/6/2 11:46
  */
