@@ -8,7 +8,7 @@ import java.util.function.*;
  * @author Create by liuwenhao on 2022/4/9 21:55
  */
 @SuppressWarnings("unchecked unused")
-public class    MultiImpl<T> implements Multi<T> {
+public class MultiImpl<T> implements Multi<T> {
 
     CompletableFuture<T> completableFuture;
 
@@ -49,26 +49,37 @@ public class    MultiImpl<T> implements Multi<T> {
 
     @Override
     public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        return completableFuture.get(timeout,unit);
+        return completableFuture.get(timeout, unit);
+    }
+
+    @Override
+    public T getNow() {
+        return completableFuture.getNow(null);
+    }
+
+    @Override
+    public Multi<T> copyMulti() {
+        CompletableFuture<T> async = CompletableFuture.supplyAsync(() -> completableFuture.join(), executorService);
+        return new MultiImpl<>(executorService, async);
     }
 
     @Override
     public <U> Multi<U> thenApply(Function<? super T, ? extends U> fn) {
         completableFuture = (CompletableFuture<T>) completableFuture.thenApplyAsync(fn, executorService);
-        return (Multi<U>) this;
+        return (Multi<U>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public Multi<Void> thenAccept(Consumer<? super T> action) {
         completableFuture = (CompletableFuture<T>) completableFuture.thenAcceptAsync(action, executorService);
-        return (Multi<Void>) this;
+        return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 
 
     @Override
     public Multi<Void> thenRun(Runnable action) {
         completableFuture = (CompletableFuture<T>) completableFuture.thenRunAsync(action, executorService);
-        return (Multi<Void>) this;
+        return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
@@ -80,31 +91,31 @@ public class    MultiImpl<T> implements Multi<T> {
     @Override
     public <U> Multi<Void> thenBiAccept(Multi<? extends U> other, BiConsumer<? super T, ? super U> action) {
         completableFuture = (CompletableFuture<T>) completableFuture.thenAcceptBothAsync(other.getCpf(), action, executorService);
-        return (Multi<Void>) this;
+        return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public Multi<Void> runRunBoth(Multi<?> other, Runnable action) {
         completableFuture = (CompletableFuture<T>) completableFuture.runAfterBothAsync(other.getCpf(), action, executorService);
-        return (Multi<Void>) this;
+        return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public <U> Multi<U> applyFun(Multi<? extends T> other, Function<? super T, U> fn) {
         completableFuture = (CompletableFuture<T>) completableFuture.applyToEitherAsync(other.getCpf(), fn, executorService);
-        return (Multi<U>) this;
+        return (Multi<U>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public Multi<Void> acceptFun(Multi<? extends T> other, Consumer<? super T> action) {
         completableFuture = (CompletableFuture<T>) completableFuture.acceptEitherAsync(other.getCpf(), action, executorService);
-        return (Multi<Void>) this;
+        return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public Multi<Void> runFun(Multi<?> other, Runnable action) {
         completableFuture = (CompletableFuture<T>) completableFuture.runAfterEitherAsync(other.getCpf(), action, executorService);
-        return (Multi<Void>) this;
+        return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
@@ -121,19 +132,19 @@ public class    MultiImpl<T> implements Multi<T> {
     @Override
     public Multi<T> exceptionally(Function<Throwable, ? extends T> fn) {
         completableFuture = completableFuture.exceptionally(fn);
-        return this;
+        return new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public Multi<T> whenComplete(BiConsumer<? super T, ? super Throwable> action) {
         completableFuture = completableFuture.whenCompleteAsync(action, executorService);
-        return this;
+        return new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
     public <U> Multi<U> handle(BiFunction<? super T, Throwable, ? extends U> fn) {
         completableFuture = (CompletableFuture<T>) completableFuture.handleAsync(fn, executorService);
-        return (Multi<U>) this;
+        return (Multi<U>) new MultiImpl<>(executorService, completableFuture);
     }
 
 }

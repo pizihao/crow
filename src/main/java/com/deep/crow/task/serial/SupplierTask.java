@@ -21,8 +21,7 @@ class SupplierTask<T, R> implements SerialTask<T> {
     @Override
     @SuppressWarnings("unchecked")
     public <U> Multi<U> increase(Multi<T> multi) {
-        Function<T, ? super R> function = t -> (R) supplier.get();
-        return (Multi<U>) multi.thenApply(function);
+        return (Multi<U>) multi.thenApply(t -> (R) supplier.get());
     }
 
 }
