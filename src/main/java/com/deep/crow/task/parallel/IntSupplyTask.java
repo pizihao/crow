@@ -13,13 +13,24 @@ import java.util.function.IntSupplier;
  */
 class IntSupplyTask implements ParallelTask {
 
+    long order;
     IntSupplier intSupplier;
-
     ExecutorService executorService;
+
+    public IntSupplyTask(long order, IntSupplier intSupplier, ExecutorService executorService) {
+        this.order = order;
+        this.intSupplier = intSupplier;
+        this.executorService = executorService;
+    }
 
     public IntSupplyTask(IntSupplier intSupplier, ExecutorService executorService) {
         this.intSupplier = intSupplier;
         this.executorService = executorService;
+    }
+
+    @Override
+    public long order() {
+        return order;
     }
 
     @Override

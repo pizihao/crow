@@ -13,13 +13,24 @@ import java.util.function.LongSupplier;
  */
 class LongSupplyTask implements ParallelTask {
 
+    long order;
     LongSupplier longSupplier;
-
     ExecutorService executorService;
+
+    public LongSupplyTask(long order, LongSupplier longSupplier, ExecutorService executorService) {
+        this.order = order;
+        this.longSupplier = longSupplier;
+        this.executorService = executorService;
+    }
 
     public LongSupplyTask(LongSupplier longSupplier, ExecutorService executorService) {
         this.longSupplier = longSupplier;
         this.executorService = executorService;
+    }
+
+    @Override
+    public long order() {
+        return order;
     }
 
     @Override

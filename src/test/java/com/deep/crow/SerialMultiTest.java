@@ -71,7 +71,7 @@ public class SerialMultiTest extends TestCase {
         SerialMulti<Object> of = SerialMulti.of(executorService)
             .add(() -> 1)
             .add(() -> 2)
-            .add(() -> 3 / 0)
+            .add(() -> 3)
             .add(() -> 4)
             .add(() -> 5)
             .add(() -> 6)
@@ -83,9 +83,9 @@ public class SerialMultiTest extends TestCase {
                 System.out.println(throwable.getMessage());
                 return "11";
             });
-//        SerialMulti<Object> serial = of.getIndexSerial(8);
-////        System.out.println(serial.getIndexSerial(6).join());
-//        assertEquals(serial.join(), 9);
+        SerialMulti<Object> serial = of.getIndexSerial(8);
+        System.out.println(serial.getIndexSerial(6).join());
+        assertEquals(serial.join(), 9);
         TimeUnit.SECONDS.sleep(5);
         System.out.println(of.getResults());
         System.out.println(of.join());

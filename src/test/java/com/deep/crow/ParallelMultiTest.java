@@ -40,6 +40,36 @@ public class ParallelMultiTest extends TestCase {
                     System.out.println(o);
                 }
             });
-
     }
+
+    public void testOrder() {
+        ExecutorService executorService = ThreadPool.executorService();
+        ParallelMulti parallelMulti = ParallelMulti.of(executorService)
+            .add(() -> 1)
+            .add(() -> 2)
+            .add(5, () -> 3)
+            .add(() -> 4)
+            .add(() -> 5)
+            .add(19, () -> 6)
+            .add(() -> 7)
+            .add(() -> 8)
+            .add(() -> 9);
+        System.out.println(parallelMulti.resultList());
+    }
+
+    public void testThrowable() {
+        ExecutorService executorService = ThreadPool.executorService();
+        ParallelMulti parallelMulti = ParallelMulti.of(executorService)
+            .add(() -> 1)
+            .add(() -> 2)
+            .add(5, () -> 3)
+            .add(() -> 4)
+            .add(() -> 5)
+            .add(19, () -> 6)
+            .add(() -> 7)
+            .add(() -> 8)
+            .add(() -> 9);
+        System.out.println(parallelMulti.resultList());
+    }
+
 }

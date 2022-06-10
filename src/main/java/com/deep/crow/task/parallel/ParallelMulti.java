@@ -1,15 +1,13 @@
 package com.deep.crow.task.parallel;
 
+import com.deep.crow.exception.CrowException;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.task.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
 import com.deep.crow.compress.TypeUtil;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.*;
@@ -24,9 +22,20 @@ import java.util.stream.Collectors;
 public class ParallelMulti {
 
     /**
-     * Multi
+     * MultiOrder
      */
-    final List<Multi<?>> multiList = new ArrayList<>();
+    final List<MultiOrder<?>> multiList = new ArrayList<>();
+
+    /**
+     * 保存有已被占用的字符
+     */
+    final Set<Long> set = new HashSet<>();
+
+    /**
+     * 保存排序的进度
+     */
+    long state = 0;
+
     /**
      * 线程池
      */
@@ -54,6 +63,47 @@ public class ParallelMulti {
     }
 
     /**
+     * <h2>将任务添加到执行序列中</h2>
+     * 冲突的排序索引会导致任务添加失败
+     *
+     * @param task 任务
+     * @author liuwenhao
+     * @date 2022/6/10 11:23
+     */
+    private synchronized <T> void add(ParallelTask task) {
+        // 先判断能不能添加任务
+        long order = task.order();
+        Multi<T> multi = task.assembling();
+        add(order, multi);
+    }
+
+    private synchronized <T> void add(long order, Multi<T> multi) {
+        if (order < 0) {
+            throw CrowException.exception("序号{}小于0，不可用", order);
+        }
+        if (set.contains(order)) {
+            throw CrowException.exception("序号{}处已存在任务，不可继续添加", order);
+        }
+        set.add(order);
+        MultiOrder<?> multiOrder = new MultiOrder<>(multi, order);
+        multiList.add(multiOrder);
+    }
+
+    /**
+     * <h2>获取下一个排序索引</h2>
+     *
+     * @return long
+     * @author liuwenhao
+     * @date 2022/6/10 13:45
+     */
+    private synchronized long getState() {
+        while (set.contains(state)) {
+            state++;
+        }
+        return state;
+    }
+
+    /**
      * <h2>添加一个{@link Supplier}</h2>
      * 并行执行，不影响其他任务的执行
      *
@@ -63,12 +113,23 @@ public class ParallelMulti {
      * @date 2022/4/12 16:07
      */
     public <T> ParallelMulti add(Supplier<T> s) {
+        return add(getState(), s);
+    }
+
+    /**
+     * <h2>添加一个{@link Supplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param order 排序号
+     * @param s     Supplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 14:00
+     */
+    public <T> ParallelMulti add(long order, Supplier<T> s) {
         Objects.requireNonNull(s);
-        ParallelTask parallelTask = new SupplyTask<>(s, executorService);
-        Multi<T> multi = parallelTask.assembling();
-        synchronized (multiList) {
-            multiList.add(multi);
-        }
+        ParallelTask parallelTask = new SupplyTask<>(order, s, executorService);
+        add(parallelTask);
         return this;
     }
 
@@ -76,18 +137,29 @@ public class ParallelMulti {
      * <h2>添加一个{@link IntSupplier}</h2>
      * 并行执行，不影响其他任务的执行
      *
-     * @param s Supplier
+     * @param s IntSupplier
      * @return com.deep.crow.task.parallel.ParallelMulti
      * @author liuwenhao
      * @date 2022/4/12 16:07
      */
     public <T> ParallelMulti add(IntSupplier s) {
+        return add(getState(), s);
+    }
+
+    /**
+     * <h2>添加一个{@link IntSupplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param order 排序号
+     * @param s     IntSupplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 14:00
+     */
+    public <T> ParallelMulti add(long order, IntSupplier s) {
         Objects.requireNonNull(s);
-        ParallelTask parallelTask = new IntSupplyTask(s, executorService);
-        Multi<T> multi = parallelTask.assembling();
-        synchronized (multiList) {
-            multiList.add(multi);
-        }
+        ParallelTask parallelTask = new IntSupplyTask(order, s, executorService);
+        add(parallelTask);
         return this;
     }
 
@@ -95,18 +167,29 @@ public class ParallelMulti {
      * <h2>添加一个{@link LongSupplier}</h2>
      * 并行执行，不影响其他任务的执行
      *
-     * @param s Supplier
+     * @param s LongSupplier
      * @return com.deep.crow.task.parallel.ParallelMulti
      * @author liuwenhao
      * @date 2022/4/12 16:07
      */
     public <T> ParallelMulti add(LongSupplier s) {
+        return add(getState(), s);
+    }
+
+    /**
+     * <h2>添加一个{@link LongSupplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param order 排序号
+     * @param s     LongSupplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 14:00
+     */
+    public <T> ParallelMulti add(long order, LongSupplier s) {
         Objects.requireNonNull(s);
-        ParallelTask parallelTask = new LongSupplyTask(s, executorService);
-        Multi<T> multi = parallelTask.assembling();
-        synchronized (multiList) {
-            multiList.add(multi);
-        }
+        ParallelTask parallelTask = new LongSupplyTask(order, s, executorService);
+        add(parallelTask);
         return this;
     }
 
@@ -114,18 +197,29 @@ public class ParallelMulti {
      * <h2>添加一个{@link DoubleSupplier}</h2>
      * 并行执行，不影响其他任务的执行
      *
-     * @param s Supplier
+     * @param s DoubleSupplier
      * @return com.deep.crow.task.parallel.ParallelMulti
      * @author liuwenhao
      * @date 2022/4/12 16:07
      */
     public <T> ParallelMulti add(DoubleSupplier s) {
+        return add(getState(), s);
+    }
+
+    /**
+     * <h2>添加一个{@link DoubleSupplier}</h2>
+     * 并行执行，不影响其他任务的执行
+     *
+     * @param order 排序号
+     * @param s     DoubleSupplier
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 14:00
+     */
+    public <T> ParallelMulti add(long order, DoubleSupplier s) {
         Objects.requireNonNull(s);
-        ParallelTask parallelTask = new DoubleSupplyTask(s, executorService);
-        Multi<T> multi = parallelTask.assembling();
-        synchronized (multiList) {
-            multiList.add(multi);
-        }
+        ParallelTask parallelTask = new DoubleSupplyTask(order, s, executorService);
+        add(parallelTask);
         return this;
     }
 
@@ -134,25 +228,85 @@ public class ParallelMulti {
      * 并行执行，不影响其他任务的执行<br>
      * 占用返回结果的位置，其结果为null，如果存在异常节点则添加
      *
-     * @param r Supplier
+     * @param r Runnable
      * @return com.deep.crow.task.parallel.ParallelMulti
      * @author liuwenhao
      * @date 2022/4/12 16:07
      */
     public ParallelMulti add(Runnable r) {
+        return add(getState(), r);
+    }
+
+    /**
+     * <h2>添加一个{@link Runnable}</h2>
+     * 并行执行，不影响其他任务的执行<br>
+     * 占用返回结果的位置，其结果为null，如果存在异常节点则添加
+     *
+     * @param order 排序号
+     * @param r     Runnable
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 14:00
+     */
+    public ParallelMulti add(long order, Runnable r) {
         Objects.requireNonNull(r);
-        ParallelTask parallelTask = new RunTask(r, executorService);
-        Multi<Void> multi = parallelTask.assembling();
+        ParallelTask parallelTask = new RunTask(order, r, executorService);
+        add(parallelTask);
+        return this;
+    }
+
+    /**
+     * <h2>添加一个异常任务节点</h2>
+     * 为处于[start,end]之间的任务添加异常处理
+     *
+     * @param start 开始序号
+     * @param end   结束序号
+     * @param fn    异常任务
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 16:58
+     */
+    @SuppressWarnings("unchecked")
+    public <T> ParallelMulti add(long start, long end, Function<Throwable, ? extends T> fn) {
         synchronized (multiList) {
-            multiList.add(multi);
+            multiList.stream()
+                .filter(m -> m.getOrder() >= start && m.getOrder() <= end)
+                .forEach(m -> {
+                    MultiOrder<T> multiOrder = (MultiOrder<T>) m;
+                    multiOrder.setFn(fn);
+                });
         }
         return this;
     }
 
     /**
      * <h2>添加一个异常任务节点</h2>
-     * 统一添加，针对所有的任务，会在调用方法时添加到队尾<T>
-     * 仅会在已添加的Multi中发生异常时执行
+     * 为处于一组任务添加异常处理
+     *
+     * @param numbers 序号
+     * @param fn      异常任务
+     * @return com.deep.crow.task.parallel.ParallelMulti
+     * @author liuwenhao
+     * @date 2022/6/10 16:58
+     */
+    @SuppressWarnings("unchecked")
+    public <T> ParallelMulti add(Function<Throwable, ? extends T> fn, long... numbers) {
+        List<Long> list = Arrays.stream(numbers).boxed().collect(Collectors.toList());
+        synchronized (multiList) {
+            multiList.stream()
+                .filter(m -> list.contains(m.getOrder()))
+                .forEach(m -> {
+                    MultiOrder<T> multiOrder = (MultiOrder<T>) m;
+                    multiOrder.setFn(fn);
+                });
+        }
+        return this;
+    }
+
+    /**
+     * <h2>添加一个异常任务节点</h2>
+     * 如果还有任务没有被设置异常处理节点，则添加<br>
+     * 如果所有的任务都已经被设置了异常会处理，则无效
      *
      * @param fn 异常任务
      * @return com.deep.crow.task.parallel.ParallelMulti
@@ -162,13 +316,16 @@ public class ParallelMulti {
     @SuppressWarnings("unchecked")
     public <T> ParallelMulti add(Function<Throwable, ? extends T> fn) {
         synchronized (multiList) {
-            multiList.forEach(m -> {
-                Multi<T> t = (Multi<T>) m;
-                t.exceptionally(fn);
-            });
+            multiList.stream().filter(MultiOrder::isThrowable)
+                .forEach(m -> {
+                    MultiOrder<T> multiOrder = (MultiOrder<T>) m;
+                    multiOrder.setFn(fn);
+                });
         }
         return this;
     }
+
+    // ===============================额外添加======================================
 
     /**
      * <h2>额外添加一个任务</h2>
@@ -179,9 +336,7 @@ public class ParallelMulti {
      * @author Created by liuwenhao on 2022/4/12 23:00
      */
     public <T> ParallelMulti add(Multi<T> multi) {
-        synchronized (multiList) {
-            multiList.add(multi);
-        }
+        add(getState(), multi);
         return this;
     }
 
@@ -195,9 +350,7 @@ public class ParallelMulti {
      */
     public <T> ParallelMulti add(SerialMulti<T> serialMulti) {
         Multi<T> multi = serialMulti.multi();
-        synchronized (multiList) {
-            multiList.add(multi);
-        }
+        add(getState(), multi);
         return this;
     }
 
@@ -210,11 +363,11 @@ public class ParallelMulti {
      * @author Created by liuwenhao on 2022/4/12 23:03
      */
     public ParallelMulti add(ParallelMulti parallelMulti) {
-        synchronized (multiList) {
-            multiList.addAll(parallelMulti.multiList);
-        }
+        parallelMulti.multiList.forEach(m -> add(getState(), m.getMulti()));
         return this;
     }
+
+    // ===============================后置操作和前置操作======================================
 
     /**
      * <h2>获取结果并执行任务</h2>
@@ -318,14 +471,26 @@ public class ParallelMulti {
         runnable.run();
     }
 
+    // ===============================结果的获取======================================
+
     /**
      * <h2>获取结果</h2>
      *
      * @return java.util.List<?>
      * @author Created by liuwenhao on 2022/4/12 23:16
      */
-    public List<?> resultList() {
-        return multiList.stream().map(Multi::join).collect(Collectors.toList());
+    @SuppressWarnings("unchecked")
+    public <T> List<Object> resultList() {
+        return multiList.stream()
+            .sorted()
+            .peek(m -> {
+                if (!m.isThrowable()) {
+                    Multi<T> mMulti = (Multi<T>) m.getMulti();
+                    mMulti.exceptionally((Function<Throwable, ? extends T>) m.getFn());
+                }
+            })
+            .map(m -> m.getMulti().join())
+            .collect(Collectors.toList());
     }
 
     /**
