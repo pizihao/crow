@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <h2></h2>
@@ -16,7 +17,7 @@ public class SerialMultiTest extends TestCase {
     public void testAdd() {
         ExecutorService executorService = ThreadPool.executorService();
         SerialMulti<Object> of = SerialMulti.of(executorService);
-        Integer join = of.add(() -> System.out.println("新增一个 runnable"))
+        Object join = of.add(() -> System.out.println("新增一个 runnable"))
             .add(() -> {
                 System.out.println("新增一个 supplier");
                 return 1;
@@ -65,7 +66,7 @@ public class SerialMultiTest extends TestCase {
         System.out.println(of.getResults());
     }
 
-    public void testThrowable() {
+    public void testThrowable() throws InterruptedException {
         ExecutorService executorService = ThreadPool.executorService();
         SerialMulti<Object> of = SerialMulti.of(executorService)
             .add(() -> 1)
@@ -80,12 +81,14 @@ public class SerialMultiTest extends TestCase {
             .add(() -> "10")
             .addThrowable(throwable -> {
                 System.out.println(throwable.getMessage());
-                return 11;
+                return "11";
             });
 //        SerialMulti<Object> serial = of.getIndexSerial(8);
 ////        System.out.println(serial.getIndexSerial(6).join());
 //        assertEquals(serial.join(), 9);
+        TimeUnit.SECONDS.sleep(5);
         System.out.println(of.getResults());
+        System.out.println(of.join());
     }
 
 }

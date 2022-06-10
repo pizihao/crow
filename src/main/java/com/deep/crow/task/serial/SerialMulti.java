@@ -167,11 +167,11 @@ public class SerialMulti<T> {
      * @date 2022/4/11 14:24
      */
     @SuppressWarnings("unchecked")
-    public synchronized <U> SerialMulti<U> addThrowable(Function<Throwable, U> function) {
+    public synchronized <U> SerialMulti<U> addThrowable(Function<Throwable, T> function) {
         Objects.requireNonNull(function);
-        Multi<U> tMulti = (Multi<U>) this.multi;
-        SerialTask<U> task = new ExceptionallyTask<>(function);
-        this.multi = task.increase(tMulti);
+        SerialTask<T> task = new ExceptionallyTask<>(function);
+        multiQueue.forEach(m -> task.increase((Multi<T>) m));
+        this.multi = task.increase(this.multi);
         return (SerialMulti<U>) this;
     }
 
@@ -313,7 +313,8 @@ public class SerialMulti<T> {
             int size = array.length;
             if (resultList.size() < size) {
                 for (int i = resultList.size(); i < size; i++) {
-                    resultList.add(array[i].getNow());
+                    Multi<?> multi1 = array[i];
+                    resultList.add(multi1.getNow());
                 }
             }
             for (; ; ) {
