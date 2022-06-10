@@ -34,7 +34,7 @@ public class SerialMulti<T> {
     BlockingQueue<Multi<?>> multiQueue = new ArrayBlockingQueue<>(DEFAULT_CAPACITY);
 
     /**
-     * 存储结果的集合，在获取结果时才会写入，通过getNow的方式
+     * 存储结果的集合，在获取结果时才会写入，通过join()的方式获取结果
      */
     List<Object> resultList = new ArrayList<>();
 
@@ -314,7 +314,7 @@ public class SerialMulti<T> {
             if (resultList.size() < size) {
                 for (int i = resultList.size(); i < size; i++) {
                     Multi<?> multi1 = array[i];
-                    resultList.add(multi1.getNow());
+                    resultList.add(multi1.join());
                 }
             }
             for (; ; ) {
