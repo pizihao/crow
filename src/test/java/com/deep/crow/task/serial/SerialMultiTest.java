@@ -1,6 +1,6 @@
-package com.deep.crow;
+package com.deep.crow.task.serial;
 
-import com.deep.crow.task.serial.SerialMulti;
+import com.deep.crow.util.ThreadPool;
 import junit.framework.TestCase;
 
 import java.util.concurrent.ArrayBlockingQueue;

@@ -1,4 +1,4 @@
-package com.deep.crow;
+package com.deep.crow.task;
 
 import com.deep.crow.task.serial.SerialMulti;
 import junit.framework.TestCase;

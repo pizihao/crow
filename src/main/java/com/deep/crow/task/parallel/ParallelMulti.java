@@ -267,7 +267,7 @@ public class ParallelMulti {
      * @date 2022/6/10 16:58
      */
     @SuppressWarnings("unchecked")
-    public <T> ParallelMulti add(long start, long end, Function<Throwable, ? extends T> fn) {
+    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn, long start, long end) {
         synchronized (multiList) {
             multiList.stream()
                 .filter(m -> m.getOrder() >= start && m.getOrder() <= end)
@@ -290,7 +290,7 @@ public class ParallelMulti {
      * @date 2022/6/10 16:58
      */
     @SuppressWarnings("unchecked")
-    public <T> ParallelMulti add(Function<Throwable, ? extends T> fn, long... numbers) {
+    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn, long... numbers) {
         List<Long> list = Arrays.stream(numbers).boxed().collect(Collectors.toList());
         synchronized (multiList) {
             multiList.stream()
@@ -314,7 +314,7 @@ public class ParallelMulti {
      * @date 2022/4/13 10:46
      */
     @SuppressWarnings("unchecked")
-    public <T> ParallelMulti add(Function<Throwable, ? extends T> fn) {
+    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn) {
         synchronized (multiList) {
             multiList.stream().filter(MultiOrder::isThrowable)
                 .forEach(m -> {

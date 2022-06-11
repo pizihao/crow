@@ -1,6 +1,7 @@
-package com.deep.crow;
+package com.deep.crow.task.parallel;
 
-import com.deep.crow.task.parallel.ParallelMulti;
+import com.deep.crow.MultiTools;
+import com.deep.crow.util.ThreadPool;
 import junit.framework.TestCase;
 
 import java.util.concurrent.ExecutorService;
@@ -20,7 +21,7 @@ public class ParallelMultiTest extends TestCase {
         of.add(() -> System.out.println(1))
             .add(() -> 2)
             .add(MultiTools.supplyAsync(executorService, () -> 5))
-            .add(throwable -> {
+            .addThrowable(throwable -> {
                 System.out.println(throwable.getMessage());
                 return 6;
             })
@@ -64,11 +65,19 @@ public class ParallelMultiTest extends TestCase {
             .add(() -> 2)
             .add(5, () -> 3)
             .add(() -> 4)
-            .add(() -> 5)
+            .add(() -> 5 / 0)
+            .addThrowable(throwable -> {
+                System.out.println(throwable.getMessage());
+                return "11";
+            }, 1, 5)
             .add(19, () -> 6)
-            .add(() -> 7)
+            .add(() -> 7 / 0)
             .add(() -> 8)
-            .add(() -> 9);
+            .add(() -> 9)
+            .addThrowable(throwable -> {
+                System.out.println(throwable.getMessage());
+                return "123132";
+            });
         System.out.println(parallelMulti.resultList());
     }
 
