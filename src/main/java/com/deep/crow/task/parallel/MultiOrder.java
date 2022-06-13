@@ -14,11 +14,11 @@ class MultiOrder<T> implements Comparable<MultiOrder<T>> {
 
     Multi<T> multi;
 
-    long order;
+    int order;
 
     Function<Throwable, ? extends T> fn;
 
-    public MultiOrder(Multi<T> multi, long order) {
+    public MultiOrder(Multi<T> multi, int order) {
         this.multi = multi;
         this.order = order;
     }
@@ -31,11 +31,11 @@ class MultiOrder<T> implements Comparable<MultiOrder<T>> {
         this.multi = multi;
     }
 
-    public long getOrder() {
+    public int getOrder() {
         return order;
     }
 
-    public void setOrder(long order) {
+    public void setOrder(int order) {
         this.order = order;
     }
 

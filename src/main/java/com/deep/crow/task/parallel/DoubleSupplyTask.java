@@ -13,11 +13,11 @@ import java.util.function.DoubleSupplier;
  */
 class DoubleSupplyTask implements ParallelTask {
 
-    long order;
+    int order;
     DoubleSupplier doubleSupplier;
     ExecutorService executorService;
 
-    public DoubleSupplyTask(long order, DoubleSupplier doubleSupplier, ExecutorService executorService) {
+    public DoubleSupplyTask(int order, DoubleSupplier doubleSupplier, ExecutorService executorService) {
         this.order = order;
         this.doubleSupplier = doubleSupplier;
         this.executorService = executorService;
@@ -30,7 +30,7 @@ class DoubleSupplyTask implements ParallelTask {
     }
 
     @Override
-    public long order() {
+    public int order() {
         return order;
     }
 

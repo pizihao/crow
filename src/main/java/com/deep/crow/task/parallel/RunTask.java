@@ -12,11 +12,11 @@ import java.util.concurrent.ExecutorService;
  */
 class RunTask implements ParallelTask {
 
-    long order;
+    int order;
     Runnable runnable;
     ExecutorService executorService;
 
-    public RunTask(long order, Runnable runnable, ExecutorService executorService) {
+    public RunTask(int order, Runnable runnable, ExecutorService executorService) {
         this.order = order;
         this.runnable = runnable;
         this.executorService = executorService;
@@ -28,7 +28,7 @@ class RunTask implements ParallelTask {
     }
 
     @Override
-    public long order() {
+    public int order() {
         return order;
     }
 

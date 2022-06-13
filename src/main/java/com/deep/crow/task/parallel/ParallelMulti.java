@@ -29,12 +29,12 @@ public class ParallelMulti {
     /**
      * 保存有已被占用的字符
      */
-    final Set<Long> set = new HashSet<>();
+    final Set<Integer> set = new HashSet<>();
 
     /**
      * 保存排序的进度
      */
-    long state = 0;
+    int state = 0;
 
     /**
      * 线程池
@@ -72,12 +72,12 @@ public class ParallelMulti {
      */
     private synchronized <T> void add(ParallelTask task) {
         // 先判断能不能添加任务
-        long order = task.order();
+        int order = task.order();
         Multi<T> multi = task.assembling();
         add(order, multi);
     }
 
-    private synchronized <T> void add(long order, Multi<T> multi) {
+    private synchronized <T> void add(int order, Multi<T> multi) {
         if (order < 0) {
             throw CrowException.exception("序号{}小于0，不可用", order);
         }
@@ -96,7 +96,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/10 13:45
      */
-    private synchronized long getState() {
+    private synchronized int getState() {
         while (set.contains(state)) {
             state++;
         }
@@ -126,7 +126,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/10 14:00
      */
-    public <T> ParallelMulti add(long order, Supplier<T> s) {
+    public <T> ParallelMulti add(int order, Supplier<T> s) {
         Objects.requireNonNull(s);
         ParallelTask parallelTask = new SupplyTask<>(order, s, executorService);
         add(parallelTask);
@@ -156,7 +156,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/10 14:00
      */
-    public <T> ParallelMulti add(long order, IntSupplier s) {
+    public <T> ParallelMulti add(int order, IntSupplier s) {
         Objects.requireNonNull(s);
         ParallelTask parallelTask = new IntSupplyTask(order, s, executorService);
         add(parallelTask);
@@ -186,7 +186,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/10 14:00
      */
-    public <T> ParallelMulti add(long order, LongSupplier s) {
+    public <T> ParallelMulti add(int order, LongSupplier s) {
         Objects.requireNonNull(s);
         ParallelTask parallelTask = new LongSupplyTask(order, s, executorService);
         add(parallelTask);
@@ -216,7 +216,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/10 14:00
      */
-    public <T> ParallelMulti add(long order, DoubleSupplier s) {
+    public <T> ParallelMulti add(int order, DoubleSupplier s) {
         Objects.requireNonNull(s);
         ParallelTask parallelTask = new DoubleSupplyTask(order, s, executorService);
         add(parallelTask);
@@ -248,7 +248,7 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/10 14:00
      */
-    public ParallelMulti add(long order, Runnable r) {
+    public ParallelMulti add(int order, Runnable r) {
         Objects.requireNonNull(r);
         ParallelTask parallelTask = new RunTask(order, r, executorService);
         add(parallelTask);
@@ -267,7 +267,7 @@ public class ParallelMulti {
      * @date 2022/6/10 16:58
      */
     @SuppressWarnings("unchecked")
-    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn, long start, long end) {
+    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn, int start, int end) {
         synchronized (multiList) {
             multiList.stream()
                 .filter(m -> m.getOrder() >= start && m.getOrder() <= end)
@@ -290,8 +290,8 @@ public class ParallelMulti {
      * @date 2022/6/10 16:58
      */
     @SuppressWarnings("unchecked")
-    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn, long... numbers) {
-        List<Long> list = Arrays.stream(numbers).boxed().collect(Collectors.toList());
+    public <T> ParallelMulti addThrowable(Function<Throwable, ? extends T> fn, int... numbers) {
+        List<Integer> list = Arrays.stream(numbers).boxed().collect(Collectors.toList());
         synchronized (multiList) {
             multiList.stream()
                 .filter(m -> list.contains(m.getOrder()))
@@ -365,6 +365,28 @@ public class ParallelMulti {
     public ParallelMulti add(ParallelMulti parallelMulti) {
         parallelMulti.multiList.forEach(m -> add(getState(), m.getMulti()));
         return this;
+    }
+
+    // ===============================获取Multi======================================
+
+    /**
+     * <h2>通过定义的索引获取Multi</h2>
+     *
+     * @param index 索引
+     * @return com.deep.crow.multi.Multi<T>
+     * @throws CrowException 当指明的索引值没有映射时
+     * @author liuwenhao
+     * @date 2022/6/13 9:17
+     */
+    @SuppressWarnings("unchecked")
+    public <T> Multi<T> multiForIndex(int index) {
+        if (!set.contains(index)) {
+            throw CrowException.exception("不存在的索引值 -- {}", index);
+        }
+        MultiOrder<?> multiOrder = multiList.stream()
+            .filter(m -> m.getOrder() == index)
+            .findFirst().orElse(null);
+        return multiOrder == null ? null : (Multi<T>) multiOrder.getMulti();
     }
 
     // ===============================后置操作和前置操作======================================

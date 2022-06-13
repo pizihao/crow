@@ -21,7 +21,7 @@ interface ParallelTask extends Task, Comparable<ParallelTask> {
      * @author liuwenhao
      * @date 2022/6/10 10:49
      */
-    long order();
+    int order();
 
     /**
      * <h2>将任务装配到Multi中</h2>
