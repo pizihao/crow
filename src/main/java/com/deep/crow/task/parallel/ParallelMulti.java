@@ -496,6 +496,17 @@ public class ParallelMulti {
     // ===============================结果的获取======================================
 
     /**
+     * <h2>等待所有任务执行完成</h2>
+     * 不获取结果
+     *
+     * @author liuwenhao
+     * @date 2022/6/13 11:24
+     */
+    public void join() {
+        resultList();
+    }
+
+    /**
      * <h2>获取结果</h2>
      *
      * @return java.util.List<?>

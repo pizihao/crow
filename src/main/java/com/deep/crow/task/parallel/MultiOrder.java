@@ -63,7 +63,7 @@ class MultiOrder<T> implements Comparable<MultiOrder<T>> {
         if (Objects.isNull(o)) {
             return -1;
         }
-        return (int) (order - o.order);
+        return order - o.order;
     }
 
     @Override
