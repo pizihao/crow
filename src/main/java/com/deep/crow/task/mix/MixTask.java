@@ -45,6 +45,7 @@ interface MixTask extends Task {
      * @author liuwenhao
      * @date 2022/6/18 17:10
      */
+    @Deprecated
     boolean isTail();
 
     /**
@@ -53,6 +54,7 @@ interface MixTask extends Task {
      * @author liuwenhao
      * @date 2022/6/18 17:11
      */
+    @Deprecated
     void cancelTail();
 
     /**
@@ -66,13 +68,13 @@ interface MixTask extends Task {
 
     /**
      * <h2>判断任务是否完成</h2>
-     * 通过任务的get()方法进行判断
-     * 如果出现异常则任务没有完成
+     * 如果强制则使用join 如果非强制则使用getNow
      *
+     * @param force 是否强制
      * @return T
      * @author liuwenhao
      * @date 2022/6/17 19:10
      */
-    boolean complete();
+    boolean complete(boolean force);
 
 }

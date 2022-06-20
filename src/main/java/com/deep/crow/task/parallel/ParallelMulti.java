@@ -27,7 +27,7 @@ public class ParallelMulti {
     final List<MultiOrder<?>> multiList = new ArrayList<>();
 
     /**
-     * 保存有已被占用的字符
+     * 保存已被占用的字符
      */
     final Set<Integer> set = new HashSet<>();
 

@@ -5,8 +5,6 @@ import com.deep.crow.multi.Multi;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 
 /**
  * <h2></h2>
@@ -28,14 +26,15 @@ class RunnableMixTask implements MixTask {
     /**
      * 任务体
      */
-    Multi<Void> multi;
+    Multi<Object> multi;
 
     /**
      * 是否是尾结点,这取决于任务是否存在后置任务，不可随意更改
      */
+    @Deprecated
     boolean isTail;
 
-    public RunnableMixTask(String name, Multi<Void> multi) {
+    public RunnableMixTask(String name, Multi<Object> multi) {
         this.name = name;
         this.multi = multi;
         this.isTail = true;
@@ -51,11 +50,13 @@ class RunnableMixTask implements MixTask {
         this.preName.remove(preName);
     }
 
+    @Deprecated
     @Override
     public boolean isTail() {
         return isTail;
     }
 
+    @Deprecated
     @Override
     public void cancelTail() {
         this.isTail = false;
@@ -72,14 +73,14 @@ class RunnableMixTask implements MixTask {
     }
 
     @Override
-    public boolean complete() {
-        try {
-            multi.get();
-        } catch (ExecutionException | InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return false;
+    public boolean complete(boolean force) {
+        ValueIfAbsent valueIfAbsent = new ValueIfAbsent();
+        if (force) {
+            multi.join();
+            return true;
         }
-        return true;
+        Object multiNow = multi.getNow(valueIfAbsent);
+        return !(multiNow instanceof ValueIfAbsent);
     }
 
     @Override
@@ -97,6 +98,14 @@ class RunnableMixTask implements MixTask {
     @Override
     public int hashCode() {
         return Objects.hash(name);
+    }
+
+    /**
+     * 内置类，用于验证任务是否执行完成
+     */
+    private static class ValueIfAbsent {
+        ValueIfAbsent() {
+        }
     }
 
 }

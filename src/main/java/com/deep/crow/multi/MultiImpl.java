@@ -58,6 +58,11 @@ public class MultiImpl<T> implements Multi<T> {
     }
 
     @Override
+    public T getNow(T valueIfAbsent) {
+        return completableFuture.getNow(valueIfAbsent);
+    }
+
+    @Override
     public Multi<T> copyMulti() {
         CompletableFuture<T> async = CompletableFuture.supplyAsync(() -> completableFuture.join(), executorService);
         return new MultiImpl<>(executorService, async);

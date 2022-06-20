@@ -190,6 +190,15 @@ public interface Multi<T> {
     T getNow();
 
     /**
+     * 获取结果
+     * 如果未执行完成返回null
+     *
+     * @return T 结果
+     * @author Created by liuwenhao on 2022/4/10 0:42
+     */
+    T getNow(T valueIfAbsent);
+
+    /**
      * <h2>复制multi</h2>
      * 两个拥有相同的信息当完全不同
      *
