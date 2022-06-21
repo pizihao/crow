@@ -54,7 +54,6 @@ interface MixTask extends Task {
      * @author liuwenhao
      * @date 2022/6/18 17:11
      */
-    @Deprecated
     void cancelTail();
 
     /**

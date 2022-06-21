@@ -18,7 +18,12 @@ import java.util.stream.Collectors;
  *
  * @author Create by liuwenhao on 2022/6/14 15:59
  */
-public class MixMulti {
+public class MixMulti<T> {
+
+    /**
+     * 公共操作对象
+     */
+    T obj;
 
     /**
      * 线程池
