@@ -9,7 +9,7 @@ import java.util.Set;
  *
  * @author Create by liuwenhao on 2022/6/17 19:07
  */
-interface MixTask extends Task {
+interface MixTask<T> extends Task {
 
     /**
      * <h2>获取任务的前置任务的标识</h2>

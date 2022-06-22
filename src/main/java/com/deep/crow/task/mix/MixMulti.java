@@ -7,6 +7,7 @@ import com.sun.istack.internal.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +34,7 @@ public class MixMulti<T> {
     /**
      * 混合任务集合
      */
-    List<MixTask> mixTasks = new ArrayList<>();
+    List<MixTask<T>> mixTasks = new ArrayList<>();
 
     /**
      * 任务名称列表，用于验证
@@ -44,14 +45,15 @@ public class MixMulti<T> {
      * 任务尾结点集合，尾结点的前置节点不能是尾结点
      */
     @Deprecated
-    List<MixTask> tailMixTasks = new ArrayList<>();
+    List<MixTask<T>> tailMixTasks = new ArrayList<>();
 
     /**
      * 等待任务集合，等待其前置任务完成
      */
-    List<MixWaitTask> waitForTask = new ArrayList<>();
+    List<MixWaitTask<T>> waitForTask = new ArrayList<>();
 
-    public MixMulti(ExecutorService executorService) {
+    public MixMulti(T obj, ExecutorService executorService) {
+        this.obj = obj;
         this.executorService = executorService;
     }
 
@@ -60,13 +62,13 @@ public class MixMulti<T> {
      * 无需验证前置任务是否已完成
      *
      * @param name     当前任务标识
-     * @param runnable 任务
+     * @param consumer 任务
      * @return MixMulti
      * @author liuwenhao
      * @date 2022/6/18 17:20
      */
-    public MixMulti add(String name, Runnable runnable) {
-        MixTask mixTask = mixTaskBuilder(name, runnable, null);
+    public MixMulti<T> add(String name, Consumer<T> consumer) {
+        MixTask<T> mixTask = mixTaskBuilder(name, consumer, null);
         addTask(mixTask);
         return this;
     }
@@ -75,21 +77,21 @@ public class MixMulti<T> {
      * <h2>添加任务。并声明前置任务</h2>
      *
      * @param name     当前任务标识
-     * @param runnable 任务
+     * @param consumer 任务
      * @param preName  前置任务
      * @return MixMulti
      * @author liuwenhao
      * @date 2022/6/18 17:20
      */
-    public MixMulti add(String name, Runnable runnable, String... preName) {
+    public MixMulti<T> add(String name, Consumer<T> consumer, String... preName) {
         // 验证前置任务是否已经完成
         Set<String> pre = Arrays.stream(preName).collect(Collectors.toSet());
         boolean checkPreBegin = checkPreBegin(pre, false);
         if (checkPreBegin) {
-            MixTask mixTask = mixTaskBuilder(name, runnable, pre);
+            MixTask<T> mixTask = mixTaskBuilder(name, consumer, pre);
             addTask(mixTask);
         } else {
-            MixWaitTask mixWaitTask = new MixWaitTask(name, runnable, pre);
+            MixWaitTask<T> mixWaitTask = new MixWaitTask<>(name, consumer, pre);
             waitForTask.add(mixWaitTask);
         }
         recastPre(false);
@@ -102,8 +104,9 @@ public class MixMulti<T> {
      * @author liuwenhao
      * @date 2022/6/20 19:09
      */
-    public void exec() {
-        recastPre(true);
+    public T exec() {
+        recastEnd();
+        return obj;
     }
 
     /**
@@ -113,41 +116,41 @@ public class MixMulti<T> {
      * @author liuwenhao
      * @date 2022/6/18 17:34
      */
-    private synchronized void addTask(MixTask mixTask) {
+    private synchronized void addTask(MixTask<T> mixTask) {
         Set<String> pre = mixTask.pre();
-        String name = mixTask.name();
         // 验证阶段
-        checkName(name);
+        checkName(mixTask.name());
         checkPreName(pre);
         // 添加到混合任务节点集合和尾节点集合
         mixTasks.add(mixTask);
         tailMixTasks.add(mixTask);
         taskName.addAll(pre);
         // 从尾结点集合中移出其前置节点并设置为非尾节点
-        List<MixTask> mixTaskList = mixTasks.stream()
+        List<MixTask<T>> mixTaskList = mixTasks.stream()
             .filter(m -> pre.contains(m.name()))
             .peek(MixTask::cancelTail)
             .collect(Collectors.toList());
         tailMixTasks.removeAll(mixTaskList);
-        taskName.add(name);
+        taskName.add(mixTask.name());
     }
 
     /**
      * <h2>构建混合任务</h2>
      *
      * @param name     任务标识
-     * @param runnable 任务体
+     * @param consumer 任务体
      * @param pre      前置节点，如果为null则前置节点为
      * @return com.deep.crow.task.mix.MixTask
      * @author liuwenhao
      * @date 2022/6/20 14:47
      */
-    private MixTask mixTaskBuilder(String name, Runnable runnable, @Nullable Set<String> pre) {
-        Multi<Object> multi = MultiHelper.supplyAsync(executorService, () -> {
-            runnable.run();
-            return null;
-        });
-        MixTask mixTask = new RunnableMixTask(name, multi);
+    private MixTask<T> mixTaskBuilder(String name, Consumer<T> consumer, @Nullable Set<String> pre) {
+        Multi<T> multi = MultiHelper.supplyAsync(executorService, () -> obj)
+            .thenApply(o -> {
+                consumer.accept(o);
+                return o;
+            });
+        MixTask<T> mixTask = new RunnableMixTask<>(name, multi);
         if (Objects.nonNull(pre)) {
             for (String s : pre) {
                 mixTask.addPreName(s);
@@ -202,18 +205,30 @@ public class MixMulti<T> {
      * @date 2022/6/20 14:03
      */
     private void recastPre(boolean force) {
-        Iterator<MixWaitTask> iterator = waitForTask.iterator();
+        Iterator<MixWaitTask<T>> iterator = waitForTask.iterator();
+        boolean flag = false;
         while (iterator.hasNext()) {
-            MixWaitTask waitTask = iterator.next();
+            MixWaitTask<T> waitTask = iterator.next();
             Set<String> preName = waitTask.getPreName();
             boolean preBegin = checkPreBegin(preName, force);
             if (preBegin) {
+                flag = true;
                 // 需要处理
-                MixTask mixTask = mixTaskBuilder(waitTask.getName(), waitTask.getRunnable(), waitTask.getPreName());
+                MixTask<T> mixTask = mixTaskBuilder(waitTask.getName(), waitTask.getConsumer(), waitTask.getPreName());
                 addTask(mixTask);
                 iterator.remove();
             }
         }
+        if (flag || (force && !waitForTask.isEmpty())) {
+            recastPre(force);
+        }
+    }
+
+    private void recastEnd() {
+        if (!waitForTask.isEmpty()) {
+            recastPre(true);
+        }
+        mixTasks.forEach(m -> m.complete(true));
     }
 
     /**
@@ -229,20 +244,20 @@ public class MixMulti<T> {
     private boolean checkPreBegin(Set<String> preName, boolean force) {
         // 优先判断是否存在等待中的
 
-        List<MixWaitTask> waitTasks = waitForTask.stream()
+        List<MixWaitTask<T>> waitTasks = waitForTask.stream()
             .filter(m -> preName.contains(m.getName()))
             .collect(Collectors.toList());
         if (!waitTasks.isEmpty()) {
             return false;
         }
 
-        List<MixTask> mixTaskList = mixTasks.stream()
+        List<MixTask<T>> mixTaskList = mixTasks.stream()
             .filter(m -> preName.contains(m.name()))
             .collect(Collectors.toList());
         if (mixTaskList.isEmpty()) {
             return false;
         }
-        for (MixTask mixTask : mixTaskList) {
+        for (MixTask<T> mixTask : mixTaskList) {
             if (!mixTask.complete(force)) {
                 return false;
             }

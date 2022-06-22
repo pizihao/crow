@@ -1,6 +1,8 @@
 package com.deep.crow.task.mix;
 
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * <h2>混合等待任务</h2>
@@ -9,15 +11,15 @@ import java.util.Set;
  *
  * @author Create by liuwenhao on 2022/6/20 13:05
  */
-public class MixWaitTask {
+public class MixWaitTask<T> {
 
     String name;
-    Runnable runnable;
+    Consumer<T> consumer;
     Set<String> preName;
 
-    public MixWaitTask(String name, Runnable runnable, Set<String> preName) {
+    public MixWaitTask(String name, Consumer<T> consumer, Set<String> preName) {
         this.name = name;
-        this.runnable = runnable;
+        this.consumer = consumer;
         this.preName = preName;
     }
 
@@ -29,12 +31,12 @@ public class MixWaitTask {
         this.name = name;
     }
 
-    public Runnable getRunnable() {
-        return runnable;
+    public Consumer<T> getConsumer() {
+        return consumer;
     }
 
-    public void setRunnable(Runnable runnable) {
-        this.runnable = runnable;
+    public void setConsumer(Consumer<T> consumer) {
+        this.consumer = consumer;
     }
 
     public Set<String> getPreName() {

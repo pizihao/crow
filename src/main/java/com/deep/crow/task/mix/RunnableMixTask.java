@@ -11,7 +11,7 @@ import java.util.Set;
  *
  * @author Create by liuwenhao on 2022/6/18 16:17
  */
-class RunnableMixTask implements MixTask {
+class RunnableMixTask<T> implements MixTask<T> {
 
     /**
      * 当前任务的名称，即唯一标识
@@ -26,7 +26,7 @@ class RunnableMixTask implements MixTask {
     /**
      * 任务体
      */
-    Multi<Object> multi;
+    Multi<T> multi;
 
     /**
      * 是否是尾结点,这取决于任务是否存在后置任务，不可随意更改
@@ -34,7 +34,7 @@ class RunnableMixTask implements MixTask {
     @Deprecated
     boolean isTail;
 
-    public RunnableMixTask(String name, Multi<Object> multi) {
+    public RunnableMixTask(String name, Multi<T> multi) {
         this.name = name;
         this.multi = multi;
         this.isTail = true;
@@ -74,13 +74,12 @@ class RunnableMixTask implements MixTask {
 
     @Override
     public boolean complete(boolean force) {
-        ValueIfAbsent valueIfAbsent = new ValueIfAbsent();
         if (force) {
             multi.join();
             return true;
         }
-        Object multiNow = multi.getNow(valueIfAbsent);
-        return !(multiNow instanceof ValueIfAbsent);
+        Object multiNow = multi.getNow(null);
+        return multiNow != null;
     }
 
     @Override
@@ -91,7 +90,7 @@ class RunnableMixTask implements MixTask {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        RunnableMixTask that = (RunnableMixTask) o;
+        RunnableMixTask<T> that = (RunnableMixTask<T>) o;
         return Objects.equals(name, that.name);
     }
 
@@ -100,12 +99,5 @@ class RunnableMixTask implements MixTask {
         return Objects.hash(name);
     }
 
-    /**
-     * 内置类，用于验证任务是否执行完成
-     */
-    private static class ValueIfAbsent {
-        ValueIfAbsent() {
-        }
-    }
 
 }
