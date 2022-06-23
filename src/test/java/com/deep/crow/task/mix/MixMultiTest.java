@@ -26,7 +26,7 @@ public class MixMultiTest extends TestCase {
 
     public void testAdd() {
         User user = new User();
-        MixMulti<User> mixMulti = new MixMulti<>(user, executorService)
+        MixMulti<User> mixMulti = MixMulti.of(user, executorService)
             .add("B", o -> wait(o, "B", 3))
             .add("C", o -> wait(o, "C", 2))
             .add("D", o -> wait(o, "D", 0), "B", "C")
@@ -41,7 +41,7 @@ public class MixMultiTest extends TestCase {
 
     public void testAddThrowable() {
         User user = new User();
-        MixMulti<User> mixMulti = new MixMulti<>(user, executorService)
+        MixMulti<User> mixMulti = MixMulti.of(user, executorService)
             .add("B", o -> wait(o, "B", 3))
             .add("C", o -> wait(o, "C", 2))
             .add("D", o -> wait(o, "D", 0), "B", "C")

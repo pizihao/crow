@@ -61,9 +61,13 @@ public class MixMulti<T> {
      */
     Consumer<Throwable> fn;
 
-    public MixMulti(T obj, ExecutorService executorService) {
+    private MixMulti(T obj, ExecutorService executorService) {
         this.obj = obj;
         this.executorService = executorService;
+    }
+
+    public static <T> MixMulti<T> of(T obj, ExecutorService executorService) {
+        return new MixMulti<>(obj, executorService);
     }
 
     /**

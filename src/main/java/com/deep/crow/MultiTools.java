@@ -2,6 +2,7 @@ package com.deep.crow;
 
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
+import com.deep.crow.task.mix.MixMulti;
 import com.deep.crow.task.parallel.ParallelMulti;
 import com.deep.crow.task.serial.SerialMulti;
 import com.deep.crow.util.Tuple;
@@ -105,6 +106,12 @@ public class MultiTools {
         return ParallelMulti.of();
     }
 
+
+    // ================================MixMulti====================================
+
+    public static <T> MixMulti<T> mixMulti(T obj, ExecutorService executorService) {
+        return MixMulti.of(obj, executorService);
+    }
 
     // ================================操作====================================
 
