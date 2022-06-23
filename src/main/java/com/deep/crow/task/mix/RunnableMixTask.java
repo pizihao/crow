@@ -31,7 +31,6 @@ class RunnableMixTask<T> implements MixTask<T> {
     /**
      * 是否是尾结点,这取决于任务是否存在后置任务，不可随意更改
      */
-    @Deprecated
     boolean isTail;
 
     public RunnableMixTask(String name, Multi<T> multi) {
@@ -80,6 +79,11 @@ class RunnableMixTask<T> implements MixTask<T> {
         }
         Object multiNow = multi.getNow(null);
         return multiNow != null;
+    }
+
+    @Override
+    public Multi<T> multi() {
+        return multi;
     }
 
     @Override

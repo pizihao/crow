@@ -1,7 +1,9 @@
 package com.deep.crow.task.mix;
 
+import com.deep.crow.multi.Multi;
 import com.deep.crow.task.Task;
 
+import java.lang.annotation.Inherited;
 import java.util.Set;
 
 /**
@@ -75,5 +77,14 @@ interface MixTask<T> extends Task {
      * @date 2022/6/17 19:10
      */
     boolean complete(boolean force);
+
+    /**
+     * <h2>获得任务</h2>
+     *
+     * @return com.deep.crow.multi.Multi<T>
+     * @author liuwenhao
+     * @date 2022/6/22 18:00
+     */
+    Multi<T> multi();
 
 }

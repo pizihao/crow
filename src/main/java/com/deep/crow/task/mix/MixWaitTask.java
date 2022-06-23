@@ -2,7 +2,6 @@ package com.deep.crow.task.mix;
 
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * <h2>混合等待任务</h2>
@@ -11,7 +10,7 @@ import java.util.function.Supplier;
  *
  * @author Create by liuwenhao on 2022/6/20 13:05
  */
-public class MixWaitTask<T> {
+class MixWaitTask<T> {
 
     String name;
     Consumer<T> consumer;

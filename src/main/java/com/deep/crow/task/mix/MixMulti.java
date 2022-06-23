@@ -44,13 +44,22 @@ public class MixMulti<T> {
     /**
      * 任务尾结点集合，尾结点的前置节点不能是尾结点
      */
-    @Deprecated
     List<MixTask<T>> tailMixTasks = new ArrayList<>();
 
     /**
-     * 等待任务集合，等待其前置任务完成
+     * 等待任务集合，等待最终阶段进行装配
      */
     List<MixWaitTask<T>> waitForTask = new ArrayList<>();
+
+    /**
+     * 已装配异常节点的任务名称集合
+     */
+    Set<String> throwableName = new HashSet<>();
+
+    /**
+     * 异常节点
+     */
+    Consumer<Throwable> fn;
 
     public MixMulti(T obj, ExecutorService executorService) {
         this.obj = obj;
@@ -84,22 +93,30 @@ public class MixMulti<T> {
      * @date 2022/6/18 17:20
      */
     public MixMulti<T> add(String name, Consumer<T> consumer, String... preName) {
-        // 验证前置任务是否已经完成
+
+        // 加入到等待集合中
         Set<String> pre = Arrays.stream(preName).collect(Collectors.toSet());
-        boolean checkPreBegin = checkPreBegin(pre, false);
-        if (checkPreBegin) {
-            MixTask<T> mixTask = mixTaskBuilder(name, consumer, pre);
-            addTask(mixTask);
-        } else {
-            MixWaitTask<T> mixWaitTask = new MixWaitTask<>(name, consumer, pre);
-            waitForTask.add(mixWaitTask);
-        }
-        recastPre(false);
+        MixWaitTask<T> mixWaitTask = new MixWaitTask<>(name, consumer, pre);
+        waitForTask.add(mixWaitTask);
+        return this;
+    }
+
+    /**
+     * <h2>添加一个异常节点</h2>
+     *
+     * @param fn 异常节点
+     * @return com.deep.crow.task.mix.MixMulti<T>
+     * @author liuwenhao
+     * @date 2022/6/22 16:52
+     */
+    public MixMulti<T> addThrowable(Consumer<Throwable> fn) {
+        this.fn = fn;
         return this;
     }
 
     /**
      * <h2>强制任务执行</h2>
+     * 一直等待直到任务完成
      *
      * @author liuwenhao
      * @date 2022/6/20 19:09
@@ -151,6 +168,9 @@ public class MixMulti<T> {
                 return o;
             });
         MixTask<T> mixTask = new RunnableMixTask<>(name, multi);
+        if (null != fn) {
+            addThrowableTask(mixTask);
+        }
         if (Objects.nonNull(pre)) {
             for (String s : pre) {
                 mixTask.addPreName(s);
@@ -168,7 +188,7 @@ public class MixMulti<T> {
      */
     private void checkName(String name) {
         if (taskName.contains(name)) {
-            CrowException.of("任务名称{}已存在", name);
+            CrowException.of("任务名称{}重复", name);
         }
     }
 
@@ -225,10 +245,23 @@ public class MixMulti<T> {
     }
 
     private void recastEnd() {
-        if (!waitForTask.isEmpty()) {
+        // 为已装配的任务添加异常节点
+        mixTasks.stream()
+            .filter(t -> !throwableName.contains(t.name()))
+            .forEach(this::addThrowableTask);
+
+        while (!waitForTask.isEmpty()) {
             recastPre(true);
         }
         mixTasks.forEach(m -> m.complete(true));
+    }
+
+    private synchronized void addThrowableTask(MixTask<T> mixTask) {
+        throwableName.add(mixTask.name());
+        mixTask.multi().exceptionally(throwable -> {
+            fn.accept(throwable);
+            return obj;
+        });
     }
 
     /**
