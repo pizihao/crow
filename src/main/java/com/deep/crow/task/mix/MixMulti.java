@@ -3,7 +3,6 @@ package com.deep.crow.task.mix;
 import com.deep.crow.exception.CrowException;
 import com.deep.crow.multi.Multi;
 import com.deep.crow.multi.MultiHelper;
-import com.sun.istack.internal.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -165,7 +164,7 @@ public class MixMulti<T> {
      * @author liuwenhao
      * @date 2022/6/20 14:47
      */
-    private MixTask<T> mixTaskBuilder(String name, Consumer<T> consumer, @Nullable Set<String> pre) {
+    private MixTask<T> mixTaskBuilder(String name, Consumer<T> consumer, Set<String> pre) {
         Multi<T> multi = MultiHelper.supplyAsync(executorService, () -> obj)
             .thenApply(o -> {
                 consumer.accept(o);

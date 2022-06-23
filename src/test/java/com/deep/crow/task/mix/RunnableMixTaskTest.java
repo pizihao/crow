@@ -22,13 +22,13 @@ public class RunnableMixTaskTest extends TestCase {
             return null;
         });
 
-        RunnableMixTask runnableMixTask = new RunnableMixTask("任务", multi);
+        RunnableMixTask<Object> runnableMixTask = new RunnableMixTask<>("任务", multi);
         assertEquals(false,runnableMixTask.complete(false));
         try {
             TimeUnit.SECONDS.sleep(3);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        assertEquals(true,runnableMixTask.complete(false));
+        assertEquals(true,runnableMixTask.complete(true));
     }
 }
