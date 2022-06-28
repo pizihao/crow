@@ -28,14 +28,18 @@ public class MapCompress extends AbstractCompress {
 
     @Override
     public boolean check() {
-        Map.Entry<?, ?> firstKeyValue = compress();
-        ParameterizedType parameterizedType = (ParameterizedType) type;
-        Type keyArgument = parameterizedType.getActualTypeArguments()[0];
-        Type valueArgument = parameterizedType.getActualTypeArguments()[1];
-        CrowTypeReference<?> keyTypeReference = CrowTypeReference.make(keyArgument);
-        CrowTypeReference<?> valueTypeReference = CrowTypeReference.make(valueArgument);
-        objectMapper.convertValue(firstKeyValue.getKey(), keyTypeReference);
-        objectMapper.convertValue(firstKeyValue.getValue(), valueTypeReference);
-        return false;
+        try {
+            Map.Entry<?, ?> firstKeyValue = compress();
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type keyArgument = parameterizedType.getActualTypeArguments()[0];
+            Type valueArgument = parameterizedType.getActualTypeArguments()[1];
+            CrowTypeReference<?> keyTypeReference = CrowTypeReference.make(keyArgument);
+            CrowTypeReference<?> valueTypeReference = CrowTypeReference.make(valueArgument);
+            objectMapper.convertValue(firstKeyValue.getKey(), keyTypeReference);
+            objectMapper.convertValue(firstKeyValue.getValue(), valueTypeReference);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
