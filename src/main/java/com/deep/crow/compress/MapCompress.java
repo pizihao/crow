@@ -37,7 +37,8 @@ public class MapCompress extends AbstractCompress {
             CrowTypeReference<?> valueTypeReference = CrowTypeReference.make(valueArgument);
             objectMapper.convertValue(firstKeyValue.getKey(), keyTypeReference);
             objectMapper.convertValue(firstKeyValue.getValue(), valueTypeReference);
-            return true;
+            return ((Class<?>) keyArgument).isAssignableFrom(firstKeyValue.getKey().getClass())
+                && ((Class<?>) valueArgument).isAssignableFrom(firstKeyValue.getValue().getClass());
         } catch (Exception e) {
             return false;
         }

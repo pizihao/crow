@@ -356,7 +356,7 @@ public class TypeUtil {
             for (Field field : fields) {
                 String property = field.getName();
                 Object result = fieldAccess.get(obj, property);
-                if ((isCover || Objects.isNull(result)) && isAccordWith(field, obj, objectMapper)) {
+                if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
                     fieldAccess.set(obj, property, o);
                     return field;
                 }
@@ -427,7 +427,7 @@ public class TypeUtil {
      * @date 2022/4/27 9:38
      */
     private static boolean isAccordWith(Field field, Object o, ObjectMapper objectMapper) {
-        Type type = field.getType();
+        Type type = field.getGenericType();
         Compress compress = CompressHelper.getType(type, o, objectMapper);
         return compress.check();
     }

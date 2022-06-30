@@ -1,6 +1,7 @@
 package com.deep.crow.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <h2></h2>
@@ -15,6 +16,10 @@ public class Person {
     List<String> list4;
     User user;
     Integer integer;
+
+    Map<Integer, String> map1;
+
+    Map<Integer, Integer> map2;
 
     public List<Integer> getList1() {
         return list1;
@@ -64,6 +69,22 @@ public class Person {
         this.integer = integer;
     }
 
+    public Map<Integer, String> getMap1() {
+        return map1;
+    }
+
+    public void setMap1(Map<Integer, String> map1) {
+        this.map1 = map1;
+    }
+
+    public Map<Integer, Integer> getMap2() {
+        return map2;
+    }
+
+    public void setMap2(Map<Integer, Integer> map2) {
+        this.map2 = map2;
+    }
+
     @Override
     public String toString() {
         return "Person{" +
@@ -73,6 +94,8 @@ public class Person {
             ", list4=" + list4 +
             ", user=" + user +
             ", integer=" + integer +
+            ", map1=" + map1 +
+            ", map2=" + map2 +
             '}';
     }
 }

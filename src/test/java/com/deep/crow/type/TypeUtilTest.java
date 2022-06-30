@@ -7,7 +7,9 @@ import junit.framework.TestCase;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <h2></h2>
@@ -18,8 +20,6 @@ import java.util.List;
 public class TypeUtilTest extends TestCase {
     public List<Object> fill() {
         List<Integer> list1 = new ArrayList<>();
-        list1.add(1);
-        list1.add(2);
         List<String> list2 = new ArrayList<>();
         list2.add("liu");
         List<String> list3 = new ArrayList<>();
@@ -32,6 +32,14 @@ public class TypeUtilTest extends TestCase {
         Integer integer = 10;
         String str = "456";
 
+        Map<Integer,String> map1 = new HashMap<>();
+        map1.put(1,"liu");
+        map1.put(2,"wen");
+
+        Map<Integer,Integer> map2 = new HashMap<>();
+        map2.put(1,123);
+        map2.put(2,456);
+
         List<Object> listObj = new ArrayList<>();
         listObj.add(list4);
         listObj.add(list1);
@@ -40,6 +48,8 @@ public class TypeUtilTest extends TestCase {
         listObj.add(user2);
         listObj.add(integer);
         listObj.add(str);
+        listObj.add(map1);
+        listObj.add(map2);
         return listObj;
     }
 

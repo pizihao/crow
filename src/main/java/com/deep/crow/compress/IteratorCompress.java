@@ -33,7 +33,7 @@ public class IteratorCompress extends AbstractCompress {
             Type rawType = parameterizedType.getRawType();
             CrowTypeReference<?> typeReference = CrowTypeReference.make(argument);
             objectMapper.convertValue(compress(), typeReference);
-            return o.getClass().isAssignableFrom((Class<?>) rawType);
+            return ((Class<?>) rawType).isAssignableFrom(o.getClass());
         } catch (Exception e) {
             return false;
         }
