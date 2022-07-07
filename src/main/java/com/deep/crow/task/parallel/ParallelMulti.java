@@ -41,6 +41,8 @@ public class ParallelMulti {
      */
     ExecutorService executorService;
 
+    IndexRepeat indexRepeat = new ThrowableStrategy();
+
     private ParallelMulti(ExecutorService executorService) {
         this.executorService = executorService;
     }
@@ -60,6 +62,10 @@ public class ParallelMulti {
     public ParallelMulti setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
         return this;
+    }
+
+    public void setIndexRepeat(IndexRepeat indexRepeat) {
+        this.indexRepeat = indexRepeat;
     }
 
     /**
@@ -82,11 +88,12 @@ public class ParallelMulti {
             throw CrowException.exception("序号{}小于0，不可用", order);
         }
         if (set.contains(order)) {
-            throw CrowException.exception("序号{}处已存在任务，不可继续添加", order);
+            MultiOrder<?> multiOrder = indexRepeat.get(set, order, multi);
+            if (multiOrder != null){
+                set.add(multiOrder.getOrder());
+                multiList.add(multiOrder);
+            }
         }
-        set.add(order);
-        MultiOrder<?> multiOrder = new MultiOrder<>(multi, order);
-        multiList.add(multiOrder);
     }
 
     /**
@@ -684,6 +691,41 @@ public class ParallelMulti {
      */
     public <T> Collection<T> batchForInstance(Collection<T> ts) {
         return batchForInstance(ts, false);
+    }
+
+
+    /**
+     * 直接抛出异常，默认
+     */
+    public static class ThrowableStrategy implements IndexRepeat {
+        @Override
+        public MultiOrder<?> get(Set<Integer> index, int order, Multi<?> multi) {
+            throw CrowException.exception("序号{}处已存在任务，不可继续添加", order);
+        }
+    }
+
+
+    /**
+     * 顺延出下一个序号，这可能和用户指定的不一致
+     */
+    public static class PostponeStrategy implements IndexRepeat {
+        @Override
+        public MultiOrder<?> get(Set<Integer> index, int order, Multi<?> multi) {
+            do {
+                order++;
+            } while (index.contains(order));
+            return new MultiOrder<>(multi, order);
+        }
+    }
+
+    /**
+     * 直接忽略
+     */
+    public static class IgnoreStrategy implements IndexRepeat {
+        @Override
+        public MultiOrder<?> get(Set<Integer> index, int order, Multi<?> multi) {
+            return null;
+        }
     }
 
 }
