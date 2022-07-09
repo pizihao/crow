@@ -83,7 +83,7 @@ public interface Multi<T> {
      * @return com.deep.crow.team.Multi<U>
      * @author Created by liuwenhao on 2022/4/9 23:50
      */
-    <U> Multi<U> applyFun(Multi<? extends T> other, Function<? super T, U> fn);
+    <U, M extends T> Multi<U> applyFun(Multi<M> other, Function<M, U> fn);
 
     /**
      * 接收一个Multi，将其结果作为原料执行一个任务
@@ -93,7 +93,7 @@ public interface Multi<T> {
      * @return com.deep.crow.team.Multi<java.lang.Void>
      * @author Created by liuwenhao on 2022/4/9 23:58
      */
-    Multi<Void> acceptFun(Multi<? extends T> other, Consumer<? super T> action);
+    <M extends T> Multi<Void> acceptFun(Multi<M> other, Consumer<M> action);
 
     /**
      * 接收一个Multi，其执行完成后执行一个任务

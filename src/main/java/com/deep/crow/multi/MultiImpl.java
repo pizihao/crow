@@ -106,14 +106,16 @@ public class MultiImpl<T> implements Multi<T> {
     }
 
     @Override
-    public <U> Multi<U> applyFun(Multi<? extends T> other, Function<? super T, U> fn) {
-        completableFuture = (CompletableFuture<T>) completableFuture.applyToEitherAsync(other.getCpf(), fn, executorService);
+    public <U, M extends T> Multi<U> applyFun(Multi<M> other, Function<M, U> fn) {
+        completableFuture.join();
+        completableFuture = (CompletableFuture<T>) completableFuture.thenApplyAsync(r -> fn.apply(other.join()), executorService);
         return (Multi<U>) new MultiImpl<>(executorService, completableFuture);
     }
 
     @Override
-    public Multi<Void> acceptFun(Multi<? extends T> other, Consumer<? super T> action) {
-        completableFuture = (CompletableFuture<T>) completableFuture.acceptEitherAsync(other.getCpf(), action, executorService);
+    public <M extends T> Multi<Void> acceptFun(Multi<M> other, Consumer<M> action) {
+        completableFuture.join();
+        completableFuture = (CompletableFuture<T>) completableFuture.thenAcceptAsync(r -> action.accept(other.join()), executorService);
         return (Multi<Void>) new MultiImpl<>(executorService, completableFuture);
     }
 

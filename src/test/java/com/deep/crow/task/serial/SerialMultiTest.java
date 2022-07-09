@@ -2,18 +2,16 @@ package com.deep.crow.task.serial;
 
 import com.deep.crow.util.ThreadPool;
 import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-/**
- * <h2></h2>
- *
- * @author Create by liuwenhao on 2022/4/18 2:55
- */
-public class SerialMultiTest extends TestCase {
+public class SerialMultiTest {
 
+    @Test
     public void testAdd() {
         ExecutorService executorService = ThreadPool.executorService();
         SerialMulti<Object> of = SerialMulti.of(executorService);
@@ -35,17 +33,19 @@ public class SerialMultiTest extends TestCase {
                 System.out.println(throwable.getMessage());
                 return 5;
             }).join();
-        System.out.println(join);
+        Assert.assertEquals(join, 8);
     }
 
+    @Test
     public void testQueue() {
         ArrayBlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<>(10);
         blockingQueue.add(10);
         double size = blockingQueue.size();
         double i = blockingQueue.remainingCapacity() + size;
-
-        System.out.println(size / i);
+        Assert.assertEquals(size / i, 0.1);
     }
+
+    @Test
 
     public void testReplaceQueue() {
         ExecutorService executorService = ThreadPool.executorService();
@@ -61,11 +61,12 @@ public class SerialMultiTest extends TestCase {
             .add(() -> 9)
             .add(() -> "10");
         SerialMulti<Object> serial = of.getIndexSerial(8);
-        System.out.println(serial.getIndexSerial(0).join());
-        assertEquals(serial.join(), 9);
-        System.out.println(of.getResults());
+        Assert.assertEquals(serial.getIndexSerial(0).join(), 1);
+        Assert.assertEquals(serial.join(), 9);
+        Assert.assertEquals(of.getResults().toString(), "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
     }
 
+    @Test
     public void testThrowable() throws InterruptedException {
         ExecutorService executorService = ThreadPool.executorService();
         SerialMulti<Object> of = SerialMulti.of(executorService)
@@ -84,11 +85,12 @@ public class SerialMultiTest extends TestCase {
                 return "11";
             });
         SerialMulti<Object> serial = of.getIndexSerial(8);
-        System.out.println(serial.getIndexSerial(6).join());
-        assertEquals(serial.join(), 9);
+        System.out.println();
+        Assert.assertEquals(serial.getIndexSerial(6).join(),7);
+        Assert.assertEquals(serial.join(), 9);
         TimeUnit.SECONDS.sleep(5);
-        System.out.println(of.getResults());
-        System.out.println(of.join());
+        Assert.assertEquals(of.getResults().toString(), "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+        Assert.assertEquals(of.join(), 10);
     }
 
 }

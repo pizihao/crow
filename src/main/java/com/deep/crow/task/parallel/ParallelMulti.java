@@ -87,12 +87,13 @@ public class ParallelMulti {
         if (order < 0) {
             throw CrowException.exception("序号{}小于0，不可用", order);
         }
+        MultiOrder<?> multiOrder = new MultiOrder<>(multi, order);
         if (set.contains(order)) {
-            MultiOrder<?> multiOrder = indexRepeat.get(set, order, multi);
-            if (multiOrder != null){
-                set.add(multiOrder.getOrder());
-                multiList.add(multiOrder);
-            }
+            multiOrder = indexRepeat.get(set, order, multi);
+        }
+        if (multiOrder != null) {
+            set.add(multiOrder.getOrder());
+            multiList.add(multiOrder);
         }
     }
 
@@ -511,8 +512,9 @@ public class ParallelMulti {
      * @author liuwenhao
      * @date 2022/6/13 11:24
      */
-    public void join() {
+    public ParallelMulti join() {
         resultList();
+        return this;
     }
 
     /**

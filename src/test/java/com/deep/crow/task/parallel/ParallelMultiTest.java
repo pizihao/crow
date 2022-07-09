@@ -3,6 +3,8 @@ package com.deep.crow.task.parallel;
 import com.deep.crow.MultiTools;
 import com.deep.crow.util.ThreadPool;
 import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -12,8 +14,9 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Create by liuwenhao on 2022/4/2 16:08
  */
-public class ParallelMultiTest extends TestCase {
+public class ParallelMultiTest  {
 
+    @Test
     public void testParallel() {
 
         ExecutorService executorService = ThreadPool.executorService();
@@ -43,6 +46,7 @@ public class ParallelMultiTest extends TestCase {
             });
     }
 
+    @Test
     public void testOrder() {
         ExecutorService executorService = ThreadPool.executorService();
         ParallelMulti parallelMulti = ParallelMulti.of(executorService)
@@ -54,10 +58,12 @@ public class ParallelMultiTest extends TestCase {
             .add(19, () -> 6)
             .add(() -> 7)
             .add(() -> 8)
-            .add(() -> 9);
-        System.out.println(parallelMulti.resultList());
+            .add(() -> 9)
+            .join();
+        Assert.assertEquals(parallelMulti.resultList().toString(),"[1, 2, 4, 5, 7, 3, 8, 9, 6]");
     }
 
+    @Test
     public void testThrowable() {
         ExecutorService executorService = ThreadPool.executorService();
         ParallelMulti parallelMulti = ParallelMulti.of(executorService)
@@ -78,7 +84,7 @@ public class ParallelMultiTest extends TestCase {
                 System.out.println(throwable.getMessage());
                 return "123132";
             });
-        System.out.println(parallelMulti.resultList());
+        Assert.assertEquals(parallelMulti.resultList().toString(),"[1, 2, 4, 11, 123132, 3, 8, 9, 6]");
     }
 
 }
