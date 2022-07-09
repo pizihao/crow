@@ -33,12 +33,14 @@ public class MapCompress extends AbstractCompress {
             ParameterizedType parameterizedType = (ParameterizedType) type;
             Type keyArgument = parameterizedType.getActualTypeArguments()[0];
             Type valueArgument = parameterizedType.getActualTypeArguments()[1];
+            Type rawType = parameterizedType.getRawType();
             CrowTypeReference<?> keyTypeReference = CrowTypeReference.make(keyArgument);
             CrowTypeReference<?> valueTypeReference = CrowTypeReference.make(valueArgument);
             objectMapper.convertValue(firstKeyValue.getKey(), keyTypeReference);
             objectMapper.convertValue(firstKeyValue.getValue(), valueTypeReference);
             return ((Class<?>) keyArgument).isAssignableFrom(firstKeyValue.getKey().getClass())
-                && ((Class<?>) valueArgument).isAssignableFrom(firstKeyValue.getValue().getClass());
+                && ((Class<?>) valueArgument).isAssignableFrom(firstKeyValue.getValue().getClass())
+                && ((Class<?>) rawType).isAssignableFrom(o.getClass());
         } catch (Exception e) {
             return false;
         }
