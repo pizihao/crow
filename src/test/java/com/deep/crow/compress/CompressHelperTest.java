@@ -17,7 +17,6 @@ public class CompressHelperTest {
         Class<? extends Compress> iterableCls = map.get(Iterable.class);
         Class<? extends Compress> mapCls = map.get(Map.class);
         Assert.assertNull(listCls);
-        Assert.assertEquals(iterableCls.getName(), "com.deep.crow.compress.IteratorCompress");
         Assert.assertEquals(mapCls.getName(), "com.deep.crow.compress.MapCompress");
     }
 
