@@ -6,6 +6,7 @@ import com.deep.crow.multi.MultiHelper;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,15 @@ import java.util.stream.Collectors;
  *     <li>任务的装配顺序：从前到后</li>
  *     <li>任务的观察顺序：从后到前</li>
  * </ol>
+ * 限于任务的合理性，如果存在某个任务拥有返回值，那么这个返回值将很难被其后续的任务所使用。
+ * 原因是这样的：一个任务可能存在多个不同的前置任务，那么就必须同时接收多个前置任务的返回值，
+ * MixMulti的任务链都是动态生成的在任务真正执行之前是不会完全确定有几个参数的，其次参数的
+ * 类型都是不确定的，所以采用了公共变量的形式，这样的话，在多线程的情况下就需要考虑线程安全
+ * 问题，如果多个线程通过修改的话该听谁的？
+ * 这种情况下，这个公共对象就应该使用{@link AtomicReference}，但是在MixMulti中涉及到
+ * 公共变量的操作都应存在于一个唯一的中间节点中，他不允许有其他的节点和他同时执行，这样就保证
+ * 了所有的写操作都会在同一个线程中进行，而其他的多线程操作都使用读的方式。
+ * 这样一来{@link AtomicReference}和普通的泛型对象得到的结果都一样。
  *
  * @author Create by liuwenhao on 2022/6/14 15:59
  */
