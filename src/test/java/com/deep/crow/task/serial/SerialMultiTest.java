@@ -42,7 +42,7 @@ public class SerialMultiTest {
         blockingQueue.add(10);
         double size = blockingQueue.size();
         double i = blockingQueue.remainingCapacity() + size;
-        Assert.assertEquals(size / i, 0.1);
+        Assert.assertEquals(size / i, 0.1,1);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class SerialMultiTest {
         Assert.assertEquals(serial.join(), 9);
         TimeUnit.SECONDS.sleep(5);
         Assert.assertEquals(of.getResults().toString(), "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
-        Assert.assertEquals(of.join(), 10);
+        Assert.assertEquals(of.join(), "10");
     }
 
 }
