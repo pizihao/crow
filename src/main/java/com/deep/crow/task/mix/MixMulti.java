@@ -66,7 +66,7 @@ public class MixMulti<T> {
     Set<String> throwableName = new HashSet<>();
 
     /**
-     * 异常节点
+     * 异常节点，即使在任务的执行过程中出现了异常也不应该对最终的返回结果产生结果
      */
     Consumer<Throwable> fn;
 

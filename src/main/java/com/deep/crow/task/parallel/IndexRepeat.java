@@ -12,7 +12,7 @@ import java.util.Set;
 public interface IndexRepeat {
 
     /**
-     * 执行策略，得到一个可以使用的索引
+     * 执行策略，得到一个可以使用的MultiOrder
      *
      * @param order 需要检验的索引
      * @param index 已存在的索引
