@@ -202,6 +202,7 @@ public class MultiTools {
 
     /**
      * <h2>并行Multi转化成串行Multi</h2>
+     * 差强人意的装换方式，粗暴的将并行任务的结果整合到了一起
      *
      * @param <R>      结果类型
      * @param function 任务
@@ -285,6 +286,7 @@ public class MultiTools {
 
     /**
      * <h2>填充实例</h2>
+     * 如果在填充之前t中部分属性存在值，则不会覆盖其中的值
      *
      * @param c 过程集合
      * @param t 需要填充的实例对象
@@ -299,6 +301,7 @@ public class MultiTools {
 
     /**
      * <h2>填充实例</h2>
+     * 会对传入的类对象进行实例化，如果clazz没有对应的无参构造器则会实例化失败
      *
      * @param c     过程集合
      * @param clazz 需要填充的类
