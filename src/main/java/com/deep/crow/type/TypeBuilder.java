@@ -23,6 +23,7 @@ public class TypeBuilder {
     private final TypeBuilder builder;
     private final Class<?> raw;
     private final List<Type> args = new ArrayList<>();
+    private Class<?> owner;
 
     private TypeBuilder(Class<?> raw, TypeBuilder builder) {
         Objects.requireNonNull(raw);
@@ -48,9 +49,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type list(Class<?> raw) {
+    public static Type list(Type raw) {
         return TypeBuilder.make(List.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -62,9 +63,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type queue(Class<?> raw) {
+    public static Type queue(Type raw) {
         return TypeBuilder.make(Queue.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -76,9 +77,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type set(Class<?> raw) {
+    public static Type set(Type raw) {
         return TypeBuilder.make(Set.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -90,9 +91,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type threadLocal(Class<?> raw) {
+    public static Type threadLocal(Type raw) {
         return TypeBuilder.make(ThreadLocal.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -104,9 +105,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type iterator(Class<?> raw) {
+    public static Type iterator(Type raw) {
         return TypeBuilder.make(Iterator.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -118,9 +119,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type collection(Class<?> raw) {
+    public static Type collection(Type raw) {
         return TypeBuilder.make(Collection.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -133,10 +134,10 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type map(Class<?> key, Class<?> value) {
+    public static Type map(Type key, Type value) {
         return TypeBuilder.make(Map.class)
-            .add(key)
-            .add(value)
+            .addArgs(key)
+            .addArgs(value)
             .build();
     }
 
@@ -148,9 +149,9 @@ public class TypeBuilder {
      * @author liuwenhao
      * @date 2022/4/24 17:28
      */
-    public static Type multi(Class<?> raw) {
+    public static Type multi(Type raw) {
         return TypeBuilder.make(Multi.class)
-            .add(raw)
+            .addArgs(raw)
             .build();
     }
 
@@ -162,29 +163,35 @@ public class TypeBuilder {
 
     public TypeBuilder parent() {
         Objects.requireNonNull(builder);
-        builder.add(getType());
+        builder.addArgs(getType());
         return builder;
     }
 
-    public TypeBuilder add(Class<?> clazz) {
-        return add((Type) clazz);
+    public TypeBuilder addArgs(Class<?> clazz) {
+        return addArgs((Type) clazz);
     }
 
     public TypeBuilder addExtends(Class<?>... classes) {
         Objects.requireNonNull(classes);
         WildcardTypeImpl wildcardType = new WildcardTypeImpl(null, classes);
-        return add(wildcardType);
+        return addArgs(wildcardType);
     }
 
     public TypeBuilder addSuper(Class<?>... classes) {
         Objects.requireNonNull(classes);
         WildcardTypeImpl wildcardType = new WildcardTypeImpl(classes, null);
-        return add(wildcardType);
+        return addArgs(wildcardType);
     }
 
-    public TypeBuilder add(Type type) {
+    public TypeBuilder addArgs(Type type) {
         Objects.requireNonNull(type);
         args.add(type);
+        return this;
+    }
+
+    public TypeBuilder owner(Class<?> owner) {
+        Objects.requireNonNull(owner);
+        this.owner = owner;
         return this;
     }
 
