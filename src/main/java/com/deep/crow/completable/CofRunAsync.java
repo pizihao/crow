@@ -1,6 +1,5 @@
 package com.deep.crow.completable;
 
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -10,10 +9,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * <h2>异步的方式执行任务</h2>
- * <p>直接通过异步化的方式执行任务，返回值为本次容器实际执行的任务数目，返回结果和实际任务的执行均为异步</p>
- * <pre>
- * {@code
+ * 异步的方式执行任务
+ *
+ * <p>直接通过异步化的方式执行任务，返回值为本次容器实际执行的任务数目，返回结果和实际任务的执行均为异步
+ *
+ * <pre>{@code
  *         System.out.println(123);
  *
  *         Integer exec = CofHelper.buildRunAsync()
@@ -42,36 +42,36 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused deprecated")
 class CofRunAsync extends CofRun {
 
-    @Override
-    public Integer exec(Predicate<CofTask<Runnable>> predicate) {
-        if (Objects.isNull(runs)) {
-            return 0;
-        }
-        List<CofTask<Runnable>> list = runs.stream().filter(predicate).collect(Collectors.toList());
-        list.forEach(r -> {
-            if (Objects.nonNull(r.getExecutorService())) {
-                CompletableFuture.runAsync(r.getTask(), r.getExecutorService());
-            } else if (Objects.nonNull(executorService)) {
-                CompletableFuture.runAsync(r.getTask(), executorService);
-            } else {
-                CompletableFuture.runAsync(r.getTask());
-            }
+  @Override
+  public Integer exec(Predicate<CofTask<Runnable>> predicate) {
+    if (Objects.isNull(runs)) {
+      return 0;
+    }
+    List<CofTask<Runnable>> list = runs.stream().filter(predicate).collect(Collectors.toList());
+    list.forEach(
+        r -> {
+          if (Objects.nonNull(r.getExecutorService())) {
+            CompletableFuture.runAsync(r.getTask(), r.getExecutorService());
+          } else if (Objects.nonNull(executorService)) {
+            CompletableFuture.runAsync(r.getTask(), executorService);
+          } else {
+            CompletableFuture.runAsync(r.getTask());
+          }
         });
-        return list.size();
-    }
+    return list.size();
+  }
 
-    protected CofRunAsync() {
-        this.runs = new ArrayList<>();
-    }
+  protected CofRunAsync() {
+    this.runs = new ArrayList<>();
+  }
 
-    protected CofRunAsync(ExecutorService executorService) {
-        this.runs = new ArrayList<>();
-        this.executorService = executorService;
-    }
+  protected CofRunAsync(ExecutorService executorService) {
+    this.runs = new ArrayList<>();
+    this.executorService = executorService;
+  }
 
-    protected CofRunAsync(List<CofTask<Runnable>> runs, ExecutorService executorService) {
-        this.runs = Objects.nonNull(runs) ? runs : new ArrayList<>();
-        this.executorService = executorService;
-    }
-
+  protected CofRunAsync(List<CofTask<Runnable>> runs, ExecutorService executorService) {
+    this.runs = Objects.nonNull(runs) ? runs : new ArrayList<>();
+    this.executorService = executorService;
+  }
 }

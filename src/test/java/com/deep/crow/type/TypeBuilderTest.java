@@ -1,46 +1,32 @@
 package com.deep.crow.type;
 
 import com.deep.crow.model.User;
-import junit.framework.TestCase;
-
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
+import junit.framework.TestCase;
 
-/**
- * <h2></h2>
- *
- * @author Create by liuwenhao on 2022/4/24 12:49
- */
+/** @author Create by liuwenhao on 2022/4/24 12:49 */
 public class TypeBuilderTest extends TestCase {
 
-    public void testBuilder() {
-        Type list = TypeBuilder.make(List.class)
-            .add(User.class)
-            .build();
-        System.out.println(list.getTypeName());
+  public void testBuilder() {
+    Type list = TypeBuilder.make(List.class).addArgs(User.class).build();
+    System.out.println(list.getTypeName());
 
-        Type build = TypeBuilder.make(Map.class)
-            .add(String.class)
-            .add(Integer.class)
-            .build();
-        System.out.println(build);
+    Type build = TypeBuilder.make(Map.class).addArgs(String.class).addArgs(Integer.class).build();
+    System.out.println(build);
 
-        Type map = TypeBuilder.make(Map.class)
-            .add(Integer.class)
-            .add(User.class)
-            .build();
-        System.out.println(map.getTypeName());
-        Type list0 = TypeBuilder.make(Map.class)
-            .add(Integer.class)
+    Type map = TypeBuilder.make(Map.class).addArgs(Integer.class).addArgs(User.class).build();
+    System.out.println(map.getTypeName());
+    Type list0 =
+        TypeBuilder.make(Map.class)
+            .addArgs(Integer.class)
             .nested(List.class)
-            .add(Integer.class)
+            .addArgs(Integer.class)
             .parent()
             .build();
-        System.out.println(list0.getTypeName());
-        Type list1 = TypeBuilder.make(User.class)
-            .build();
-        System.out.println(list1.getTypeName());
-    }
-
+    System.out.println(list0.getTypeName());
+    Type list1 = TypeBuilder.make(User.class).build();
+    System.out.println(list1.getTypeName());
+  }
 }
