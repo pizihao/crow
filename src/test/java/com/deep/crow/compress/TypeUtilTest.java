@@ -46,11 +46,11 @@ public class TypeUtilTest extends TestCase {
     User user = TypeUtil.screenClass(list, User.class);
     Cat cat = TypeUtil.screenClass(list, Cat.class);
     Dog dog = TypeUtil.screenClass(list, Dog.class);
-    Assert.assertEquals(s, "132");
-    Assert.assertEquals(bird.getName(), "bird");
-    Assert.assertEquals(user.getName(), "user");
-    Assert.assertEquals(cat.getName(), "cat");
-    Assert.assertEquals(dog.getName(), "dog");
+    Assert.assertEquals("132", s);
+    Assert.assertEquals("bird", bird.getName());
+    Assert.assertEquals("user", user.getName());
+    Assert.assertEquals("cat", cat.getName());
+    Assert.assertEquals("dog", dog.getName());
   }
 
   public void testScreenClasses() {
@@ -61,9 +61,9 @@ public class TypeUtilTest extends TestCase {
     List<User> users = TypeUtil.screenClasses(list, User.class);
     List<Cat> cats = TypeUtil.screenClasses(list, Cat.class);
     List<Dog> dogs = TypeUtil.screenClasses(list, Dog.class);
-    Assert.assertEquals(users.size(), 1);
-    Assert.assertEquals(cats.size(), 2);
-    Assert.assertEquals(dogs.size(), 2);
+    Assert.assertEquals(1, users.size());
+    Assert.assertEquals(2, cats.size());
+    Assert.assertEquals(2, dogs.size());
   }
 
   public void testScreenType() {
@@ -71,14 +71,14 @@ public class TypeUtilTest extends TestCase {
     List<User> user = TypeUtil.screenType(list, TypeBuilder.list(User.class));
     List<Cat> cat = TypeUtil.screenType(list, TypeBuilder.list(Cat.class));
     List<Dog> dog = TypeUtil.screenType(list, TypeBuilder.list(Dog.class));
-    Assert.assertEquals(bird.get(0).getName(), "bird1");
-    Assert.assertEquals(bird.get(1).getName(), "bird2");
-    Assert.assertEquals(user.get(0).getName(), "user1");
-    Assert.assertEquals(user.get(1).getName(), "user2");
-    Assert.assertEquals(cat.get(0).getName(), "cat1");
-    Assert.assertEquals(cat.get(1).getName(), "cat2");
-    Assert.assertEquals(dog.get(0).getName(), "dog1");
-    Assert.assertEquals(dog.get(1).getName(), "dog2");
+    Assert.assertEquals("bird1", bird.get(0).getName());
+    Assert.assertEquals("bird2", bird.get(1).getName());
+    Assert.assertEquals("user1", user.get(0).getName());
+    Assert.assertEquals("user2", user.get(1).getName());
+    Assert.assertEquals("cat1", cat.get(0).getName());
+    Assert.assertEquals("cat2", cat.get(1).getName());
+    Assert.assertEquals("dog1", dog.get(0).getName());
+    Assert.assertEquals("dog2", dog.get(1).getName());
   }
 
   @SuppressWarnings("unchecked")
@@ -87,38 +87,38 @@ public class TypeUtilTest extends TestCase {
     List<User> user = TypeUtil.screenType(list, List.class, User.class);
     List<Cat> cat = TypeUtil.screenType(list, List.class, Cat.class);
     List<Dog> dog = TypeUtil.screenType(list, List.class, Dog.class);
-    Assert.assertEquals(bird.get(0).getName(), "bird1");
-    Assert.assertEquals(bird.get(1).getName(), "bird2");
-    Assert.assertEquals(user.get(0).getName(), "user1");
-    Assert.assertEquals(user.get(1).getName(), "user2");
-    Assert.assertEquals(cat.get(0).getName(), "cat1");
-    Assert.assertEquals(cat.get(1).getName(), "cat2");
-    Assert.assertEquals(dog.get(0).getName(), "dog1");
-    Assert.assertEquals(dog.get(1).getName(), "dog2");
+    Assert.assertEquals("bird1", bird.get(0).getName());
+    Assert.assertEquals("bird2", bird.get(1).getName());
+    Assert.assertEquals("user1", user.get(0).getName());
+    Assert.assertEquals("user2", user.get(1).getName());
+    Assert.assertEquals("cat1", cat.get(0).getName());
+    Assert.assertEquals("cat2", cat.get(1).getName());
+    Assert.assertEquals("dog1", dog.get(0).getName());
+    Assert.assertEquals("dog2", dog.get(1).getName());
   }
 
   public void testFillInstance() {
     Animal animal = new Animal();
     TypeUtil.fillInstance(list, animal);
-    Assert.assertEquals(animal.getBird().getName(), "bird");
-    Assert.assertEquals(animal.getUser().getName(), "user");
-    Assert.assertEquals(animal.getCat().getName(), "cat");
-    Assert.assertEquals(animal.getDog().getName(), "dog");
-    Assert.assertEquals(animal.getBirds().size(), 2);
-    Assert.assertEquals(animal.getUsers().size(), 2);
-    Assert.assertEquals(animal.getCats().size(), 2);
-    Assert.assertEquals(animal.getDogs().size(), 2);
+    Assert.assertEquals("bird", animal.getBird().getName());
+    Assert.assertEquals("user", animal.getUser().getName());
+    Assert.assertEquals("cat", animal.getCat().getName());
+    Assert.assertEquals("dog", animal.getDog().getName());
+    Assert.assertEquals(2, animal.getBirds().size());
+    Assert.assertEquals(2, animal.getUsers().size());
+    Assert.assertEquals(2, animal.getCats().size());
+    Assert.assertEquals(2, animal.getDogs().size());
   }
 
   public void testFillClass() {
     Animal animal = TypeUtil.fillClass(list, Animal.class);
-    Assert.assertEquals(animal.getBird().getName(), "bird");
-    Assert.assertEquals(animal.getUser().getName(), "user");
-    Assert.assertEquals(animal.getCat().getName(), "cat");
-    Assert.assertEquals(animal.getDog().getName(), "dog");
-    Assert.assertEquals(animal.getBirds().size(), 2);
-    Assert.assertEquals(animal.getUsers().size(), 2);
-    Assert.assertEquals(animal.getCats().size(), 2);
-    Assert.assertEquals(animal.getDogs().size(), 2);
+    Assert.assertEquals("bird", animal.getBird().getName());
+    Assert.assertEquals("user", animal.getUser().getName());
+    Assert.assertEquals("cat", animal.getCat().getName());
+    Assert.assertEquals("dog", animal.getDog().getName());
+    Assert.assertEquals(2, animal.getBirds().size());
+    Assert.assertEquals(2, animal.getUsers().size());
+    Assert.assertEquals(2, animal.getCats().size());
+    Assert.assertEquals(2, animal.getDogs().size());
   }
 }

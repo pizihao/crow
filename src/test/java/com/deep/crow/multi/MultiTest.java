@@ -12,7 +12,7 @@ public class MultiTest {
   public void thenApplyTest() {
     ExecutorService executor = ThreadPool.executorService();
     String join = MultiHelper.create(executor).thenApply(o -> "测试").thenApply(s -> s + "测试").join();
-    Assert.assertEquals(join, "测试测试");
+    Assert.assertEquals("测试测试", join);
   }
 
   @Test
@@ -23,7 +23,7 @@ public class MultiTest {
         .thenAccept(o -> a.getAndIncrement())
         .thenAccept(s -> a.getAndIncrement())
         .join();
-    Assert.assertEquals(a.get(), 2);
+    Assert.assertEquals(2, a.get());
   }
 
   @Test
@@ -31,7 +31,7 @@ public class MultiTest {
     ExecutorService executor = ThreadPool.executorService();
     AtomicInteger a = new AtomicInteger();
     MultiHelper.create(executor).thenRun(a::getAndIncrement).thenRun(a::getAndIncrement).join();
-    Assert.assertEquals(a.get(), 2);
+    Assert.assertEquals(2, a.get());
   }
 
   @Test
@@ -40,7 +40,7 @@ public class MultiTest {
     Multi<Integer> multi1 = MultiHelper.supplyAsync(executor, () -> 1);
     Integer join =
         MultiHelper.create(executor).thenApply(o -> 2).thenCombine(multi1, Integer::sum).join();
-    Assert.assertEquals(join.intValue(), 3);
+    Assert.assertEquals(3, join.intValue());
   }
 
   @Test
@@ -52,7 +52,7 @@ public class MultiTest {
         .thenApply(o -> 2)
         .thenBiAccept(multi1, (i, j) -> a.set(i + j))
         .join();
-    Assert.assertEquals(a.get(), 3);
+    Assert.assertEquals(3, a.get());
   }
 
   @Test
@@ -60,6 +60,6 @@ public class MultiTest {
     ExecutorService executor = ThreadPool.executorService();
     Multi<Integer> multi1 = MultiHelper.supplyAsync(executor, () -> 1);
     Integer join = MultiHelper.create(executor).applyFun(multi1, o -> o + 2).join();
-    Assert.assertEquals(join.intValue(), 3);
+    Assert.assertEquals(3, join.intValue());
   }
 }

@@ -35,6 +35,6 @@ class IntSupplyTask implements ParallelTask {
   @Override
   @SuppressWarnings("unchecked")
   public <U> Multi<U> assembling() {
-    return (Multi<U>) MultiHelper.supplyAsync(executorService, () -> intSupplier.getAsInt());
+    return (Multi<U>) MultiHelper.supplyAsync(executorService, intSupplier::getAsInt);
   }
 }

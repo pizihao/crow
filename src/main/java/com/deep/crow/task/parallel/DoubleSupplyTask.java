@@ -36,6 +36,6 @@ class DoubleSupplyTask implements ParallelTask {
   @Override
   @SuppressWarnings("unchecked")
   public <U> Multi<U> assembling() {
-    return (Multi<U>) MultiHelper.supplyAsync(executorService, () -> doubleSupplier.getAsDouble());
+    return (Multi<U>) MultiHelper.supplyAsync(executorService, doubleSupplier::getAsDouble);
   }
 }

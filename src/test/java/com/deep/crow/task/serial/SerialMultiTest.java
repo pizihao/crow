@@ -37,7 +37,7 @@ public class SerialMultiTest {
                   return 5;
                 })
             .join();
-    Assert.assertEquals(join, 8);
+    Assert.assertEquals(8, join);
   }
 
   @Test
@@ -46,7 +46,7 @@ public class SerialMultiTest {
     blockingQueue.add(10);
     double size = blockingQueue.size();
     double i = blockingQueue.remainingCapacity() + size;
-    Assert.assertEquals(size / i, 0.1, 1);
+    Assert.assertEquals(0.1, size / i, 1);
   }
 
   @Test
@@ -65,9 +65,9 @@ public class SerialMultiTest {
             .add(() -> 9)
             .add(() -> "10");
     SerialMulti<Object> serial = of.getIndexSerial(8);
-    Assert.assertEquals(serial.getIndexSerial(0).join(), 1);
-    Assert.assertEquals(serial.join(), 9);
-    Assert.assertEquals(of.getResults().toString(), "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
+    Assert.assertEquals(1, serial.getIndexSerial(0).join());
+    Assert.assertEquals(9, serial.join());
+    Assert.assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", of.getResults().toString());
   }
 
   @Test
@@ -92,10 +92,10 @@ public class SerialMultiTest {
                 });
     SerialMulti<Object> serial = of.getIndexSerial(8);
     System.out.println();
-    Assert.assertEquals(serial.getIndexSerial(6).join(), 7);
-    Assert.assertEquals(serial.join(), 9);
+    Assert.assertEquals(7, serial.getIndexSerial(6).join());
+    Assert.assertEquals(9, serial.join());
     TimeUnit.SECONDS.sleep(5);
-    Assert.assertEquals(of.getResults().toString(), "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]");
-    Assert.assertEquals(of.join(), "10");
+    Assert.assertEquals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]", of.getResults().toString());
+    Assert.assertEquals("10", of.join());
   }
 }

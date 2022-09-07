@@ -66,7 +66,7 @@ public class ParallelMultiTest {
             .add(() -> 8)
             .add(() -> 9)
             .join();
-    Assert.assertEquals(parallelMulti.resultList().toString(), "[1, 2, 4, 5, 7, 3, 8, 9, 6]");
+    Assert.assertEquals("[1, 2, 4, 5, 7, 3, 8, 9, 6]", parallelMulti.resultList().toString());
   }
 
   @Test
@@ -95,6 +95,6 @@ public class ParallelMultiTest {
                   System.out.println(throwable.getMessage());
                   return "123132";
                 });
-    Assert.assertEquals(parallelMulti.resultList().toString(), "[1, 2, 4, 11, 123132, 3, 8, 9, 6]");
+    Assert.assertEquals("[1, 2, 4, 11, 123132, 3, 8, 9, 6]", parallelMulti.resultList().toString());
   }
 }

@@ -36,9 +36,9 @@ public class MapCompressTest {
     Map.Entry<Integer, User> usersEntity = userCompress.compress();
     Map.Entry<String, Cat> catsEntity = catCompress.compress();
     Assert.assertEquals(usersEntity.getKey(), Integer.valueOf(456));
-    Assert.assertEquals(usersEntity.getValue().getName(), "2");
-    Assert.assertEquals(catsEntity.getKey(), "cat2");
-    Assert.assertEquals(catsEntity.getValue().getName(), "4");
+    Assert.assertEquals("2", usersEntity.getValue().getName());
+    Assert.assertEquals("cat2", catsEntity.getKey());
+    Assert.assertEquals("4", catsEntity.getValue().getName());
   }
 
   @Test

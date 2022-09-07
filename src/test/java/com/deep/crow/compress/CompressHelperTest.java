@@ -16,7 +16,7 @@ public class CompressHelperTest {
     Class<? extends Compress> iterableCls = map.get(Iterable.class);
     Class<? extends Compress> mapCls = map.get(Map.class);
     Assert.assertNull(listCls);
-    Assert.assertEquals(mapCls.getName(), "com.deep.crow.compress.MapCompress");
+    Assert.assertEquals("com.deep.crow.compress.MapCompress", mapCls.getName());
   }
 
   @Test
@@ -30,7 +30,7 @@ public class CompressHelperTest {
     Class<? extends Compress> stringCls = map.get(Iterable.class);
     Class<? extends Compress> charSequenceCls = map.get(CharSequence.class);
     Assert.assertNull(listCls);
-    Assert.assertEquals(stringCls.getName(), "com.deep.crow.compress.DefaultCompress");
-    Assert.assertEquals(charSequenceCls.getName(), "com.deep.crow.compress.IteratorCompress");
+    Assert.assertEquals("com.deep.crow.compress.DefaultCompress", stringCls.getName());
+    Assert.assertEquals("com.deep.crow.compress.IteratorCompress", charSequenceCls.getName());
   }
 }

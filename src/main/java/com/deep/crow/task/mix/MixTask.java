@@ -44,6 +44,7 @@ interface MixTask<T> extends Task {
    * @return boolean
    * @author liuwenhao
    * @date 2022/6/18 17:10
+   * @deprecated when deprecated
    */
   @Deprecated
   boolean isTail();

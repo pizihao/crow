@@ -34,8 +34,8 @@ public class IteratorCompressTest {
         new IteratorCompress(cats, TypeBuilder.list(Cat.class), objectMapper);
     User user = userCompress.compress();
     Cat cat = catCompress.compress();
-    Assert.assertEquals(user.getName(), "1");
-    Assert.assertEquals(cat.getName(), "3");
+    Assert.assertEquals("1", user.getName());
+    Assert.assertEquals("3", cat.getName());
   }
 
   @Test

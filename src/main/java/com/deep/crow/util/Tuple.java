@@ -51,8 +51,7 @@ public class Tuple implements Iterable<Object> {
    */
   public final List<Object> toList() {
     synchronized (members) {
-      Object[] members = this.members;
-      return Arrays.stream(members).collect(Collectors.toList());
+      return Arrays.stream(this.members).collect(Collectors.toList());
     }
   }
 
@@ -64,8 +63,8 @@ public class Tuple implements Iterable<Object> {
    * @date 2022/4/11 17:50
    */
   public int size() {
-    Object[] members = this.members;
-    Objects.requireNonNull(members);
+    Object[] member = this.members;
+    Objects.requireNonNull(member);
     return members.length;
   }
 
@@ -77,8 +76,8 @@ public class Tuple implements Iterable<Object> {
    * @date 2022/4/11 17:50
    */
   public boolean contains(Object value) {
-    Object[] members = this.members;
-    Objects.requireNonNull(members);
+    Object[] member = this.members;
+    Objects.requireNonNull(member);
     return toList().contains(value);
   }
 

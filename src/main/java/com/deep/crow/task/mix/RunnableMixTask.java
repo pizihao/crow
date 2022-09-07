@@ -36,13 +36,11 @@ class RunnableMixTask<T> implements MixTask<T> {
     this.preName.remove(preName);
   }
 
-  @Deprecated
   @Override
   public boolean isTail() {
     return isTail;
   }
 
-  @Deprecated
   @Override
   public void cancelTail() {
     this.isTail = false;

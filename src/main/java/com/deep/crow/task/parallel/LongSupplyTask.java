@@ -35,6 +35,6 @@ class LongSupplyTask implements ParallelTask {
   @Override
   @SuppressWarnings("unchecked")
   public <U> Multi<U> assembling() {
-    return (Multi<U>) MultiHelper.supplyAsync(executorService, () -> longSupplier.getAsLong());
+    return (Multi<U>) MultiHelper.supplyAsync(executorService, longSupplier::getAsLong);
   }
 }
