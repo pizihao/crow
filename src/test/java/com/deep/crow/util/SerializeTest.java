@@ -1,6 +1,6 @@
 package com.deep.crow.util;
 
-import com.deep.crow.jackson.ObjectMapperFactory;
+import com.deep.crow.json.ObjectMapperFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

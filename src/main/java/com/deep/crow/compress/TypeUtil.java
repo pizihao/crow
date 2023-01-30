@@ -1,7 +1,7 @@
 package com.deep.crow.compress;
 
 import com.deep.crow.exception.CrowException;
-import com.deep.crow.jackson.ObjectMapperFactory;
+import com.deep.crow.json.ObjectMapperFactory;
 import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.type.ParameterizedTypeImpl;
 import com.deep.crow.util.ContainerUtil;
