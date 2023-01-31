@@ -8,6 +8,7 @@ import com.deep.crow.util.ContainerUtil;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.FieldAccess;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -21,13 +22,14 @@ import java.util.*;
 @SuppressWarnings("unchecked,unused")
 public class TypeUtil {
 
-  private TypeUtil() {}
+  private TypeUtil() {
+  }
 
   /**
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，匹配成功则直接返回<br>
    * 无匹配选项则抛出异常
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @return T
    * @author liuwenhao
@@ -47,7 +49,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
    * 无匹配选项则获得空集合
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @return T
    * @author liuwenhao
@@ -68,7 +70,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项<br>
    * 无匹配选项则抛出异常
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @param types 泛型
    * @return T
@@ -88,7 +90,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
    * 无匹配选项则返回空集合
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @param types 泛型
    * @return T
@@ -105,13 +107,19 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项<br>
    * 无匹配选项则抛出异常
    *
-   * @param l 结果集
+   * @param l    结果集
    * @param type 检索的类型
    * @return T
    * @author liuwenhao
    * @date 2022/4/24 16:27
    */
   public static <T> T screenType(Iterable<?> l, Type type) {
+    // 如果type的类型直接是class，则可以通过比较简单的方式去转化
+    if (type instanceof Class) {
+      Class<?> cls = (Class<?>) type;
+      return (T) screenClass(l, cls);
+    }
+
     /*
      * o及其泛型是否与parameterizedType兼容，
      * 1，通过API获取o被擦除的泛型类型，和传入的类型进行对比，相同则返回
@@ -139,7 +147,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
    * 无匹配选项则返回空集合
    *
-   * @param l 结果集
+   * @param l    结果集
    * @param type 检索的类型
    * @return T
    * @author liuwenhao
@@ -175,8 +183,8 @@ public class TypeUtil {
    * 根据类型填充属性 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
    * 按对象的填充方式，在填充时不会影响到已有的数据在填充之前需要使用到反射获取属性类型<br>
    *
-   * @param l 结果集
-   * @param t 需要填充的类对象
+   * @param l       结果集
+   * @param t       需要填充的类对象
    * @param isCover 是否覆盖
    * @author liuwenhao
    * @date 2022/4/26 9:02
@@ -197,8 +205,8 @@ public class TypeUtil {
   /**
    * 根据类型填充属性 批量处理的形式，针对单个对象的处理和{@link #fillInstance(Iterable, Object, boolean)}相同
    *
-   * @param l 结果集
-   * @param ts 需要填充的类对象集合
+   * @param l       结果集
+   * @param ts      需要填充的类对象集合
    * @param isCover 是否覆盖
    * @return java.util.Collection<T>
    * @author liuwenhao
@@ -225,7 +233,7 @@ public class TypeUtil {
   /**
    * 根据类型填充属性 批量处理的形式，针对单个对象的处理和{@link #fillInstance(Iterable, Object, boolean)}相同
    *
-   * @param l 结果集
+   * @param l  结果集
    * @param ts 需要填充的类对象集合
    * @return java.util.Collection<T>
    * @author liuwenhao
@@ -239,7 +247,7 @@ public class TypeUtil {
    * 根据类型填充属性 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
    * 这需要 reflections 的支持
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 需要填充的类
    * @author liuwenhao
    * @date 2022/4/26 9:02
@@ -252,8 +260,8 @@ public class TypeUtil {
    * 根据类型填充属性 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
    * 这需要 reflections 的支持
    *
-   * @param l 结果集
-   * @param clazz 需要填充的类
+   * @param l       结果集
+   * @param clazz   需要填充的类
    * @param isCover 是否覆盖
    * @author liuwenhao
    * @date 2022/4/26 9:02
@@ -269,8 +277,8 @@ public class TypeUtil {
    * 验证类型是否匹配
    *
    * @param typeReference 类型
-   * @param o 对象
-   * @param objectMapper objectMapper
+   * @param o             对象
+   * @param objectMapper  objectMapper
    * @return boolean
    * @author liuwenhao
    * @date 2022/4/26 11:24
@@ -292,16 +300,24 @@ public class TypeUtil {
    */
   static class TypeMatching {
 
-    /** 字段集 */
+    /**
+     * 字段集
+     */
     List<Field> fields;
 
-    /** 实例对象 */
+    /**
+     * 实例对象
+     */
     Object o;
 
-    /** 操作实例字段 */
+    /**
+     * 操作实例字段
+     */
     FieldAccess fieldAccess;
 
-    /** 是否覆盖 */
+    /**
+     * 是否覆盖
+     */
     boolean isCover;
 
     public TypeMatching(List<Field> fields, Object o, FieldAccess fieldAccess, boolean isCover) {
@@ -345,7 +361,9 @@ public class TypeUtil {
    */
   static class TypeMatchingBatch<T> extends TypeMatching {
 
-    /** 需要填充的类对象集合 */
+    /**
+     * 需要填充的类对象集合
+     */
     Collection<T> collection;
 
     public TypeMatchingBatch(
@@ -391,8 +409,8 @@ public class TypeUtil {
   /**
    * 验证字段与实例对象是否可以兼容
    *
-   * @param field 字段属性
-   * @param o 实例对象
+   * @param field        字段属性
+   * @param o            实例对象
    * @param objectMapper ObjectMapper
    * @return boolean
    * @author liuwenhao
