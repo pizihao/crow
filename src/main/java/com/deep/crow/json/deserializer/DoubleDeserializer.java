@@ -1,7 +1,7 @@
 package com.deep.crow.json.deserializer;
 
 /**
- * Integer 类型序列化
+ * Double 类型序列化
  *
  * @author Create by liuwenhao on 2022/5/10 16:52
  */

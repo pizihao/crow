@@ -5,9 +5,9 @@ package com.deep.crow.json.deserializer;
  *
  * @author Create by liuwenhao on 2022/5/10 16:33
  */
-public class StringDeserializer extends TypeDeserializer<String> {
+public class CharSequenceDeserializer extends TypeDeserializer<CharSequence> {
 
-  String type = "java.lang.String";
+  String type = "java.lang.CharSequence";
 
   @Override
   public String getType() {

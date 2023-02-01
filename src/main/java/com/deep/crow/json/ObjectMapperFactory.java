@@ -36,33 +36,7 @@ public class ObjectMapperFactory {
     DateTimeFormatter localTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
 
     SimpleModule simpleModule = new SimpleModule();
-    simpleModule.addSerializer(Long.class, new LongSerializer());
-    simpleModule.addDeserializer(Long.class, new LongDeserializer());
-    simpleModule.addSerializer(Integer.class, new IntegerSerializer());
-    simpleModule.addDeserializer(Integer.class, new IntegerDeserializer());
-    simpleModule.addSerializer(Double.class, new DoubleSerializer());
-    simpleModule.addDeserializer(Double.class, new DoubleDeserializer());
-    simpleModule.addSerializer(Float.class, new FloatSerializer());
-    simpleModule.addDeserializer(Float.class, new FloatDeserializer());
-    simpleModule.addSerializer(Short.class, new ShortSerializer());
-    simpleModule.addDeserializer(Short.class, new ShortDeserializer());
-    simpleModule.addSerializer(Byte.class, new ByteSerializer());
-    simpleModule.addDeserializer(Byte.class, new ByteDeserializer());
-    simpleModule.addSerializer(Character.class, new CharacterSerializer());
-    simpleModule.addDeserializer(Character.class, new CharacterDeserializer());
-    simpleModule.addSerializer(Boolean.class, new BooleanSerializer());
-    simpleModule.addDeserializer(Boolean.class, new BooleanDeserializer());
-    simpleModule.addSerializer(String.class, new StringSerializer());
-    simpleModule.addDeserializer(String.class, new StringDeserializer());
 
-    simpleModule.addSerializer(
-        LocalDateTime.class, new LocalDateTimeSerializer(localDateTimePattern));
-    simpleModule.addDeserializer(
-        LocalDateTime.class, new LocalDateTimeDeserializer(localDateTimePattern));
-    simpleModule.addSerializer(LocalDate.class, new LocalDateSerializer(localDatePattern));
-    simpleModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(localDatePattern));
-    simpleModule.addSerializer(LocalTime.class, new LocalTimeSerializer(localTime));
-    simpleModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(localTime));
     objectMapper.registerModule(simpleModule);
   }
 

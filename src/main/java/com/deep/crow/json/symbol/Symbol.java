@@ -5,13 +5,12 @@ package com.deep.crow.json.symbol;
  */
 public interface Symbol {
 
-  String space = " ";
-  String rightBracket = "]";
-  String rightBraces = "}";
-  String quotes = "\"";
-  String leftBracket = "[";
-  String leftBraces = "{";
-  String comma = ",";
-  String colon = ":";
+  String RIGHT_BRACKET = "]";
+  String RIGHT_BRACES = "}";
+  String QUOTES = "\"";
+  String LEFT_BRACKET = "[";
+  String LEFT_BRACES = "{";
+  String COMMA = ",";
+  String COLON = ":";
 
 }

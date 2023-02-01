@@ -2,6 +2,10 @@ package com.deep.crow.json.data;
 
 import com.deep.crow.json.symbol.Symbol;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /**
  * json数据中的键，这是一个比较简单的数据
  */
@@ -10,23 +14,24 @@ public class Key {
   /**
    * 键的值
    */
-  String keyName;
+  Object keyName;
 
   /**
    * 通过键组装的数据
    */
-  String keyRes;
+  Writer keyRes;
 
-  public Key(String key) {
+  public Key(Object key) throws IOException {
     this.keyName = key;
-    this.keyRes = Symbol.quotes + keyName + Symbol.quotes + Symbol.space + Symbol.colon;
+    this.keyRes = new StringWriter();
+    keyRes.append(Symbol.QUOTES).append(keyName.toString()).append(Symbol.QUOTES).append(Symbol.COLON);
   }
 
   public String getKeyRes() {
-    return keyRes;
+    return keyRes.toString();
   }
 
-  public String getKey() {
+  public Object getKey() {
     return keyName;
   }
 

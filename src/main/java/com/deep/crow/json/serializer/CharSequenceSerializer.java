@@ -5,9 +5,9 @@ package com.deep.crow.json.serializer;
  *
  * @author Create by liuwenhao on 2022/5/10 16:52
  */
-public class StringSerializer extends TypeSerializer<String> {
+public class CharSequenceSerializer extends TypeSerializer<CharSequence> {
 
-  String str = "java.lang.String";
+  String str = "java.lang.CharSequence";
 
   @Override
   public String getStr() {

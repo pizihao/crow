@@ -3,6 +3,7 @@ package com.deep.crow.json.serializer;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
+import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -27,9 +28,9 @@ public class LocalDateSerializer extends TypeSerializer<LocalDate> {
   }
 
   @Override
-  public void serialize(LocalDate value, JsonGenerator gen, SerializerProvider serializers)
+  public void serialize(LocalDate value, Writer writer)
       throws IOException {
     String format = value.format(localDatePattern);
-    gen.writeString(getStr() + format);
+    writer.append(getStr()).append(format);
   }
 }
