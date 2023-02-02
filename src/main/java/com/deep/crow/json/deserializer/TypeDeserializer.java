@@ -1,11 +1,8 @@
 package com.deep.crow.json.deserializer;
 
 import com.deep.crow.exception.CrowException;
-import com.fasterxml.jackson.core.JsonParser;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.Writer;
 import java.time.format.DateTimeParseException;
 
 /**
@@ -20,8 +17,8 @@ public abstract class TypeDeserializer<T> implements JsonDeserializer<T> {
   public abstract T getResult(String s);
 
   @Override
-  public T deserialize(Reader reader) throws IOException {
-    String text = reader.toString();
+  public T deserialize(Writer writer) {
+    String text = writer.toString();
     int length = getType().length();
     String type = text.substring(0, length);
     if (!getType().equals(type)) {

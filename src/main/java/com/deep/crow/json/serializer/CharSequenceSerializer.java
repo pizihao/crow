@@ -1,5 +1,7 @@
 package com.deep.crow.json.serializer;
 
+import com.deep.crow.json.symbol.Symbol;
+
 /**
  * Boolean 类型序列化
  *
@@ -12,5 +14,12 @@ public class CharSequenceSerializer extends TypeSerializer<CharSequence> {
   @Override
   public String getStr() {
     return str;
+  }
+
+  @Override
+  public void serialize(CharSequence value, StringBuilder builder) {
+    builder.append(Symbol.QUOTES);
+    super.serialize(value, builder);
+    builder.append(Symbol.QUOTES);
   }
 }

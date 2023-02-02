@@ -1,6 +1,8 @@
 package com.deep.crow.type;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 /**
@@ -12,7 +14,6 @@ public class CrowTypeReference<T> extends TypeReference<T> {
   Type type;
 
   private CrowTypeReference(Type type) {
-    super();
     this.type = type;
   }
 

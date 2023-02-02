@@ -1,10 +1,5 @@
 package com.deep.crow.json.serializer;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-
-import java.io.IOException;
-import java.io.Writer;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
@@ -29,9 +24,8 @@ public class LocalTimeSerializer extends TypeSerializer<LocalTime> {
   }
 
   @Override
-  public void serialize(LocalTime value, Writer writer)
-      throws IOException {
+  public void serialize(LocalTime value, StringBuilder builder) {
     String format = value.format(localTimePattern);
-    writer.append(getStr()).append(format);
+    builder.append(getStr()).append(format);
   }
 }

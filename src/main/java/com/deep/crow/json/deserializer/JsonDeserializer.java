@@ -1,7 +1,7 @@
 package com.deep.crow.json.deserializer;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.Writer;
 
 /**
  * 反序列化器
@@ -11,8 +11,7 @@ public interface JsonDeserializer<T> {
   /**
    * 反序列化操作
    *
-   * @param reader 读取数据
-   * @throws IOException 异常
+   * @param writer 读取数据
    */
-  T deserialize(Reader reader) throws IOException;
+  T deserialize(Writer writer);
 }
