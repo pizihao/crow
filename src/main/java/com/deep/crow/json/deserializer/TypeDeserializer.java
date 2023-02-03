@@ -2,7 +2,6 @@ package com.deep.crow.json.deserializer;
 
 import com.deep.crow.exception.CrowException;
 
-import java.io.Writer;
 import java.time.format.DateTimeParseException;
 
 /**
@@ -17,14 +16,13 @@ public abstract class TypeDeserializer<T> implements JsonDeserializer<T> {
   public abstract T getResult(String s);
 
   @Override
-  public T deserialize(Writer writer) {
-    String text = writer.toString();
+  public T deserialize(String str) {
     int length = getType().length();
-    String type = text.substring(0, length);
+    String type = str.substring(0, length);
     if (!getType().equals(type)) {
       throw CrowException.exception("类型映射错误 -- {}", getType());
     }
-    String value = text.substring(type.length());
+    String value = str.substring(type.length());
     try {
       return getResult(value);
     } catch (DateTimeParseException e) {

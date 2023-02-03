@@ -5,8 +5,7 @@ import com.deep.crow.json.symbol.Symbol;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 public class IterableElement implements Element {
 
@@ -15,31 +14,36 @@ public class IterableElement implements Element {
     if (Objects.isNull(type)) {
       return false;
     }
-    Class<?> cls;
-    if (type instanceof ParameterizedType) {
-      cls = (Class<?>) ((ParameterizedType) type).getRawType();
-    } else {
-      cls = (Class<?>) type;
-    }
+    Class<?> cls = getCls(type);
     return Iterable.class.isAssignableFrom(cls);
   }
 
   @Override
-  public void serializer(Mapper m, Object o, String key) {
+  public Mapper serializer(Object o, String key, boolean isIndexKey) {
     Iterable<?> iterable = (Iterable<?>) o;
-    Mapper mapper = new Mapper(null, o, Symbol.LEFT_BRACKET, Symbol.RIGHT_BRACKET);
+    Mapper mapper = new Mapper(key, o, Symbol.LEFT_BRACKET, Symbol.RIGHT_BRACKET, isIndexKey);
     int i = 0;
     for (Object obj : iterable) {
       Element element = Elements.getElement(obj.getClass());
-      mapper.setIndex(true);
-      element.serializer(mapper, obj, String.valueOf(i));
+      String s = String.valueOf(i);
+      Mapper serializer = element.serializer(obj, s, true);
+      mapper.put(s, serializer);
       i++;
     }
-    m.put(key, mapper);
+    return mapper;
   }
 
   @Override
-  public <T> T deserializer(String context, Type type) {
-    return null;
+  @SuppressWarnings("unchecked")
+  public <T> T deserializer(Mapper mapper, Type type) {
+    List<Object> list = new ArrayList<>();
+    ParameterizedType parameterizedType = (ParameterizedType) type;
+    Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
+    Element element = Elements.getElement(actualTypeArgument);
+    for (Mapper m : mapper.values()) {
+      Object deserializer = element.deserializer(m, actualTypeArgument);
+      list.add(deserializer);
+    }
+    return (T) list;
   }
 }

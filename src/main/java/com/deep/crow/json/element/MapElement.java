@@ -5,39 +5,44 @@ import com.deep.crow.json.symbol.Symbol;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MapElement implements Element {
   @Override
   public boolean isSupport(Type type) {
-    if (type instanceof ParameterizedType) {
-      Class<?> cls = (Class<?>) ((ParameterizedType) type).getRawType();
-      return Map.class.isAssignableFrom(cls);
-    }
-
-    Class<?> cls = (Class<?>) type;
+    Class<?> cls = getCls(type);
     return Map.class.isAssignableFrom(cls);
   }
 
   @Override
-  public void serializer(Mapper m, Object o, String key) {
+  public Mapper serializer(Object o, String key, boolean isIndexKey) {
     Map<?, ?> map = (Map<?, ?>) o;
-    Mapper mapper = new Mapper(null, o, Symbol.LEFT_BRACES, Symbol.RIGHT_BRACES);
-    mapper.setIndex(m.isIndex());
-    m.setIndex(false);
+    Mapper mapper = new Mapper(key, o, Symbol.LEFT_BRACES, Symbol.RIGHT_BRACES, isIndexKey);
     for (Map.Entry<?, ?> entry : map.entrySet()) {
       Object entryKey = entry.getKey();
       Object entryValue = entry.getValue();
-      Mapper entryMapper = new Mapper(String.valueOf(entryKey), entryValue);
+      String s = String.valueOf(entryKey);
       Element element = Elements.getElement(entryValue.getClass());
-      element.serializer(entryMapper, entryValue, null);
-      mapper.put(String.valueOf(entryKey), entryMapper);
+      Mapper serializer = element.serializer(entryValue, s, false);
+      mapper.put(s, serializer);
     }
-    m.put(key, mapper);
+    return mapper;
   }
 
   @Override
-  public <T> T deserializer(String context, Type type) {
-    return null;
+  @SuppressWarnings("unchecked")
+  public <T> T deserializer(Mapper mapper, Type type) {
+    ParameterizedType parameterizedType = (ParameterizedType) type;
+    Type valueType = parameterizedType.getActualTypeArguments()[1];
+    Map<Object, Object> map = new HashMap<>();
+    for (Map.Entry<String, Mapper> entry : mapper.entrySet()) {
+      String key = entry.getKey();
+      Mapper value = entry.getValue();
+      Element element = Elements.getElement(valueType);
+      Object deserializer = element.deserializer(value, valueType);
+      map.put(key, deserializer);
+    }
+    return (T) map;
   }
 }

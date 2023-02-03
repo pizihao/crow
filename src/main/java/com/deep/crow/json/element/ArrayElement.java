@@ -5,7 +5,7 @@ import com.deep.crow.json.symbol.Symbol;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 解析数组类型
@@ -17,24 +17,36 @@ public class ArrayElement implements Element {
     if (Objects.isNull(type) || type instanceof ParameterizedType) {
       return false;
     }
-    return ((Class<?>) type).isArray();
+    return getCls(type).isArray();
   }
 
   @Override
-  public void serializer(Mapper m, Object o, String key) {
+  public Mapper serializer(Object o, String key, boolean isIndexKey) {
     Object[] arr = (Object[]) o;
-    Mapper mapper = new Mapper(null, o, Symbol.LEFT_BRACKET, Symbol.RIGHT_BRACKET);
+    Mapper mapper = new Mapper(key, o, Symbol.LEFT_BRACKET, Symbol.RIGHT_BRACKET, isIndexKey);
     for (int i = 0; i < arr.length; i++) {
       Object obj = arr[i];
+      String s = String.valueOf(i);
       Element element = Elements.getElement(obj.getClass());
-      mapper.setIndex(true);
-      element.serializer(mapper, obj, String.valueOf(i));
+      Mapper serializer = element.serializer(obj, s, true);
+      mapper.put(s, serializer);
     }
-    m.put(key, mapper);
+    return mapper;
   }
 
   @Override
-  public <T> T deserializer(String context, Type type) {
-    return null;
+  @SuppressWarnings("unchecked")
+  public <T> T deserializer(Mapper mapper, Type type) {
+    ParameterizedType parameterizedType = (ParameterizedType) type;
+    Type actualTypeArgument = parameterizedType.getActualTypeArguments()[0];
+    Element element = Elements.getElement(actualTypeArgument);
+    List<Mapper> values = new ArrayList<>(mapper.values());
+    Object[] o = new Object[values.size()];
+    for (int i = 0; i < values.size(); i++) {
+      Mapper m = values.get(i);
+      Object deserializer = element.deserializer(m, actualTypeArgument);
+      o[i] = deserializer;
+    }
+    return (T) o;
   }
 }

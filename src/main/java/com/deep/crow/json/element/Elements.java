@@ -1,7 +1,6 @@
 package com.deep.crow.json.element;
 
 import com.deep.crow.exception.CrowException;
-import com.deep.crow.json.Mapper;
 
 import java.lang.reflect.Type;
 import java.util.LinkedList;

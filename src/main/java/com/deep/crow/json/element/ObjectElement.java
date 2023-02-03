@@ -19,24 +19,18 @@ public class ObjectElement implements Element {
     if (Objects.isNull(type)) {
       return false;
     }
-    Class<?> cls = (Class<?>) type;
+    Class<?> cls = getCls(type);
     return !(ClassUtil.isPrimitive(cls) || CharSequence.class.isAssignableFrom(cls));
   }
 
   @Override
-  public void serializer(Mapper m, Object o, String key) {
+  public Mapper serializer(Object o, String key, boolean isIndexKey) {
     Class<?> cls = o.getClass();
     List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
     if (fields.isEmpty()) {
-      Mapper mapper = new Mapper(key, o);
-      mapper.setIndex(m.isIndex());
-      m.setIndex(false);
-      m.put(key, mapper);
-      return;
+      return new Mapper(key, o, isIndexKey);
     }
-    Mapper mapper = new Mapper(key, o, Symbol.LEFT_BRACES, Symbol.RIGHT_BRACES);
-    mapper.setIndex(m.isIndex());
-    m.setIndex(false);
+    Mapper mapper = new Mapper(key, o, Symbol.LEFT_BRACES, Symbol.RIGHT_BRACES, isIndexKey);
     try {
       for (Field f : fields) {
         String name = f.getName();
@@ -44,18 +38,42 @@ public class ObjectElement implements Element {
         Method readMethod = descriptor.getReadMethod();
         Object invoke = readMethod.invoke(o);
         Element element = Elements.getElement(invoke.getClass());
-        Mapper invokeMapper = new Mapper(name, invoke);
-        element.serializer(invokeMapper, invoke, null);
-        mapper.put(name, invokeMapper);
+        Mapper serializer = element.serializer(invoke, name, false);
+        mapper.put(name, serializer);
       }
-      m.put(key, mapper);
+      return mapper;
     } catch (Exception e) {
-      throw new CrowException(e);
+      throw CrowException.exception(e);
     }
   }
 
   @Override
-  public <T> T deserializer(String context, Type type) {
-    return null;
+  @SuppressWarnings("unchecked")
+  public <T> T deserializer(Mapper mapper, Type type) {
+    Class<?> cls = getCls(type);
+    List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
+    T t;
+    try {
+      t = (T) cls.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw CrowException.exception(e);
+    }
+    if (!fields.isEmpty()) {
+      try {
+        for (Field f : fields) {
+          Mapper entryMapper = mapper.get(f.getName());
+          Type fieldType = f.getGenericType();
+          Element element = Elements.getElement(fieldType);
+          Object o = element.deserializer(entryMapper, fieldType);
+          PropertyDescriptor descriptor = new PropertyDescriptor(f.getName(), cls);
+          Method writeMethod = descriptor.getWriteMethod();
+          writeMethod.invoke(t, o);
+        }
+      } catch (Exception e) {
+        throw CrowException.exception(e);
+      }
+    }
+    return t;
   }
+
 }

@@ -11,6 +11,9 @@ public class IOPerson<T> {
     this.name = name;
   }
 
+  public IOPerson() {
+  }
+
   public T getT() {
     return t;
   }

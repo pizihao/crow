@@ -1,6 +1,7 @@
 package com.deep.crow.json.element;
 
 import com.deep.crow.json.Mapper;
+import com.deep.crow.json.deserializer.JsonDeserializer;
 import com.deep.crow.json.serializer.JsonSerializer;
 import com.deep.crow.util.ClassUtil;
 
@@ -17,25 +18,27 @@ public class SimpleElement implements Element {
     if (Objects.isNull(type)) {
       return false;
     }
-    Class<?> cls = (Class<?>) type;
+    Class<?> cls = getCls(type);
     return ClassUtil.isPrimitive(cls) || CharSequence.class.isAssignableFrom(cls);
   }
 
   @Override
-  public void serializer(Mapper m, Object o, String key) {
+  public Mapper serializer(Object o, String key, boolean isIndexKey) {
     Class<?> cls = o.getClass();
     JsonSerializer<Object> serializer = Mapper.getSerializer(cls);
     StringBuilder builder = new StringBuilder();
     serializer.serialize(o, builder);
-    Mapper mapper = new Mapper(null, builder.toString());
-    mapper.setIndex(m.isIndex());
-    m.setIndex(false);
-    m.put(key, mapper);
+    return new Mapper(key, builder.toString(), isIndexKey);
   }
 
   @Override
-  public <T> T deserializer(String context, Type type) {
-    return null;
+  @SuppressWarnings("unchecked")
+  public <T> T deserializer(Mapper mapper, Type type) {
+    Object value = mapper.getValue();
+    String s = String.valueOf(value);
+    Class<?> cls = getCls(type);
+    JsonDeserializer<Object> deserializer = Mapper.getDeserializer(cls);
+    return (T) deserializer.deserialize(s);
   }
 
 }

@@ -2,6 +2,7 @@ package com.deep.crow.json;
 
 import com.deep.crow.json.element.Element;
 import com.deep.crow.json.element.Elements;
+import com.deep.crow.json.symbol.Symbol;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 
@@ -27,10 +28,12 @@ public class JsonTest extends TestCase {
     map.put("ssaa", 789);
 
     IOSimpleObj simpleObj = new IOSimpleObj("Str", 1527, strings, ioPerson, map);
-    Mapper mapper = new Mapper(simpleObj);
     Element element = Elements.getElement(simpleObj.getClass());
-    element.serializer(mapper, simpleObj, null);
-    System.out.println(mapper);
+    Mapper mapper = element.serializer(simpleObj, null, false);
+    String s = mapper.toString();
+    System.out.println(s);
+
+    element.deserializer(mapper, simpleObj.getClass());
 
   }
 }

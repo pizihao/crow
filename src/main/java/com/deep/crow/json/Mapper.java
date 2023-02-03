@@ -15,35 +15,36 @@ public class Mapper implements Map<String, Mapper> {
   /**
    * 自身的key
    */
-  String key;
+  private String key;
 
   /**
    * 自身的value
    */
-  Object value;
+  private Object value;
 
-  String prefix;
+  private String prefix;
 
-  String suffix;
+  private String suffix;
 
-  boolean index;
+  /**
+   * 表示map的key仅用作表示索引位置，没有具体的展示作用，这在集合和数组中会使用到
+   */
+  boolean isIndexKey;
 
   Map<String, Mapper> map = new HashMap<>();
 
-  public Mapper(String key, Object value, String prefix, String suffix) {
+  public Mapper(String key, Object value, String prefix, String suffix, boolean isIndexKey) {
     this.key = key;
     this.value = value;
     this.prefix = prefix;
     this.suffix = suffix;
+    this.isIndexKey = isIndexKey;
   }
 
-  public Mapper(String key, Object value) {
+  public Mapper(String key, Object value, boolean isIndexKey) {
     this.key = key;
     this.value = value;
-  }
-
-  public Mapper(Object value) {
-    this.value = value;
+    this.isIndexKey = isIndexKey;
   }
 
   public String getKey() {
@@ -67,19 +68,15 @@ public class Mapper implements Map<String, Mapper> {
       builder.append(mapper.toString()).append(Symbol.COMMA);
     }
     builder.deleteCharAt(builder.length() - 1);
-    return builder.toString();
+
+    if (suffix == null || prefix == null) {
+      return builder.toString();
+    }
+    return prefix + builder + suffix;
   }
 
   public void setValue(Object value) {
     this.value = value;
-  }
-
-  public boolean isIndex() {
-    return index;
-  }
-
-  public void setIndex(boolean index) {
-    this.index = index;
   }
 
   static Map<Class<?>, JsonSerializer<?>> mapSerializer = new HashMap<>();
@@ -212,15 +209,11 @@ public class Mapper implements Map<String, Mapper> {
   @Override
   public String toString() {
     String s;
-    if (key == null || index) {
+    if (key == null || isIndexKey) {
       s = getParseValue().toString();
     } else {
       s = Symbol.QUOTES + getKey() + Symbol.QUOTES + Symbol.COLON + getParseValue();
     }
-
-    if (suffix == null || prefix == null) {
-      return s;
-    }
-    return prefix + s + suffix;
+    return s;
   }
 }
