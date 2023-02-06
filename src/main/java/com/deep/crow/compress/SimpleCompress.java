@@ -1,6 +1,5 @@
 package com.deep.crow.compress;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Type;
 
 /**
@@ -11,8 +10,8 @@ import java.lang.reflect.Type;
 @SuppressWarnings("unchecked")
 public class SimpleCompress extends AbstractCompress {
 
-  public SimpleCompress(Object o, Type type, ObjectMapper objectMapper) {
-    super(o, type, objectMapper);
+  public SimpleCompress(Object o, Type type) {
+    super(o, type);
   }
 
   @Override

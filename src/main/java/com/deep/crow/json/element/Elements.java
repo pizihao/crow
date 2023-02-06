@@ -11,22 +11,21 @@ import java.util.List;
  */
 public class Elements {
 
-  static List<Element> elements = new LinkedList<>();
+  static final List<Element> ELEMENT = new LinkedList<>();
 
   private Elements() {
   }
 
   static {
-    elements.add(new SimpleElement());
-//    elements.add(new EnumElement());
-    elements.add(new ArrayElement());
-    elements.add(new IterableElement());
-    elements.add(new MapElement());
-    elements.add(new ObjectElement());
+    ELEMENT.add(new SimpleElement());
+    ELEMENT.add(new ArrayElement());
+    ELEMENT.add(new IterableElement());
+    ELEMENT.add(new MapElement());
+    ELEMENT.add(new ObjectElement());
   }
 
   public static Element getElement(Type type) {
-    for (Element e : elements) {
+    for (Element e : ELEMENT) {
       boolean support = e.isSupport(type);
       if (support){
         return e;

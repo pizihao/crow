@@ -15,15 +15,21 @@ public class Mapper implements Map<String, Mapper> {
   /**
    * 自身的key
    */
-  private String key;
+  private final String key;
 
   /**
    * 自身的value
    */
   private Object value;
 
+  /**
+   * 前缀
+   */
   private String prefix;
 
+  /**
+   * 后缀
+   */
   private String suffix;
 
   /**
@@ -45,14 +51,6 @@ public class Mapper implements Map<String, Mapper> {
     this.key = key;
     this.value = value;
     this.isIndexKey = isIndexKey;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
   }
 
   public Object getValue() {
@@ -212,7 +210,7 @@ public class Mapper implements Map<String, Mapper> {
     if (key == null || isIndexKey) {
       s = getParseValue().toString();
     } else {
-      s = Symbol.QUOTES + getKey() + Symbol.QUOTES + Symbol.COLON + getParseValue();
+      s = Symbol.QUOTES + key + Symbol.QUOTES + Symbol.COLON + getParseValue();
     }
     return s;
   }

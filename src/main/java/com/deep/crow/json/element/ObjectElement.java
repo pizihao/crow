@@ -6,9 +6,7 @@ import com.deep.crow.json.symbol.Symbol;
 import com.deep.crow.util.ClassUtil;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,8 +22,16 @@ public class ObjectElement implements Element {
   }
 
   @Override
-  public Mapper serializer(Object o, String key, boolean isIndexKey) {
+  public Mapper serializer(Type type, Object o, String key, boolean isIndexKey) {
     Class<?> cls = o.getClass();
+    String typeName = type.getTypeName();
+    if (type instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      typeName = parameterizedType.getRawType().getTypeName();
+    }
+    if (!typeName.equals(cls.getTypeName())) {
+      throw CrowException.exception("类型不匹配");
+    }
     List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
     if (fields.isEmpty()) {
       return new Mapper(key, o, isIndexKey);
@@ -38,7 +44,7 @@ public class ObjectElement implements Element {
         Method readMethod = descriptor.getReadMethod();
         Object invoke = readMethod.invoke(o);
         Element element = Elements.getElement(invoke.getClass());
-        Mapper serializer = element.serializer(invoke, name, false);
+        Mapper serializer = element.serializer(getFieldType(type, f), invoke, name, false);
         mapper.put(name, serializer);
       }
       return mapper;

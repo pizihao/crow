@@ -6,6 +6,7 @@ import junit.framework.TestCase;
 
 import java.util.*;
 
+@SuppressWarnings("all")
 public class JsonTest extends TestCase {
 
   public void testData() throws Exception {
@@ -26,12 +27,13 @@ public class JsonTest extends TestCase {
     map.put("ssaa", 789);
 
     IOSimpleObj simpleObj = new IOSimpleObj("Str", 1527, strings, ioPerson, map);
-    Element element = Elements.getElement(simpleObj.getClass());
-    Mapper mapper = element.serializer(simpleObj, null, false);
+    Class<? extends IOSimpleObj> objCls = simpleObj.getClass();
+    Element element = Elements.getElement(objCls);
+    Mapper mapper = element.serializer(objCls, simpleObj, null, false);
     String s = mapper.toString();
     System.out.println(s);
 
-    IOSimpleObj o = element.deserializer(mapper, simpleObj.getClass());
+    IOSimpleObj o = element.deserializer(mapper, objCls);
     System.out.println(o);
 
   }

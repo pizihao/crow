@@ -1,13 +1,11 @@
 package com.deep.crow.compress;
 
 import com.deep.crow.exception.CrowException;
-import com.deep.crow.json.ObjectMapperFactory;
-import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.type.ParameterizedTypeImpl;
 import com.deep.crow.util.ContainerUtil;
+import com.deep.crow.util.JsonUtil;
 import com.esotericsoftware.reflectasm.ConstructorAccess;
 import com.esotericsoftware.reflectasm.FieldAccess;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -127,14 +125,11 @@ public class TypeUtil {
      *      其真实类型是未知的，所以并不支持这种获取方式。
      * 2，通过序列化的方式，先通过参数指明类型进行序列化
      *      如果成功，则说明类型兼容，反之不兼容
-     *      这需要 Jackson 的支持
      */
 
     if (type instanceof ParameterizedType) {
-      CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
-      ObjectMapper objectMapper = ObjectMapperFactory.get();
       for (Object o : l) {
-        boolean match = isMatch(typeReference, o, objectMapper);
+        boolean match = isMatch(type, o);
         if (match) {
           return (T) o;
         }
@@ -155,10 +150,8 @@ public class TypeUtil {
    */
   public static <T> List<T> screenTypes(Iterable<?> l, Type type) {
     List<T> tList = new ArrayList<>();
-    CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
-    ObjectMapper objectMapper = ObjectMapperFactory.get();
     for (Object o : l) {
-      boolean match = isMatch(typeReference, o, objectMapper);
+      boolean match = isMatch(type, o);
       if (match) {
         tList.add((T) o);
       }
@@ -276,17 +269,15 @@ public class TypeUtil {
   /**
    * 验证类型是否匹配
    *
-   * @param typeReference 类型
-   * @param o             对象
-   * @param objectMapper  objectMapper
+   * @param type 类型
+   * @param o    对象
    * @return boolean
    * @author liuwenhao
    * @date 2022/4/26 11:24
    */
-  private static boolean isMatch(
-      CrowTypeReference<?> typeReference, Object o, ObjectMapper objectMapper) {
+  private static boolean isMatch(Type type, Object o) {
     try {
-      objectMapper.convertValue(o, typeReference);
+      JsonUtil.objToString(o, type);
       return true;
     } catch (Exception e) {
       return false;
@@ -341,11 +332,10 @@ public class TypeUtil {
      * @date 2022/4/26 11:00
      */
     public Field matching(Object obj) {
-      ObjectMapper objectMapper = ObjectMapperFactory.get();
       for (Field field : fields) {
         String property = field.getName();
         Object result = fieldAccess.get(obj, property);
-        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
+        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
           fieldAccess.set(obj, property, o);
           return field;
         }
@@ -393,11 +383,10 @@ public class TypeUtil {
      */
     @Override
     public Field matching(Object obj) {
-      ObjectMapper objectMapper = ObjectMapperFactory.get();
       for (Field field : fields) {
         String property = field.getName();
         Object result = fieldAccess.get(obj, property);
-        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
+        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
           collection.forEach(t -> fieldAccess.set(t, property, o));
           return field;
         }
@@ -409,16 +398,15 @@ public class TypeUtil {
   /**
    * 验证字段与实例对象是否可以兼容
    *
-   * @param field        字段属性
-   * @param o            实例对象
-   * @param objectMapper ObjectMapper
+   * @param field 字段属性
+   * @param o     实例对象
    * @return boolean
    * @author liuwenhao
    * @date 2022/4/27 9:38
    */
-  private static boolean isAccordWith(Field field, Object o, ObjectMapper objectMapper) {
+  private static boolean isAccordWith(Field field, Object o) {
     Type type = field.getGenericType();
-    Compress compress = CompressHelper.getType(type, o, objectMapper);
+    Compress compress = CompressHelper.getType(type, o);
     return compress.check();
   }
 }

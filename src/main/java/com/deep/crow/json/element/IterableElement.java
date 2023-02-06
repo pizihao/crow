@@ -1,5 +1,6 @@
 package com.deep.crow.json.element;
 
+import com.deep.crow.exception.CrowException;
 import com.deep.crow.json.Mapper;
 import com.deep.crow.json.symbol.Symbol;
 
@@ -19,14 +20,19 @@ public class IterableElement implements Element {
   }
 
   @Override
-  public Mapper serializer(Object o, String key, boolean isIndexKey) {
+  public Mapper serializer(Type type, Object o, String key, boolean isIndexKey) {
     Iterable<?> iterable = (Iterable<?>) o;
+    if (!(type instanceof ParameterizedType)) {
+      throw CrowException.exception("类型不匹配");
+    }
+    ParameterizedType parameterizedType = (ParameterizedType) type;
+    Type argument = parameterizedType.getActualTypeArguments()[0];
     Mapper mapper = new Mapper(key, o, Symbol.LEFT_BRACKET, Symbol.RIGHT_BRACKET, isIndexKey);
     int i = 0;
     for (Object obj : iterable) {
-      Element element = Elements.getElement(obj.getClass());
       String s = String.valueOf(i);
-      Mapper serializer = element.serializer(obj, s, true);
+      Element element = Elements.getElement(obj.getClass());
+      Mapper serializer = element.serializer(argument, obj, s, true);
       mapper.put(s, serializer);
       i++;
     }

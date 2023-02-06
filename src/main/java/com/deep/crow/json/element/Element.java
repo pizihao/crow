@@ -2,7 +2,6 @@ package com.deep.crow.json.element;
 
 import com.deep.crow.json.Mapper;
 import com.deep.crow.type.ParameterizedTypeImpl;
-import com.deep.crow.type.TypeBuilder;
 
 import java.lang.reflect.*;
 import java.util.Arrays;
@@ -29,7 +28,7 @@ public interface Element {
    * @param o   待序列化的对象
    * @param key key
    */
-  Mapper serializer(Object o, String key, boolean isIndexKey);
+  Mapper serializer(Type type, Object o, String key, boolean isIndexKey);
 
   /**
    * 反序列化操作
@@ -60,6 +59,7 @@ public interface Element {
    * @param field 类中字段的类型
    * @return 获取字段的实际类型
    */
+  @SuppressWarnings("all")
   default Type getFieldType(Type type, Field field) {
     Type genericType = field.getGenericType();
     if (!(type instanceof ParameterizedType)) {

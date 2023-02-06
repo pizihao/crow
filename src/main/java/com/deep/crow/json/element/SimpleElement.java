@@ -1,5 +1,6 @@
 package com.deep.crow.json.element;
 
+import com.deep.crow.exception.CrowException;
 import com.deep.crow.json.Mapper;
 import com.deep.crow.json.deserializer.JsonDeserializer;
 import com.deep.crow.json.serializer.JsonSerializer;
@@ -23,8 +24,11 @@ public class SimpleElement implements Element {
   }
 
   @Override
-  public Mapper serializer(Object o, String key, boolean isIndexKey) {
+  public Mapper serializer(Type type, Object o, String key, boolean isIndexKey) {
     Class<?> cls = o.getClass();
+    if (!cls.getTypeName().equals(type.getTypeName())) {
+      throw CrowException.exception("类型不匹配");
+    }
     JsonSerializer<Object> serializer = Mapper.getSerializer(cls);
     StringBuilder builder = new StringBuilder();
     serializer.serialize(o, builder);

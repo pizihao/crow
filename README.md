@@ -17,8 +17,6 @@
 </dependency>
 ~~~
 
-jackson版本：2.13.3
-
 asm版本：5.2
 
 ### 串行化

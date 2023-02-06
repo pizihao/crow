@@ -1,6 +1,5 @@
 package com.deep.crow.compress;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.Type;
 
 /**
@@ -11,11 +10,9 @@ import java.lang.reflect.Type;
 public abstract class AbstractCompress implements Compress {
   Object o;
   Type type;
-  ObjectMapper objectMapper;
 
-  AbstractCompress(Object o, Type type, ObjectMapper objectMapper) {
+  AbstractCompress(Object o, Type type) {
     this.o = o;
     this.type = type;
-    this.objectMapper = objectMapper;
   }
 }
