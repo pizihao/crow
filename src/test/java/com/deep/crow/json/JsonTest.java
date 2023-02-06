@@ -2,15 +2,9 @@ package com.deep.crow.json;
 
 import com.deep.crow.json.element.Element;
 import com.deep.crow.json.element.Elements;
-import com.deep.crow.json.symbol.Symbol;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import junit.framework.TestCase;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class JsonTest extends TestCase {
 
@@ -20,7 +14,11 @@ public class JsonTest extends TestCase {
     strings.add(new IOUser("456"));
     strings.add(new IOUser("75469"));
 
-    IOPerson<Integer> ioPerson = new IOPerson<>(13, "dhkf");
+    List<Integer> integers = new LinkedList<>();
+    integers.add(5);
+    integers.add(7);
+
+    IOPerson<Integer> ioPerson = new IOPerson<>(13, "dhkf", integers);
 
     Map<String, Integer> map = new HashMap<>();
     map.put("456", 32);
@@ -33,7 +31,8 @@ public class JsonTest extends TestCase {
     String s = mapper.toString();
     System.out.println(s);
 
-    element.deserializer(mapper, simpleObj.getClass());
+    IOSimpleObj o = element.deserializer(mapper, simpleObj.getClass());
+    System.out.println(o);
 
   }
 }

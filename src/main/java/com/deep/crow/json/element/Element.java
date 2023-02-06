@@ -65,7 +65,6 @@ public interface Element {
     if (!(type instanceof ParameterizedType)) {
       return genericType;
     }
-
     // 获取类的泛型
     ParameterizedType parameterizedType = (ParameterizedType) type;
     Type[] arguments = parameterizedType.getActualTypeArguments();
@@ -86,13 +85,18 @@ public interface Element {
           types.add(typeArgument);
         } else {
           int i = typeNames.indexOf(typeName);
-          types.add(parameters[i]);
+          types.add(arguments[i]);
         }
       }
       return ParameterizedTypeImpl.make(rawType, types.toArray(new Type[0]));
     }
     // 如果字段本身就是泛型，但实际类型是class
-
-    return null;
+    String genericTypeTypeName = genericType.getTypeName();
+    boolean contains = typeNames.contains(genericTypeTypeName);
+    if (contains) {
+      int i = typeNames.indexOf(genericTypeTypeName);
+      return arguments[i];
+    }
+    return genericType;
   }
 }

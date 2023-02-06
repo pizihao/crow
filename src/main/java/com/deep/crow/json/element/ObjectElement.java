@@ -62,7 +62,7 @@ public class ObjectElement implements Element {
       try {
         for (Field f : fields) {
           Mapper entryMapper = mapper.get(f.getName());
-          Type fieldType = f.getGenericType();
+          Type fieldType = getFieldType(type, f);
           Element element = Elements.getElement(fieldType);
           Object o = element.deserializer(entryMapper, fieldType);
           PropertyDescriptor descriptor = new PropertyDescriptor(f.getName(), cls);

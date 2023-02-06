@@ -68,4 +68,14 @@ public class IOSimpleObj implements Serializable {
     this.map = map;
   }
 
+  @Override
+  public String toString() {
+    return "IOSimpleObj{" +
+        "str='" + str + '\'' +
+        ", integer=" + integer +
+        ", strings=" + strings +
+        ", ioPerson=" + ioPerson +
+        ", map=" + map +
+        '}';
+  }
 }
