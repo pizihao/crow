@@ -1,5 +1,7 @@
 package com.deep.crow.util;
 
+import com.deep.crow.exception.CrowException;
+
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -77,5 +79,13 @@ public class ClassUtil {
     return allFields.stream()
         .filter(f -> !Modifier.isStatic(f.getModifiers()))
         .collect(Collectors.toList());
+  }
+
+  public static <T> T newInstance(Class<T> cls) {
+    try {
+      return cls.newInstance();
+    } catch (InstantiationException | IllegalAccessException e) {
+      throw CrowException.exception(e);
+    }
   }
 }

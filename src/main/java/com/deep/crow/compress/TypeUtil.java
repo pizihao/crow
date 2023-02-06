@@ -2,14 +2,13 @@ package com.deep.crow.compress;
 
 import com.deep.crow.exception.CrowException;
 import com.deep.crow.type.ParameterizedTypeImpl;
+import com.deep.crow.util.ClassUtil;
 import com.deep.crow.util.ContainerUtil;
 import com.deep.crow.util.JsonUtil;
-import com.esotericsoftware.reflectasm.ConstructorAccess;
-import com.esotericsoftware.reflectasm.FieldAccess;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -183,11 +182,11 @@ public class TypeUtil {
    * @date 2022/4/26 9:02
    */
   public static <T> void fillInstance(Iterable<?> l, T t, boolean isCover) {
-    FieldAccess fieldAccess = FieldAccess.get(t.getClass());
-    List<Field> fields = new ArrayList<>(Arrays.asList(fieldAccess.getFields()));
+    Class<?> cls = t.getClass();
+    List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
 
     for (Object o : l) {
-      TypeMatching typeMatching = new TypeMatching(fields, o, fieldAccess, isCover);
+      TypeMatching typeMatching = new TypeMatching(fields, o, cls, isCover);
       Field matching = typeMatching.matching(t);
       if (matching != null) {
         fields.remove(matching);
@@ -210,11 +209,11 @@ public class TypeUtil {
     if (Objects.isNull(element)) {
       return ts;
     }
-    FieldAccess fieldAccess = FieldAccess.get(element.getClass());
-    List<Field> fields = new ArrayList<>(Arrays.asList(fieldAccess.getFields()));
+    Class<?> cls = element.getClass();
+    List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
 
     for (Object o : l) {
-      TypeMatching typeMatching = new TypeMatchingBatch<>(fields, o, fieldAccess, isCover, ts);
+      TypeMatching typeMatching = new TypeMatchingBatch<>(fields, o, cls, isCover, ts);
       Field matching = typeMatching.matching(element);
       if (matching != null) {
         fields.remove(matching);
@@ -260,8 +259,7 @@ public class TypeUtil {
    * @date 2022/4/26 9:02
    */
   public static <T> T fillClass(Iterable<?> l, Class<T> clazz, boolean isCover) {
-    ConstructorAccess<T> constructorAccess = ConstructorAccess.get(clazz);
-    T t = constructorAccess.newInstance();
+    T t = ClassUtil.newInstance(clazz);
     fillInstance(l, t, isCover);
     return t;
   }
@@ -302,24 +300,24 @@ public class TypeUtil {
     Object o;
 
     /**
-     * 操作实例字段
+     * 实例类型
      */
-    FieldAccess fieldAccess;
+    Class<?> cls;
 
     /**
      * 是否覆盖
      */
     boolean isCover;
 
-    public TypeMatching(List<Field> fields, Object o, FieldAccess fieldAccess, boolean isCover) {
+    public TypeMatching(List<Field> fields, Object o, Class<?> cls, boolean isCover) {
       this.fields = fields;
       this.o = o;
+      this.cls = cls;
       this.isCover = isCover;
-      this.fieldAccess = fieldAccess;
     }
 
-    public TypeMatching(List<Field> fields, Object o, FieldAccess fieldAccess) {
-      this(fields, o, fieldAccess, false);
+    public TypeMatching(List<Field> fields, Object o, Class<?> cls) {
+      this(fields, o, cls, false);
     }
 
     /**
@@ -332,15 +330,22 @@ public class TypeUtil {
      * @date 2022/4/26 11:00
      */
     public Field matching(Object obj) {
-      for (Field field : fields) {
-        String property = field.getName();
-        Object result = fieldAccess.get(obj, property);
-        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
-          fieldAccess.set(obj, property, o);
-          return field;
+      try {
+        for (Field field : fields) {
+          String property = field.getName();
+          PropertyDescriptor descriptor = new PropertyDescriptor(property, cls);
+          Method readMethod = descriptor.getReadMethod();
+          Object result = readMethod.invoke(obj);
+          if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
+            Method writeMethod = descriptor.getWriteMethod();
+            writeMethod.invoke(obj, o);
+            return field;
+          }
         }
+        return null;
+      } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+        throw CrowException.exception(e);
       }
-      return null;
     }
   }
 
@@ -359,16 +364,16 @@ public class TypeUtil {
     public TypeMatchingBatch(
         List<Field> fields,
         Object o,
-        FieldAccess fieldAccess,
+        Class<?> cls,
         boolean isCover,
         Collection<T> collection) {
-      super(fields, o, fieldAccess, isCover);
+      super(fields, o, cls, isCover);
       this.collection = collection;
     }
 
     public TypeMatchingBatch(
-        List<Field> fields, Object o, FieldAccess fieldAccess, Collection<T> collection) {
-      super(fields, o, fieldAccess);
+        List<Field> fields, Object o, Class<?> cls, Collection<T> collection) {
+      super(fields, o, cls);
       this.collection = collection;
     }
 
@@ -383,15 +388,24 @@ public class TypeUtil {
      */
     @Override
     public Field matching(Object obj) {
-      for (Field field : fields) {
-        String property = field.getName();
-        Object result = fieldAccess.get(obj, property);
-        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
-          collection.forEach(t -> fieldAccess.set(t, property, o));
-          return field;
+      try {
+        for (Field field : fields) {
+          String property = field.getName();
+          PropertyDescriptor descriptor = new PropertyDescriptor(property, cls);
+          Method readMethod = descriptor.getReadMethod();
+          Object result = readMethod.invoke(obj);
+          if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
+            for (T t : collection) {
+              Method writeMethod = descriptor.getWriteMethod();
+              writeMethod.invoke(t, o);
+            }
+            return field;
+          }
         }
+        return null;
+      } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+        throw CrowException.exception(e);
       }
-      return null;
     }
   }
 
