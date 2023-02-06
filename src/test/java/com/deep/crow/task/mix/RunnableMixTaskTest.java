@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
 
+@SuppressWarnings("all")
 public class RunnableMixTaskTest extends TestCase {
 
   public void testComplete() {

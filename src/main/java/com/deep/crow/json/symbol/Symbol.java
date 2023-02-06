@@ -3,6 +3,7 @@ package com.deep.crow.json.symbol;
 /**
  * 用于表示进行拼接的符号和执行拼接的操作
  */
+@SuppressWarnings("all")
 public interface Symbol {
 
   String RIGHT_BRACKET = "]";

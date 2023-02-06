@@ -9,6 +9,8 @@ import junit.framework.TestCase;
  *
  * @author Create by liuwenhao on 2022/4/2 16:08
  */
+
+@SuppressWarnings("all")
 public class CompletionStageTest extends TestCase {
 
   public void testCompletableFuture() throws InterruptedException {

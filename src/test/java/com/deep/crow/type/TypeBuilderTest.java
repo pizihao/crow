@@ -7,6 +7,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 /** @author Create by liuwenhao on 2022/4/24 12:49 */
+@SuppressWarnings("all")
 public class TypeBuilderTest extends TestCase {
 
   public void testBuilder() {

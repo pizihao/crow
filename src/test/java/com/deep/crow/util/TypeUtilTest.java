@@ -5,11 +5,13 @@ import com.deep.crow.model.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /** @author Create by liuwenhao on 2022/6/2 10:07 */
-public class TypeUtilTest extends TestCase {
+@SuppressWarnings("all")
+public class TypeUtilTest {
 
+  @Test
   public void testTypeFillSpeed() {
     List<Bird> birds = new ArrayList<>();
     List<Cat> cats = new ArrayList<>();
@@ -46,6 +48,7 @@ public class TypeUtilTest extends TestCase {
     System.out.println(t - l);
   }
 
+  @Test
   public void testTypeFillInstance() {
     Bird bird = new Bird();
     bird.setName("鸟");
@@ -66,6 +69,7 @@ public class TypeUtilTest extends TestCase {
     System.out.println(animal);
   }
 
+  @Test
   public void testFillCollection() {
     List<Bird> birds = new ArrayList<>();
     List<Cat> cats = new ArrayList<>();

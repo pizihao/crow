@@ -8,6 +8,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /** @author Create by liuwenhao on 2022/4/28 10:33 */
+@SuppressWarnings("all")
 public class SeniorTypeUtilTest extends TestCase {
 
   public void testExample() {

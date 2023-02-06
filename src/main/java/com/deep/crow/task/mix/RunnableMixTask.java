@@ -37,11 +37,6 @@ class RunnableMixTask<T> implements MixTask<T> {
   }
 
   @Override
-  public boolean isTail() {
-    return isTail;
-  }
-
-  @Override
   public void cancelTail() {
     this.isTail = false;
   }

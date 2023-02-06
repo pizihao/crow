@@ -1,7 +1,5 @@
 package com.deep.crow.json.serializer;
 
-import java.io.IOException;
-
 /**
  * 序列化器
  */
