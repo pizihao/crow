@@ -1,7 +1,7 @@
 package com.deep.crow.compress;
 
 import com.deep.crow.exception.CrowException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -33,49 +33,47 @@ public class CompressHelper {
    * 通过类型获取一组压缩器
    *
    * @param type 类型
-   * @param o 需要判断的对象
-   * @param objectMapper objectMapper
+   * @param o    需要判断的对象
    * @return com.deep.crow.compress.Compress
    * @author liuwenhao
    * @date 2022/6/2 16:48
    */
-  public static Compress getType(Type type, Object o, ObjectMapper objectMapper) {
+  public static Compress getType(Type type, Object o) {
     return (type instanceof ParameterizedType)
-        ? get(o, type, objectMapper)
-        : new SimpleCompress(o, type, objectMapper);
+        ? get(o, type)
+        : new SimpleCompress(o, type);
   }
 
   /**
    * 通过类型获取一组压缩器
    *
    * @param type 类型
-   * @param o 需要判断的对象
-   * @param objectMapper objectMapper
+   * @param o    需要判断的对象
    * @return com.deep.crow.compress.Compress
    * @author liuwenhao
    * @date 2022/6/2 17:26
    */
-  private static Compress get(Object o, Type type, ObjectMapper objectMapper) {
+  private static Compress get(Object o, Type type) {
     for (Map.Entry<Class<?>, Class<? extends Compress>> entry : compressMap.entrySet()) {
       if (entry.getKey().isInstance(o)) {
         Class<? extends Compress> aClass = compressMap.get(entry.getKey());
         try {
           Constructor<? extends Compress> constructor =
-              aClass.getConstructor(Object.class, Type.class, ObjectMapper.class);
-          return constructor.newInstance(o, type, objectMapper);
+              aClass.getConstructor(Object.class, Type.class);
+          return constructor.newInstance(o, type);
         } catch (Exception e) {
           throw CrowException.exception(e);
         }
       }
     }
-    return new DefaultCompress(o, type, objectMapper);
+    return new DefaultCompress(o, type);
   }
 
   /**
    * 添加一组压缩器映射 高级别的抽象会覆盖低级别的抽象<br>
    * 所以注册的压缩器不一定会生效
    *
-   * @param key 键
+   * @param key   键
    * @param value 值
    * @author liuwenhao
    * @date 2022/6/2 16:17
@@ -107,7 +105,7 @@ public class CompressHelper {
    * 如果新指定的键类型抽象级别更高则会删除抽象级别更低的键<br>
    * 例如指定了 List Compress，则会覆盖 Iterable IteratorCompress，最终的结果为：Iterable Compress
    *
-   * @param key 键
+   * @param key   键
    * @param value 值
    * @author liuwenhao
    * @date 2022/6/7 10:31
@@ -135,7 +133,7 @@ public class CompressHelper {
    * 获取所有的值
    *
    * @return java.util.Map<java.lang.Class < ?>,java.lang.Class<? extends
-   *     com.deep.crow.compress.Compress>>
+   * com.deep.crow.compress.Compress>>
    * @author liuwenhao
    * @date 2022/6/2 18:43
    */

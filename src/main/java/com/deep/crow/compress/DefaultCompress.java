@@ -1,7 +1,7 @@
 package com.deep.crow.compress;
 
-import com.deep.crow.type.CrowTypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.deep.crow.util.JsonUtil;
+
 import java.lang.reflect.Type;
 
 /**
@@ -12,8 +12,8 @@ import java.lang.reflect.Type;
 @SuppressWarnings("unchecked")
 public class DefaultCompress extends AbstractCompress {
 
-  public DefaultCompress(Object o, Type type, ObjectMapper objectMapper) {
-    super(o, type, objectMapper);
+  public DefaultCompress(Object o, Type type) {
+    super(o, type);
   }
 
   @Override
@@ -24,8 +24,7 @@ public class DefaultCompress extends AbstractCompress {
   @Override
   public boolean check() {
     try {
-      CrowTypeReference<?> typeReference = CrowTypeReference.make(type);
-      objectMapper.convertValue(compress(), typeReference);
+      JsonUtil.objToString(compress(), type);
       return true;
     } catch (Exception e) {
       return false;

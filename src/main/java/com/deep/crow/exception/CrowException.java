@@ -2,7 +2,9 @@ package com.deep.crow.exception;
 
 import com.deep.crow.util.StrUtil;
 
-/** @author Create by liuwenhao on 2022/4/7 16:15 */
+/**
+ * @author Create by liuwenhao on 2022/4/7 16:15
+ */
 public class CrowException extends RuntimeException {
   private static final long serialVersionUID = 4220666905005394823L;
 
@@ -23,6 +25,9 @@ public class CrowException extends RuntimeException {
   }
 
   public static CrowException exception(Throwable throwable) {
+    if (throwable instanceof CrowException) {
+      return new CrowException(throwable.getMessage());
+    }
     return new CrowException(throwable);
   }
 

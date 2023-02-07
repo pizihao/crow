@@ -1,11 +1,9 @@
 package com.deep.crow.task.parallel;
 
 import com.deep.crow.MultiTools;
-import com.deep.crow.exception.CrowException;
 import com.deep.crow.util.ThreadPool;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -14,6 +12,7 @@ import org.junit.Test;
  *
  * @author Create by liuwenhao on 2022/4/2 16:08
  */
+@SuppressWarnings("all")
 public class ParallelMultiTest {
 
   @Test
@@ -29,11 +28,6 @@ public class ParallelMultiTest {
               System.out.println(throwable.getMessage());
               return 6;
             })
-        .add(
-            (Supplier<Object>)
-                () -> {
-                  throw new CrowException("456");
-                })
         .add(
             () -> {
               try {
@@ -78,7 +72,7 @@ public class ParallelMultiTest {
             .add(() -> 2)
             .add(5, () -> 3)
             .add(() -> 4)
-            .add(() -> 5)
+            .add(() -> 5/0)
             .addThrowable(
                 throwable -> {
                   System.out.println(throwable.getMessage());
@@ -87,7 +81,7 @@ public class ParallelMultiTest {
                 1,
                 5)
             .add(19, () -> 6)
-            .add(() -> 7)
+            .add(() -> 7/0)
             .add(() -> 8)
             .add(() -> 9)
             .addThrowable(

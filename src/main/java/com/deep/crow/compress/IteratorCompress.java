@@ -1,8 +1,8 @@
 package com.deep.crow.compress;
 
-import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.util.ContainerUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.deep.crow.util.JsonUtil;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
@@ -14,8 +14,8 @@ import java.lang.reflect.Type;
 @SuppressWarnings("unchecked")
 public class IteratorCompress extends AbstractCompress {
 
-  public IteratorCompress(Object o, Type type, ObjectMapper objectMapper) {
-    super(o, type, objectMapper);
+  public IteratorCompress(Object o, Type type) {
+    super(o, type);
   }
 
   @Override
@@ -31,9 +31,8 @@ public class IteratorCompress extends AbstractCompress {
       ParameterizedType parameterizedType = (ParameterizedType) type;
       Type argument = parameterizedType.getActualTypeArguments()[0];
       Type rawType = parameterizedType.getRawType();
-      CrowTypeReference<?> typeReference = CrowTypeReference.make(argument);
       Object compress = compress();
-      objectMapper.convertValue(compress, typeReference);
+      JsonUtil.objToString(compress, argument);
       return ((Class<?>) argument).isAssignableFrom(compress.getClass())
           && ((Class<?>) rawType).isAssignableFrom(o.getClass());
     } catch (Exception e) {

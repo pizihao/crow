@@ -7,6 +7,8 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
 
 /** graph LR A[开始] --> B --> D; A --> C; C --> D --> F; A --> E --> G; F --> G */
+
+@SuppressWarnings("all")
 public class MixMultiTest extends TestCase {
 
   ExecutorService executorService;

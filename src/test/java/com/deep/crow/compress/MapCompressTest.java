@@ -3,7 +3,6 @@ package com.deep.crow.compress;
 import com.deep.crow.model.Cat;
 import com.deep.crow.model.User;
 import com.deep.crow.type.TypeBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Assert;
@@ -28,11 +27,10 @@ public class MapCompressTest {
 
   @Test
   public void testCompress() {
-    ObjectMapper objectMapper = new ObjectMapper();
     Compress userCompress =
-        new MapCompress(userMap, TypeBuilder.map(Integer.class, User.class), objectMapper);
+        new MapCompress(userMap, TypeBuilder.map(Integer.class, User.class));
     Compress catCompress =
-        new MapCompress(catMap, TypeBuilder.map(String.class, Cat.class), objectMapper);
+        new MapCompress(catMap, TypeBuilder.map(String.class, Cat.class));
     Map.Entry<Integer, User> usersEntity = userCompress.compress();
     Map.Entry<String, Cat> catsEntity = catCompress.compress();
     Assert.assertEquals(usersEntity.getKey(), Integer.valueOf(456));
@@ -43,11 +41,10 @@ public class MapCompressTest {
 
   @Test
   public void testCheck() {
-    ObjectMapper objectMapper = new ObjectMapper();
     Compress userCompress =
-        new MapCompress(userMap, TypeBuilder.map(Integer.class, User.class), objectMapper);
+        new MapCompress(userMap, TypeBuilder.map(Integer.class, User.class));
     Compress catCompress =
-        new MapCompress(catMap, TypeBuilder.map(Integer.class, Cat.class), objectMapper);
+        new MapCompress(catMap, TypeBuilder.map(Integer.class, Cat.class));
     boolean userCheck = userCompress.check();
     boolean catCheck = catCompress.check();
     Assert.assertTrue(userCheck);

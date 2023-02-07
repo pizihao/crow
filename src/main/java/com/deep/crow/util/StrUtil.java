@@ -5,6 +5,7 @@ package com.deep.crow.util;
  *
  * @author Create by liuwenhao on 2022/4/11 18:18
  */
+@SuppressWarnings("all")
 public class StrUtil {
 
   private StrUtil() {}

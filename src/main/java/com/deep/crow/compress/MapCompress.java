@@ -1,8 +1,8 @@
 package com.deep.crow.compress;
 
-import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.util.ContainerUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.deep.crow.util.JsonUtil;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -15,8 +15,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class MapCompress extends AbstractCompress {
 
-  public MapCompress(Object o, Type type, ObjectMapper objectMapper) {
-    super(o, type, objectMapper);
+  public MapCompress(Object o, Type type) {
+    super(o, type);
   }
 
   @Override
@@ -33,10 +33,8 @@ public class MapCompress extends AbstractCompress {
       Type keyArgument = parameterizedType.getActualTypeArguments()[0];
       Type valueArgument = parameterizedType.getActualTypeArguments()[1];
       Type rawType = parameterizedType.getRawType();
-      CrowTypeReference<?> keyTypeReference = CrowTypeReference.make(keyArgument);
-      CrowTypeReference<?> valueTypeReference = CrowTypeReference.make(valueArgument);
-      objectMapper.convertValue(firstKeyValue.getKey(), keyTypeReference);
-      objectMapper.convertValue(firstKeyValue.getValue(), valueTypeReference);
+      JsonUtil.objToString(firstKeyValue.getKey(), keyArgument);
+      JsonUtil.objToString(firstKeyValue.getValue(), valueArgument);
       return ((Class<?>) keyArgument).isAssignableFrom(firstKeyValue.getKey().getClass())
           && ((Class<?>) valueArgument).isAssignableFrom(firstKeyValue.getValue().getClass())
           && ((Class<?>) rawType).isAssignableFrom(o.getClass());

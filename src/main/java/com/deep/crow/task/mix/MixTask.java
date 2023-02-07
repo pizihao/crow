@@ -39,17 +39,6 @@ interface MixTask<T> extends Task {
   void removePreName(String preName);
 
   /**
-   * 是否是尾结点
-   *
-   * @return boolean
-   * @author liuwenhao
-   * @date 2022/6/18 17:10
-   * @deprecated when deprecated
-   */
-  @Deprecated
-  boolean isTail();
-
-  /**
    * 声明当前节点不再是尾结点
    *
    * @author liuwenhao

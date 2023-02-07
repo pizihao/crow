@@ -11,7 +11,7 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 /** @author Create by liuwenhao on 2022/4/24 12:49 */
-@SuppressWarnings("unchecked")
+@SuppressWarnings("all")
 public class TypeUtilTest extends TestCase {
   public List<Object> fill() {
     List<Integer> list1 = new ArrayList<>();

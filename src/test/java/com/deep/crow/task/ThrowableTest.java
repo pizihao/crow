@@ -7,6 +7,7 @@ import java.util.concurrent.ExecutorService;
 import junit.framework.TestCase;
 
 /** @author Create by liuwenhao on 2022/4/7 16:09 */
+@SuppressWarnings("all")
 public class ThrowableTest extends TestCase {
 
   public void testThrowable() {

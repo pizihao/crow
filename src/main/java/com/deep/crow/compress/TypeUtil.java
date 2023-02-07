@@ -1,16 +1,14 @@
 package com.deep.crow.compress;
 
 import com.deep.crow.exception.CrowException;
-import com.deep.crow.jackson.ObjectMapperFactory;
-import com.deep.crow.type.CrowTypeReference;
 import com.deep.crow.type.ParameterizedTypeImpl;
+import com.deep.crow.util.ClassUtil;
 import com.deep.crow.util.ContainerUtil;
-import com.esotericsoftware.reflectasm.ConstructorAccess;
-import com.esotericsoftware.reflectasm.FieldAccess;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import com.deep.crow.util.JsonUtil;
+
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -21,13 +19,14 @@ import java.util.*;
 @SuppressWarnings("unchecked,unused")
 public class TypeUtil {
 
-  private TypeUtil() {}
+  private TypeUtil() {
+  }
 
   /**
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，匹配成功则直接返回<br>
    * 无匹配选项则抛出异常
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @return T
    * @author liuwenhao
@@ -47,7 +46,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
    * 无匹配选项则获得空集合
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @return T
    * @author liuwenhao
@@ -68,7 +67,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项<br>
    * 无匹配选项则抛出异常
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @param types 泛型
    * @return T
@@ -88,7 +87,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
    * 无匹配选项则返回空集合
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 目标类
    * @param types 泛型
    * @return T
@@ -105,13 +104,19 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项<br>
    * 无匹配选项则抛出异常
    *
-   * @param l 结果集
+   * @param l    结果集
    * @param type 检索的类型
    * @return T
    * @author liuwenhao
    * @date 2022/4/24 16:27
    */
   public static <T> T screenType(Iterable<?> l, Type type) {
+    // 如果type的类型直接是class，则可以通过比较简单的方式去转化
+    if (type instanceof Class) {
+      Class<?> cls = (Class<?>) type;
+      return (T) screenClass(l, cls);
+    }
+
     /*
      * o及其泛型是否与parameterizedType兼容，
      * 1，通过API获取o被擦除的泛型类型，和传入的类型进行对比，相同则返回
@@ -119,14 +124,11 @@ public class TypeUtil {
      *      其真实类型是未知的，所以并不支持这种获取方式。
      * 2，通过序列化的方式，先通过参数指明类型进行序列化
      *      如果成功，则说明类型兼容，反之不兼容
-     *      这需要 Jackson 的支持
      */
 
     if (type instanceof ParameterizedType) {
-      CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
-      ObjectMapper objectMapper = ObjectMapperFactory.get();
       for (Object o : l) {
-        boolean match = isMatch(typeReference, o, objectMapper);
+        boolean match = isMatch(type, o);
         if (match) {
           return (T) o;
         }
@@ -139,7 +141,7 @@ public class TypeUtil {
    * 筛选结果类型 在一个未知的结果集中匹配指定类型的项，得到所有可能匹配的结果<br>
    * 无匹配选项则返回空集合
    *
-   * @param l 结果集
+   * @param l    结果集
    * @param type 检索的类型
    * @return T
    * @author liuwenhao
@@ -147,10 +149,8 @@ public class TypeUtil {
    */
   public static <T> List<T> screenTypes(Iterable<?> l, Type type) {
     List<T> tList = new ArrayList<>();
-    CrowTypeReference<T> typeReference = CrowTypeReference.make(type);
-    ObjectMapper objectMapper = ObjectMapperFactory.get();
     for (Object o : l) {
-      boolean match = isMatch(typeReference, o, objectMapper);
+      boolean match = isMatch(type, o);
       if (match) {
         tList.add((T) o);
       }
@@ -175,18 +175,18 @@ public class TypeUtil {
    * 根据类型填充属性 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
    * 按对象的填充方式，在填充时不会影响到已有的数据在填充之前需要使用到反射获取属性类型<br>
    *
-   * @param l 结果集
-   * @param t 需要填充的类对象
+   * @param l       结果集
+   * @param t       需要填充的类对象
    * @param isCover 是否覆盖
    * @author liuwenhao
    * @date 2022/4/26 9:02
    */
   public static <T> void fillInstance(Iterable<?> l, T t, boolean isCover) {
-    FieldAccess fieldAccess = FieldAccess.get(t.getClass());
-    List<Field> fields = new ArrayList<>(Arrays.asList(fieldAccess.getFields()));
+    Class<?> cls = t.getClass();
+    List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
 
     for (Object o : l) {
-      TypeMatching typeMatching = new TypeMatching(fields, o, fieldAccess, isCover);
+      TypeMatching typeMatching = new TypeMatching(fields, o, cls, isCover);
       Field matching = typeMatching.matching(t);
       if (matching != null) {
         fields.remove(matching);
@@ -197,8 +197,8 @@ public class TypeUtil {
   /**
    * 根据类型填充属性 批量处理的形式，针对单个对象的处理和{@link #fillInstance(Iterable, Object, boolean)}相同
    *
-   * @param l 结果集
-   * @param ts 需要填充的类对象集合
+   * @param l       结果集
+   * @param ts      需要填充的类对象集合
    * @param isCover 是否覆盖
    * @return java.util.Collection<T>
    * @author liuwenhao
@@ -209,11 +209,11 @@ public class TypeUtil {
     if (Objects.isNull(element)) {
       return ts;
     }
-    FieldAccess fieldAccess = FieldAccess.get(element.getClass());
-    List<Field> fields = new ArrayList<>(Arrays.asList(fieldAccess.getFields()));
+    Class<?> cls = element.getClass();
+    List<Field> fields = ClassUtil.getFieldsByGetterAndSetter(cls);
 
     for (Object o : l) {
-      TypeMatching typeMatching = new TypeMatchingBatch<>(fields, o, fieldAccess, isCover, ts);
+      TypeMatching typeMatching = new TypeMatchingBatch<>(fields, o, cls, isCover, ts);
       Field matching = typeMatching.matching(element);
       if (matching != null) {
         fields.remove(matching);
@@ -225,7 +225,7 @@ public class TypeUtil {
   /**
    * 根据类型填充属性 批量处理的形式，针对单个对象的处理和{@link #fillInstance(Iterable, Object, boolean)}相同
    *
-   * @param l 结果集
+   * @param l  结果集
    * @param ts 需要填充的类对象集合
    * @return java.util.Collection<T>
    * @author liuwenhao
@@ -239,7 +239,7 @@ public class TypeUtil {
    * 根据类型填充属性 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
    * 这需要 reflections 的支持
    *
-   * @param l 结果集
+   * @param l     结果集
    * @param clazz 需要填充的类
    * @author liuwenhao
    * @date 2022/4/26 9:02
@@ -252,15 +252,14 @@ public class TypeUtil {
    * 根据类型填充属性 按照类型匹配的方式将结果集中的数据填充到实例对象中，对于相同类型的数据采用按顺序依次填充的策略<br>
    * 这需要 reflections 的支持
    *
-   * @param l 结果集
-   * @param clazz 需要填充的类
+   * @param l       结果集
+   * @param clazz   需要填充的类
    * @param isCover 是否覆盖
    * @author liuwenhao
    * @date 2022/4/26 9:02
    */
   public static <T> T fillClass(Iterable<?> l, Class<T> clazz, boolean isCover) {
-    ConstructorAccess<T> constructorAccess = ConstructorAccess.get(clazz);
-    T t = constructorAccess.newInstance();
+    T t = ClassUtil.newInstance(clazz);
     fillInstance(l, t, isCover);
     return t;
   }
@@ -268,17 +267,15 @@ public class TypeUtil {
   /**
    * 验证类型是否匹配
    *
-   * @param typeReference 类型
-   * @param o 对象
-   * @param objectMapper objectMapper
+   * @param type 类型
+   * @param o    对象
    * @return boolean
    * @author liuwenhao
    * @date 2022/4/26 11:24
    */
-  private static boolean isMatch(
-      CrowTypeReference<?> typeReference, Object o, ObjectMapper objectMapper) {
+  private static boolean isMatch(Type type, Object o) {
     try {
-      objectMapper.convertValue(o, typeReference);
+      JsonUtil.objToString(o, type);
       return true;
     } catch (Exception e) {
       return false;
@@ -292,27 +289,35 @@ public class TypeUtil {
    */
   static class TypeMatching {
 
-    /** 字段集 */
+    /**
+     * 字段集
+     */
     List<Field> fields;
 
-    /** 实例对象 */
+    /**
+     * 实例对象
+     */
     Object o;
 
-    /** 操作实例字段 */
-    FieldAccess fieldAccess;
+    /**
+     * 实例类型
+     */
+    Class<?> cls;
 
-    /** 是否覆盖 */
+    /**
+     * 是否覆盖
+     */
     boolean isCover;
 
-    public TypeMatching(List<Field> fields, Object o, FieldAccess fieldAccess, boolean isCover) {
+    public TypeMatching(List<Field> fields, Object o, Class<?> cls, boolean isCover) {
       this.fields = fields;
       this.o = o;
+      this.cls = cls;
       this.isCover = isCover;
-      this.fieldAccess = fieldAccess;
     }
 
-    public TypeMatching(List<Field> fields, Object o, FieldAccess fieldAccess) {
-      this(fields, o, fieldAccess, false);
+    public TypeMatching(List<Field> fields, Object o, Class<?> cls) {
+      this(fields, o, cls, false);
     }
 
     /**
@@ -325,16 +330,22 @@ public class TypeUtil {
      * @date 2022/4/26 11:00
      */
     public Field matching(Object obj) {
-      ObjectMapper objectMapper = ObjectMapperFactory.get();
-      for (Field field : fields) {
-        String property = field.getName();
-        Object result = fieldAccess.get(obj, property);
-        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
-          fieldAccess.set(obj, property, o);
-          return field;
+      try {
+        for (Field field : fields) {
+          String property = field.getName();
+          PropertyDescriptor descriptor = new PropertyDescriptor(property, cls);
+          Method readMethod = descriptor.getReadMethod();
+          Object result = readMethod.invoke(obj);
+          if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
+            Method writeMethod = descriptor.getWriteMethod();
+            writeMethod.invoke(obj, o);
+            return field;
+          }
         }
+        return null;
+      } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+        throw CrowException.exception(e);
       }
-      return null;
     }
   }
 
@@ -345,22 +356,24 @@ public class TypeUtil {
    */
   static class TypeMatchingBatch<T> extends TypeMatching {
 
-    /** 需要填充的类对象集合 */
+    /**
+     * 需要填充的类对象集合
+     */
     Collection<T> collection;
 
     public TypeMatchingBatch(
         List<Field> fields,
         Object o,
-        FieldAccess fieldAccess,
+        Class<?> cls,
         boolean isCover,
         Collection<T> collection) {
-      super(fields, o, fieldAccess, isCover);
+      super(fields, o, cls, isCover);
       this.collection = collection;
     }
 
     public TypeMatchingBatch(
-        List<Field> fields, Object o, FieldAccess fieldAccess, Collection<T> collection) {
-      super(fields, o, fieldAccess);
+        List<Field> fields, Object o, Class<?> cls, Collection<T> collection) {
+      super(fields, o, cls);
       this.collection = collection;
     }
 
@@ -375,16 +388,24 @@ public class TypeUtil {
      */
     @Override
     public Field matching(Object obj) {
-      ObjectMapper objectMapper = ObjectMapperFactory.get();
-      for (Field field : fields) {
-        String property = field.getName();
-        Object result = fieldAccess.get(obj, property);
-        if ((isCover || Objects.isNull(result)) && isAccordWith(field, o, objectMapper)) {
-          collection.forEach(t -> fieldAccess.set(t, property, o));
-          return field;
+      try {
+        for (Field field : fields) {
+          String property = field.getName();
+          PropertyDescriptor descriptor = new PropertyDescriptor(property, cls);
+          Method readMethod = descriptor.getReadMethod();
+          Object result = readMethod.invoke(obj);
+          if ((isCover || Objects.isNull(result)) && isAccordWith(field, o)) {
+            for (T t : collection) {
+              Method writeMethod = descriptor.getWriteMethod();
+              writeMethod.invoke(t, o);
+            }
+            return field;
+          }
         }
+        return null;
+      } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+        throw CrowException.exception(e);
       }
-      return null;
     }
   }
 
@@ -392,15 +413,14 @@ public class TypeUtil {
    * 验证字段与实例对象是否可以兼容
    *
    * @param field 字段属性
-   * @param o 实例对象
-   * @param objectMapper ObjectMapper
+   * @param o     实例对象
    * @return boolean
    * @author liuwenhao
    * @date 2022/4/27 9:38
    */
-  private static boolean isAccordWith(Field field, Object o, ObjectMapper objectMapper) {
+  private static boolean isAccordWith(Field field, Object o) {
     Type type = field.getGenericType();
-    Compress compress = CompressHelper.getType(type, o, objectMapper);
+    Compress compress = CompressHelper.getType(type, o);
     return compress.check();
   }
 }

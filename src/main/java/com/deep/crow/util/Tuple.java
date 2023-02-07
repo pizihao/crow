@@ -63,8 +63,7 @@ public class Tuple implements Iterable<Object> {
    * @date 2022/4/11 17:50
    */
   public int size() {
-    Object[] member = this.members;
-    Objects.requireNonNull(member);
+    Objects.requireNonNull(getMembers());
     return members.length;
   }
 
@@ -76,15 +75,14 @@ public class Tuple implements Iterable<Object> {
    * @date 2022/4/11 17:50
    */
   public boolean contains(Object value) {
-    Object[] member = this.members;
-    Objects.requireNonNull(member);
+    Objects.requireNonNull(getMembers());
     return toList().contains(value);
   }
 
   @Override
   public int hashCode() {
     int result = 1;
-    result = 31 * result + Arrays.deepHashCode(members);
+    result = 31 * result + Arrays.deepHashCode(getMembers());
     return result;
   }
 
@@ -100,23 +98,23 @@ public class Tuple implements Iterable<Object> {
       return false;
     }
     Tuple other = (Tuple) obj;
-    return Arrays.deepEquals(members, other.members);
+    return Arrays.deepEquals(getMembers(), other.getMembers());
   }
 
   @Override
   public String toString() {
-    return Arrays.toString(members);
+    return Arrays.toString(getMembers());
   }
 
   @Override
   @SuppressWarnings("all")
   public Iterator<Object> iterator() {
-    return new TupleIter(this.members);
+    return new TupleIter(getMembers());
   }
 
   @Override
   public final Spliterator<Object> spliterator() {
-    return Spliterators.spliterator(this.members, Spliterator.ORDERED);
+    return Spliterators.spliterator(getMembers(), Spliterator.ORDERED);
   }
 
   public static class TupleIter<T> implements Iterable<T>, Iterator<T> {
@@ -137,7 +135,7 @@ public class Tuple implements Iterable<Object> {
 
     @Override
     public Iterator<T> iterator() {
-      return this;
+      return new TupleIter<>(array);
     }
 
     @Override
