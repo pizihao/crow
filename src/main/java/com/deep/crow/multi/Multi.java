@@ -191,7 +191,7 @@ public interface Multi<T> {
   T getNow();
 
   /**
-   * 获取结果 如果未执行完成返回null
+   * 获取结果 如果未执行完成返回默认值
    *
    * @return T 结果
    * @author Created by liuwenhao on 2022/4/10 0:42
@@ -199,7 +199,7 @@ public interface Multi<T> {
   T getNow(T valueIfAbsent);
 
   /**
-   * 复制multi 两个拥有相同的信息当完全不同
+   * 复制multi 两个拥有相同的信息但完全不同
    *
    * @return com.deep.crow.multi.Multi<T>
    * @author liuwenhao

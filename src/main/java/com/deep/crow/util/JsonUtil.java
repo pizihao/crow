@@ -24,7 +24,7 @@ public class JsonUtil {
   }
 
   /**
-   * 反序列haul操作
+   * 反序列化操作
    *
    * @param mapper json串
    * @param type   反序列化的类型
